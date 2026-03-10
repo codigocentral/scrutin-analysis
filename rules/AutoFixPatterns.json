@@ -1,0 +1,617 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0",
+  "description": "Auto-fix patterns for automatic code correction - ALL 10 LANGUAGES",
+  "lastUpdated": "2026-03-07",
+  "totalPatterns": 90,
+
+  "patterns": {
+    "csharp": [
+      {
+        "ruleId": "S107",
+        "name": "Extract parameters to object",
+        "description": "When method has too many parameters, suggest creating a parameter object",
+        "findPattern": "(public|private|protected|internal)\\s+(\\w+)\\s+(\\w+)\\s*\\(([^)]{200,})\\)",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to configuration",
+        "description": "Replace hardcoded credentials with configuration reference",
+        "findPattern": "(password|secret|apikey|token)\\s*=\\s*\"([^\"]+)\"",
+        "replaceTemplate": "$1 = _configuration[\"$1\"]",
+        "isSafe": false,
+        "breakingChanges": ["Requires configuration setup"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S3168",
+        "name": "Change async void to async Task",
+        "description": "Fix async void methods to return Task",
+        "findPattern": "async\\s+void\\s+(\\w+)",
+        "replaceTemplate": "async Task $1",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S3649",
+        "name": "Add parameterized query",
+        "description": "Convert string concatenation SQL to parameterized query",
+        "findPattern": "ExecuteSqlRaw\\s*\\(\\s*\\$\"([^\"]+\\{[^}]+\\}[^\"]*)\"",
+        "isSafe": false,
+        "breakingChanges": ["Requires parameter extraction"],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S1135",
+        "name": "Create issue from TODO",
+        "description": "Extract TODO comment to issue tracker",
+        "findPattern": "//\\s*TODO[\\s:]*(.*)$",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S1481",
+        "name": "Remove unused variable",
+        "description": "Remove unused local variable declaration",
+        "findPattern": "^\\s*(var|\\w+)\\s+(\\w+)\\s*=\\s*[^;]+;\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S1128",
+        "name": "Remove unused using",
+        "description": "Remove unused using directive",
+        "findPattern": "^using\\s+([^;]+);\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "(\\w+)\\s*=\\s*\\1\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S125",
+        "name": "Remove commented code",
+        "description": "Remove blocks of commented code",
+        "findPattern": "^\\s*//.*[{};=]",
+        "isSafe": false,
+        "confidence": 0.6
+      }
+    ],
+
+    "typescript": [
+      {
+        "ruleId": "S6747",
+        "name": "Add key prop",
+        "description": "Add missing key prop to list items",
+        "findPattern": "(\\w+)\\.map\\s*\\(\\s*\\(\\s*(\\w+)\\s*\\)\\s*=>\\s*<([A-Z]\\w+)",
+        "replaceTemplate": "$1.map(($2) => <$3 key={$2.id}",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S6479",
+        "name": "Replace index with unique key",
+        "description": "Replace array index with unique identifier",
+        "findPattern": "key=\\{index\\}|key=\\{i\\}|key=\\{idx\\}",
+        "isSafe": false,
+        "breakingChanges": ["Requires unique identifier in data"],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S6766",
+        "name": "Add missing dependencies",
+        "description": "Add missing dependencies to useEffect",
+        "findPattern": "useEffect\\s*\\(\\s*\\(\\s*\\)\\s*=>",
+        "isSafe": false,
+        "breakingChanges": ["May cause infinite loops if not careful"],
+        "confidence": 0.6
+      },
+      {
+        "ruleId": "S6789",
+        "name": "Move hook outside conditional",
+        "description": "Move React hook call outside of conditional",
+        "findPattern": "if\\s*\\(\\s*\\w+\\s*\\)\\s*\\{[^}]*use(?:State|Effect|Memo|Callback|Ref)",
+        "isSafe": false,
+        "confidence": 0.5
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to environment variable",
+        "description": "Replace hardcoded credentials with env variable",
+        "findPattern": "(password|secret|apiKey|token)\\s*[:=]\\s*['\"]([^'\"]+)['\"]",
+        "replaceTemplate": "$1: process.env.$1",
+        "isSafe": false,
+        "breakingChanges": ["Requires environment variable setup"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "(\\w+)\\s*=\\s*\\1\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S6676",
+        "name": "Remove console.log",
+        "description": "Remove console.log statements",
+        "findPattern": "console\\.(log|warn|error)\\s*\\([^)]+\\)\\s*;?",
+        "replaceTemplate": "",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S2737",
+        "name": "Remove unused import",
+        "description": "Remove unused import statement",
+        "findPattern": "import\\s+\\{[^}]+\\}\\s+from\\s+['\"][^'\"]+['\"]",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ],
+
+    "python": [
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^(\\w+)\\s*=\\s*\\1\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S3649",
+        "name": "Use parameterized query",
+        "description": "Convert string formatting to parameterized query",
+        "findPattern": "cursor\\.execute\\s*\\(\\s*f['\"]",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to environment variable",
+        "description": "Replace hardcoded credentials with os.environ",
+        "findPattern": "(PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*['\"]([^'\"]+)['\"]",
+        "replaceTemplate": "$1 = os.environ.get('$1')",
+        "isSafe": false,
+        "breakingChanges": ["Requires environment variable setup"],
+        "requiredImports": ["os"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S3518",
+        "name": "Add zero check before division",
+        "description": "Add check for division by zero",
+        "findPattern": "(\\w+)\\s*/\\s*(\\w+)",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S1186",
+        "name": "Remove pass statement",
+        "description": "Remove unnecessary pass",
+        "findPattern": "^\\s*pass\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S2328",
+        "name": "Use f-string",
+        "description": "Convert format to f-string",
+        "findPattern": "\".*\"\\.format\\s*\\(",
+        "isSafe": true,
+        "confidence": 0.8
+      }
+    ],
+
+    "go": [
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^(\\w+)\\s*:=\\s*\\1\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to environment variable",
+        "description": "Replace hardcoded credentials with os.Getenv",
+        "findPattern": "(password|secret|apiKey|token)\\s*:=\\s*\"([^\"]+)\"",
+        "replaceTemplate": "$1 := os.Getenv(\"$1\")",
+        "isSafe": false,
+        "breakingChanges": ["Requires environment variable setup"],
+        "requiredImports": ["os"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S8208",
+        "name": "Add defer Body.Close()",
+        "description": "Add defer for response body close",
+        "findPattern": "resp,\\s*err\\s*:=\\s*http\\.Get\\([^)]+\\)",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S1000",
+        "name": "Simplify error handling",
+        "description": "Simplify if err != nil blocks",
+        "findPattern": "if\\s+err\\s*!=\\s*nil\\s*\\{\\s*return\\s+err\\s*\\}",
+        "replaceTemplate": "if err != nil { return err }",
+        "isSafe": false,
+        "confidence": 0.6
+      }
+    ],
+
+    "java": [
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^(\\w+)\\s*=\\s*\\1\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2259",
+        "name": "Add null check",
+        "description": "Add null check before method call",
+        "findPattern": "(\\w+)\\.(\\w+)\\(\\)",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to properties",
+        "description": "Replace hardcoded credentials with property reference",
+        "findPattern": "(password|secret|apiKey|token)\\s*=\\s*\"([^\"]+)\"",
+        "replaceTemplate": "$1 = System.getProperty(\"$1\");",
+        "isSafe": false,
+        "breakingChanges": ["Requires property setup"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S1141",
+        "name": "Use try-with-resources",
+        "description": "Convert to try-with-resources",
+        "findPattern": "try\\s*\\{[^}]*new\\s+(?:FileInputStream|FileOutputStream|Socket|Connection)",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S1118",
+        "name": "Add private constructor",
+        "description": "Add private constructor to utility class",
+        "findPattern": "public\\s+class\\s+(\\w+)\\s*\\{\\s*(?=\\s*(?:public\\s+static|private\\s+static))",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ],
+
+    "rust": [
+      {
+        "ruleId": "S6915",
+        "name": "Replace unwrap with match",
+        "description": "Replace unwrap with proper error handling",
+        "findPattern": "(\\w+)\\.unwrap\\(\\)",
+        "replaceTemplate": "match $1 {\\n    Ok(v) => v,\\n    Err(e) => return Err(e.into()),\\n}",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S6916",
+        "name": "Replace expect with ?",
+        "description": "Replace expect with ? operator",
+        "findPattern": "(\\w+)\\.expect\\(\"([^\"]+)\"\\)",
+        "replaceTemplate": "$1?",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S6941",
+        "name": "Prefix unused variable",
+        "description": "Prefix unused variable with underscore",
+        "findPattern": "let\\s+(\\w+):",
+        "replaceTemplate": "let _$1:",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S6943",
+        "name": "Remove unnecessary return",
+        "description": "Remove explicit return at end of function",
+        "findPattern": "return\\s+(.+);\\s*\\}$",
+        "replaceTemplate": "$1\\n}",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^(\\w+)\\s*=\\s*\\1\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2325",
+        "name": "Remove explicit unit type",
+        "description": "Remove explicit unit return type",
+        "findPattern": "->\\s*\\(\\)\\s*\\{",
+        "replaceTemplate": "{",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ],
+
+    "php": [
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^(\\$\\w+)\\s*=\\s*\\1\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to environment variable",
+        "description": "Replace hardcoded credentials with getenv",
+        "findPattern": "\\$(password|secret|api_key|token)\\s*=\\s*['\"]([^'\"]+)['\"]",
+        "replaceTemplate": "$$$1 = getenv(strtoupper('$1'));",
+        "isSafe": false,
+        "breakingChanges": ["Requires environment variable setup"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S2078",
+        "name": "Use prepared statement",
+        "description": "Convert to PDO prepared statement",
+        "findPattern": "(?:mysql|mysqli)_query\\s*\\([^)]*\\$",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S1788",
+        "name": "Replace die with exception",
+        "description": "Replace die/exit with proper exception handling",
+        "findPattern": "die\\s*\\(",
+        "replaceTemplate": "throw new Exception(",
+        "isSafe": false,
+        "confidence": 0.8
+      }
+    ],
+
+    "kotlin": [
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^(\\w+)\\s*=\\s*\\1\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S6628",
+        "name": "Add null-safe call",
+        "description": "Replace direct call with null-safe call",
+        "findPattern": "(\\w+)\\.(\\w+)\\(\\)",
+        "replaceTemplate": "$1?.$2()",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S6624",
+        "name": "Replace with when",
+        "description": "Convert if-else chain to when expression",
+        "findPattern": "if\\s*\\([^)]+\\)\\s*\\{[^}]*\\}\\s*else\\s*if",
+        "isSafe": true,
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S6619",
+        "name": "Use isNullOrEmpty",
+        "description": "Replace length check with isNullOrEmpty",
+        "findPattern": "==\\s*null\\s*\\|\\|\\s*.*\\.isEmpty\\(\\)",
+        "replaceTemplate": "?.isNullOrEmpty()",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ],
+
+    "ruby": [
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "^@?(\\w+)\\s*=\\s*\\1\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to environment variable",
+        "description": "Replace hardcoded credentials with ENV",
+        "findPattern": "(PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*['\"]([^'\"]+)['\"]",
+        "replaceTemplate": "$1 = ENV['$1']",
+        "isSafe": false,
+        "breakingChanges": ["Requires environment variable setup"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S1176",
+        "name": "Add frozen string literal",
+        "description": "Add frozen_string_literal: true comment",
+        "findPattern": "^#!/usr/bin/env ruby",
+        "replaceTemplate": "#!/usr/bin/env ruby\\n# frozen_string_literal: true",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S6609",
+        "name": "Replace collect with map",
+        "description": "Use map instead of collect",
+        "findPattern": "\\.collect\\s*\\{",
+        "replaceTemplate": ".map {",
+        "isSafe": true,
+        "confidence": 0.95
+      }
+    ]
+  },
+
+  "transforms": {
+    "csharp": {
+      "extractToMethod": "Extract code block to new method",
+      "addUsing": "Add missing using directive",
+      "addAsync": "Add async/await keywords",
+      "addNullCheck": "Add null check before dereference"
+    },
+    "typescript": {
+      "extractComponent": "Extract JSX to new component",
+      "addType": "Add explicit type annotation",
+      "addGeneric": "Add generic type parameter",
+      "convertToHook": "Extract to custom hook"
+    },
+    "python": {
+      "extractFunction": "Extract code to function",
+      "addTypeHint": "Add type hints",
+      "convertToFstring": "Convert to f-string"
+    },
+    "go": {
+      "extractFunction": "Extract to function",
+      "handleError": "Add error handling",
+      "deferClose": "Add defer for Close()"
+    },
+    "java": {
+      "extractToMethod": "Extract to method",
+      "convertToStreams": "Convert to Stream API",
+      "addLombok": "Add Lombok annotations"
+    },
+    "rust": {
+      "extractFunction": "Extract to function",
+      "addErrorHandling": "Add ? operator",
+      "removeUnwrap": "Replace unwrap with match"
+    },
+    "php": {
+      "extractFunction": "Extract to function",
+      "addTypeHints": "Add type declarations",
+      "modernize": "Use modern PHP features"
+    },
+    "kotlin": {
+      "convertToWhen": "Convert to when expression",
+      "addNullSafety": "Add null safety",
+      "useScopeFunctions": "Use let/run/apply"
+    },
+    "ruby": {
+      "extractMethod": "Extract to method",
+      "modernize": "Use modern Ruby idioms",
+      "safeNavigation": "Add safe navigation operator"
+    },
+    "cpp": [
+      {
+        "ruleId": "S3519",
+        "name": "Replace unsafe string functions",
+        "description": "Replace strcpy, strcat with strncpy, strncat",
+        "findPattern": "(strcpy|strcat|sprintf|gets)\\s*\\(",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S5000",
+        "name": "Add memory cleanup",
+        "description": "Ensure allocated memory is freed",
+        "findPattern": "(malloc|calloc|realloc)\\s*\\([^)]+\\)(?!\\s*;\\s*free)",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S5027",
+        "name": "Add null check",
+        "description": "Add null pointer check before dereference",
+        "findPattern": "(\\w+)\\s*->\\s*(\\w+)",
+        "replaceTemplate": "if ($1 != nullptr) $1->$2",
+        "isSafe": false,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S113",
+        "name": "Add include guards",
+        "description": "Add #ifndef/#define/#endif guards to header",
+        "findPattern": "^\\s*(?!#ifndef|#pragma\\s+once)(#include|class|struct|namespace)",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S121",
+        "name": "Add braces",
+        "description": "Add curly braces to control structures",
+        "findPattern": "(if|for|while)\\s*\\([^)]+\\)\\s*([^;{][^;]*)$",
+        "replaceTemplate": "$1 ($2) {\\n    $3\\n}",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S5354",
+        "name": "Fix delete mismatch",
+        "description": "Use delete[] for arrays, delete for single objects",
+        "findPattern": "delete\\s+(\\w+);",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S106",
+        "name": "Extract magic number",
+        "description": "Replace magic number with named constant",
+        "findPattern": "\\b([0-9]{2,})\\b",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S5025",
+        "name": "Remove unused variable",
+        "description": "Remove unused local variable",
+        "findPattern": "^\\s*(int|char|float|double|auto|std::\\w+)\\s+(\\w+)\\s*=\\s*[^;]+;\\s*$",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S5355",
+        "name": "Add override keyword",
+        "description": "Add override to overriding virtual functions",
+        "findPattern": "virtual\\s+(\\w+)\\s+(\\w+)\\s*\\([^)]*\\)\\s*(const)?\\s*;",
+        "replaceTemplate": "$1 $2($3) $4 override;",
+        "isSafe": true,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S5356",
+        "name": "Add noexcept",
+        "description": "Mark move constructor/assignment noexcept",
+        "findPattern": "(\\w+)\\s*\\(\\s*\\w+&&\\s*\\)|operator=\\s*\\(\\s*\\w+&&\\s*\\)",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ]
+  }
+}

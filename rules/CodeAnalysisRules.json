@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-02",
+  "description": "Security analysis detection rules for Scrutin AI code review",
+
+  "securityStandards": {
+    "owaspTop10_2021": {
+      "A01_BrokenAccessControl": {
+        "id": "A01:2021",
+        "name": "Broken Access Control",
+        "description": "Restrictions on what authenticated users are allowed to do are often not properly enforced",
+        "cweIds": ["CWE-22", "CWE-284", "CWE-285", "CWE-352", "CWE-601", "CWE-639", "CWE-862", "CWE-863"]
+      },
+      "A02_CryptographicFailures": {
+        "id": "A02:2021",
+        "name": "Cryptographic Failures",
+        "cweIds": ["CWE-310", "CWE-319", "CWE-326", "CWE-327", "CWE-328", "CWE-330", "CWE-916"]
+      },
+      "A03_Injection": {
+        "id": "A03:2021",
+        "name": "Injection",
+        "cweIds": ["CWE-20", "CWE-74", "CWE-77", "CWE-78", "CWE-79", "CWE-89", "CWE-94", "CWE-917"]
+      },
+      "A04_InsecureDesign": {
+        "id": "A04:2021",
+        "name": "Insecure Design",
+        "cweIds": ["CWE-209", "CWE-256", "CWE-311", "CWE-434", "CWE-522"]
+      },
+      "A05_SecurityMisconfiguration": {
+        "id": "A05:2021",
+        "name": "Security Misconfiguration",
+        "cweIds": ["CWE-16", "CWE-260", "CWE-611", "CWE-614", "CWE-942"]
+      },
+      "A06_VulnerableComponents": {
+        "id": "A06:2021",
+        "name": "Vulnerable and Outdated Components",
+        "cweIds": ["CWE-937", "CWE-1035", "CWE-1104"]
+      },
+      "A07_AuthenticationFailures": {
+        "id": "A07:2021",
+        "name": "Identification and Authentication Failures",
+        "cweIds": ["CWE-259", "CWE-287", "CWE-295", "CWE-306", "CWE-307", "CWE-384", "CWE-521", "CWE-613", "CWE-798"]
+      },
+      "A08_DataIntegrityFailures": {
+        "id": "A08:2021",
+        "name": "Software and Data Integrity Failures",
+        "cweIds": ["CWE-345", "CWE-502", "CWE-829", "CWE-915"]
+      },
+      "A09_LoggingFailures": {
+        "id": "A09:2021",
+        "name": "Security Logging and Monitoring Failures",
+        "cweIds": ["CWE-117", "CWE-223", "CWE-532", "CWE-778"]
+      },
+      "A10_SSRF": {
+        "id": "A10:2021",
+        "name": "Server-Side Request Forgery",
+        "cweIds": ["CWE-918"]
+      }
+    },
+
+    "cweTop25_2023": [
+      {"rank": 1, "id": "CWE-787", "name": "Out-of-bounds Write"},
+      {"rank": 2, "id": "CWE-79", "name": "Cross-site Scripting"},
+      {"rank": 3, "id": "CWE-89", "name": "SQL Injection"},
+      {"rank": 4, "id": "CWE-416", "name": "Use After Free"},
+      {"rank": 5, "id": "CWE-78", "name": "OS Command Injection"},
+      {"rank": 6, "id": "CWE-20", "name": "Improper Input Validation"},
+      {"rank": 7, "id": "CWE-125", "name": "Out-of-bounds Read"},
+      {"rank": 8, "id": "CWE-22", "name": "Path Traversal"},
+      {"rank": 9, "id": "CWE-352", "name": "CSRF"},
+      {"rank": 10, "id": "CWE-434", "name": "Unrestricted Upload"},
+      {"rank": 11, "id": "CWE-862", "name": "Missing Authorization"},
+      {"rank": 12, "id": "CWE-476", "name": "NULL Pointer Dereference"},
+      {"rank": 13, "id": "CWE-287", "name": "Improper Authentication"},
+      {"rank": 14, "id": "CWE-190", "name": "Integer Overflow"},
+      {"rank": 15, "id": "CWE-502", "name": "Unsafe Deserialization"},
+      {"rank": 16, "id": "CWE-77", "name": "Command Injection"},
+      {"rank": 17, "id": "CWE-119", "name": "Memory Corruption"},
+      {"rank": 18, "id": "CWE-798", "name": "Hardcoded Credentials"},
+      {"rank": 19, "id": "CWE-918", "name": "SSRF"},
+      {"rank": 20, "id": "CWE-306", "name": "Missing Authentication"},
+      {"rank": 21, "id": "CWE-362", "name": "Race Condition"},
+      {"rank": 22, "id": "CWE-269", "name": "Improper Privilege Management"},
+      {"rank": 23, "id": "CWE-94", "name": "Code Injection"},
+      {"rank": 24, "id": "CWE-863", "name": "Incorrect Authorization"},
+      {"rank": 25, "id": "CWE-276", "name": "Incorrect Default Permissions"}
+    ],
+
+    "sansTop25": {
+      "insecureInteraction": ["CWE-89", "CWE-79", "CWE-352", "CWE-434", "CWE-601", "CWE-78", "CWE-22"],
+      "riskyResourceManagement": ["CWE-120", "CWE-22", "CWE-676", "CWE-131", "CWE-134", "CWE-190"],
+      "porousDefenses": ["CWE-306", "CWE-862", "CWE-798", "CWE-311", "CWE-807", "CWE-250", "CWE-863", "CWE-732", "CWE-327", "CWE-307", "CWE-759"]
+    }
+  },
+
+  "languageRules": {
+    "csharp": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S2755", "name": "XXE vulnerability", "severity": "BLOCKER", "cwe": ["CWE-611"]},
+        {"id": "S3649", "name": "SQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S5144", "name": "SSRF vulnerability", "severity": "BLOCKER", "cwe": ["CWE-918"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S2245", "name": "Insecure random", "severity": "CRITICAL", "cwe": ["CWE-330"]},
+        {"id": "S4423", "name": "Weak SSL/TLS", "severity": "CRITICAL", "cwe": ["CWE-326"]}
+      ],
+      "bugs": [
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"},
+        {"id": "S3168", "name": "Async void method", "severity": "MAJOR"},
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S2259", "name": "Null dereference", "severity": "MAJOR"},
+        {"id": "S3966", "name": "Double dispose", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1192", "name": "Duplicated strings", "severity": "MINOR", "threshold": 3},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused methods", "severity": "MAJOR"},
+        {"id": "S6960", "name": "Controller responsibility", "severity": "MAJOR"}
+      ]
+    },
+
+    "typescript": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S5334", "name": "Secrets exposure", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S5122", "name": "Permissive CORS", "severity": "MAJOR", "cwe": ["CWE-942"]}
+      ],
+      "bugs": [
+        {"id": "S2201", "name": "Ignored return value", "severity": "MAJOR"},
+        {"id": "S3403", "name": "Strict equality", "severity": "MAJOR"},
+        {"id": "S4144", "name": "Identical functions", "severity": "MAJOR"}
+      ],
+      "react": [
+        {"id": "S6747", "name": "Missing key prop", "severity": "MAJOR"},
+        {"id": "S6766", "name": "Hooks dependencies", "severity": "MAJOR"},
+        {"id": "S6479", "name": "Index as key", "severity": "MAJOR"},
+        {"id": "S6759", "name": "Unstable key", "severity": "MAJOR"}
+      ]
+    },
+
+    "javascript": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER"},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER"},
+        {"id": "S2755", "name": "XXE vulnerability", "severity": "BLOCKER"}
+      ],
+      "bugs": [
+        {"id": "S2201", "name": "Ignored return value", "severity": "MAJOR"},
+        {"id": "S3504", "name": "Implicit globals", "severity": "MAJOR"},
+        {"id": "S2486", "name": "Empty catch", "severity": "MAJOR"}
+      ]
+    },
+
+    "python": {
+      "security": [
+        {"id": "S4830", "name": "SSL verification", "severity": "CRITICAL"},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER"},
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER"}
+      ]
+    },
+
+    "go": {
+      "security": [
+        {"id": "S4507", "name": "Debug in production", "severity": "MAJOR"},
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER"},
+        {"id": "S4784", "name": "Regex DoS", "severity": "CRITICAL"}
+      ]
+    }
+  },
+
+  "cleanCodeAttributes": {
+    "INTENTIONAL": ["CLEAR", "COMPLETE", "EFFICIENT", "FOCUSED", "LOGICAL"],
+    "CONSISTENT": ["CONVENTIONAL", "FORMATTED", "IDENTIFIABLE"],
+    "ADAPTABLE": ["DISTINCT", "MODULAR", "TESTED"],
+    "RESPONSIBLE": ["LAWFUL", "RESPECTFUL", "TRUSTWORTHY"]
+  },
+
+  "severityMapping": {
+    "BLOCKER": {"scrutin": "Critical", "weight": 10},
+    "CRITICAL": {"scrutin": "Critical", "weight": 8},
+    "MAJOR": {"scrutin": "High", "weight": 5},
+    "MINOR": {"scrutin": "Medium", "weight": 3},
+    "INFO": {"scrutin": "Low", "weight": 1}
+  }
+}

@@ -1,0 +1,1395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0",
+  "description": "Regex patterns for static code analysis detection - ALL 10 LANGUAGES",
+  "lastUpdated": "2026-03-07",
+  "totalPatterns": 175,
+
+  "csharp": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "\\$\".*\\{.*\\}.*\"\\s*\\+\\s*.*(?:WHERE|SELECT|INSERT|UPDATE|DELETE)",
+          "string\\.Format\\s*\\([^)]*(?:WHERE|SELECT|INSERT|UPDATE|DELETE)",
+          "ExecuteSqlRaw\\s*\\([^)]*\\$",
+          "FromSqlRaw\\s*\\([^)]*\\+",
+          "\\.CommandText\\s*=\\s*[^;]*\\+"
+        ],
+        "message": "SQL query may be vulnerable to injection attacks. Use parameterized queries.",
+        "suggestion": "Use parameterized queries with SqlParameter or Entity Framework's parameterized methods."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "Process\\.Start\\s*\\([^)]*\\$",
+          "Process\\.Start\\s*\\([^)]*\\+",
+          "ProcessStartInfo\\s*\\{[^}]*Arguments\\s*=\\s*[^}]*\\$",
+          "new\\s+ProcessStartInfo\\s*\\([^)]*\\+",
+          "\\.StartInfo\\.Arguments\\s*=\\s*[^;]*\\+"
+        ],
+        "message": "OS command may be vulnerable to injection attacks.",
+        "suggestion": "Validate and sanitize user input before passing to system commands. Use allowlists when possible."
+      },
+      {
+        "ruleId": "S5131",
+        "patterns": [
+          "Content\\s*\\([^)]*Request\\.",
+          "Html\\.Raw\\s*\\([^)]*Request\\.",
+          "Response\\.Write\\s*\\([^)]*Request\\.",
+          "\\@Html\\.Raw\\s*\\([^)]*Model\\."
+        ],
+        "message": "Endpoint may be vulnerable to reflected XSS attacks.",
+        "suggestion": "Encode user input before rendering. Use Content() with proper encoding or HtmlEncoder."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "File\\.(?:Read|Write|Open|Delete|Copy|Move)\\w*\\s*\\([^)]*\\+",
+          "File\\.(?:Read|Write|Open|Delete|Copy|Move)\\w*\\s*\\([^)]*\\$",
+          "Path\\.Combine\\s*\\([^)]*Request\\.",
+          "new\\s+FileStream\\s*\\([^)]*\\+",
+          "Directory\\.(?:GetFiles|GetDirectories|Delete)\\s*\\([^)]*\\+"
+        ],
+        "message": "I/O operation may be vulnerable to path injection attacks.",
+        "suggestion": "Validate file paths and use Path.GetFullPath() to resolve paths before operations."
+      },
+      {
+        "ruleId": "S2755",
+        "patterns": [
+          "XmlReader\\.Create\\s*\\([^)]*(?!XmlReaderSettings)",
+          "new\\s+XmlDocument\\s*\\(\\s*\\)",
+          "XmlDocument\\s+\\w+\\s*=\\s*new\\s*\\(\\s*\\)",
+          "\\.Load\\s*\\([^)]*\\)\\s*;\\s*(?!.*DtdProcessing)",
+          "XmlTextReader\\s+\\w+\\s*=\\s*new"
+        ],
+        "message": "XML parser may be vulnerable to XXE attacks.",
+        "suggestion": "Configure XmlReaderSettings with DtdProcessing.Prohibit and XmlResolver = null."
+      },
+      {
+        "ruleId": "S5547",
+        "patterns": [
+          "DES\\s*\\.Create",
+          "TripleDES\\s*\\.Create",
+          "RC2\\s*\\.Create",
+          "new\\s+DESCryptoServiceProvider",
+          "new\\s+TripleDESCryptoServiceProvider",
+          "CipherMode\\.ECB"
+        ],
+        "message": "Weak cipher algorithm detected. Use AES with CBC or GCM mode.",
+        "suggestion": "Use Aes.Create() with CipherMode.CBC or CipherMode.GCM."
+      },
+      {
+        "ruleId": "S4426",
+        "patterns": [
+          "RSA\\.Create\\s*\\(\\s*(?:512|768|1024)\\s*\\)",
+          "new\\s+RSACryptoServiceProvider\\s*\\(\\s*(?:512|768|1024)\\s*\\)",
+          "KeySize\\s*=\\s*(?:512|768|1024)",
+          "DSA\\.Create\\s*\\(\\s*(?:512|768|1024)\\s*\\)"
+        ],
+        "message": "Cryptographic key size is too small.",
+        "suggestion": "Use at least 2048-bit keys for RSA and 256-bit for ECDSA."
+      },
+      {
+        "ruleId": "S4423",
+        "patterns": [
+          "SslProtocols\\.Ssl2",
+          "SslProtocols\\.Ssl3",
+          "SslProtocols\\.Tls\\b(?!1[23])",
+          "SecurityProtocolType\\.Ssl3",
+          "SecurityProtocolType\\.Tls\\b(?!1[23])"
+        ],
+        "message": "Weak SSL/TLS protocol version detected.",
+        "suggestion": "Use TLS 1.2 or TLS 1.3 only."
+      },
+      {
+        "ruleId": "S5344",
+        "patterns": [
+          "MD5\\.Create\\s*\\(\\s*\\)\\.ComputeHash\\s*\\([^)]*password",
+          "SHA1\\.Create\\s*\\(\\s*\\)\\.ComputeHash\\s*\\([^)]*password",
+          "new\\s+PasswordHasher.*\\{.*IterationCount\\s*=\\s*[1-9]\\d{0,3}\\s*\\}",
+          "Rfc2898DeriveBytes\\s*\\([^,]*,\\s*[^,]*,\\s*[1-9]\\d{0,3}\\s*\\)"
+        ],
+        "message": "Password hashing is weak or uses insufficient iterations.",
+        "suggestion": "Use a strong password hashing algorithm like Argon2, bcrypt, or PBKDF2 with at least 100,000 iterations."
+      },
+      {
+        "ruleId": "S5146",
+        "patterns": [
+          "Redirect\\s*\\([^)]*Request\\.",
+          "RedirectToAction\\s*\\([^)]*Request\\.",
+          "Response\\.Redirect\\s*\\([^)]*\\+",
+          "LocalRedirect\\s*\\([^)]*Request\\."
+        ],
+        "message": "HTTP redirect may be vulnerable to open redirect attacks.",
+        "suggestion": "Validate redirect URLs against an allowlist of trusted domains."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|pwd|passwd|secret|apikey|api_key|token)\\s*=\\s*\"[^\"]+\"",
+          "(?:Password|Secret|ApiKey|Token)\\s*=\\s*\"[^\"]{8,}\"",
+          "connectionString\\s*=\\s*\"[^\"]*(?:Password|pwd)=[^;\"]+",
+          "new\\s+NetworkCredential\\s*\\([^)]*\"[^\"]+\""
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use secure configuration management like Azure Key Vault, environment variables, or user secrets."
+      },
+      {
+        "ruleId": "S4502",
+        "patterns": [
+          "\\.DisableAntiforgery\\s*\\(",
+          "\\[IgnoreAntiforgeryToken\\]",
+          "options\\.SuppressAntiforgeryTokenGeneration\\s*=\\s*true",
+          "ValidateAntiForgeryToken\\s*=\\s*false"
+        ],
+        "message": "CSRF protection is disabled.",
+        "suggestion": "Enable anti-forgery token validation for state-changing operations."
+      },
+      {
+        "ruleId": "S5122",
+        "patterns": [
+          "\\.AllowAnyOrigin\\s*\\(",
+          "WithOrigins\\s*\\(\\s*\"\\*\"\\s*\\)",
+          "Access-Control-Allow-Origin.*\\*",
+          "EnableCors\\s*\\(\\s*\\)\\s*(?!.*\\.WithOrigins)"
+        ],
+        "message": "CORS policy is too permissive.",
+        "suggestion": "Restrict CORS to specific trusted origins."
+      },
+      {
+        "ruleId": "S4507",
+        "patterns": [
+          "app\\.UseDeveloperExceptionPage\\s*\\(\\s*\\)",
+          "IsDevelopment\\s*\\(\\s*\\)\\s*\\)\\s*\\{[^}]*UseDeveloperExceptionPage",
+          "#if\\s+DEBUG[^#]*UseDeveloperExceptionPage"
+        ],
+        "message": "Debug features may be enabled in production.",
+        "suggestion": "Ensure debug features are only enabled in development environment."
+      },
+      {
+        "ruleId": "S2245",
+        "patterns": [
+          "new\\s+Random\\s*\\(",
+          "Random\\.Next\\s*\\(",
+          "Random\\.NextBytes\\s*\\("
+        ],
+        "message": "Pseudorandom number generator used. May not be suitable for security purposes.",
+        "suggestion": "Use RandomNumberGenerator for cryptographic purposes."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S2259",
+        "patterns": [
+          "\\.(?:Length|Count)\\s*(?:>|<|==|!=)\\s*\\d+[^;]*\\.[^;]*(?:First|Last|Single|\\[)"
+        ],
+        "message": "Possible null pointer dereference.",
+        "suggestion": "Add null checks before accessing object members."
+      },
+      {
+        "ruleId": "S3168",
+        "patterns": [
+          "async\\s+void\\s+(?!Main|.*EventHandler)",
+          "private\\s+async\\s+void\\s+",
+          "public\\s+async\\s+void\\s+(?!On)"
+        ],
+        "message": "Async method returns void instead of Task.",
+        "suggestion": "Change return type to Task to allow proper exception handling and await."
+      },
+      {
+        "ruleId": "S3966",
+        "patterns": [
+          "Dispose\\s*\\(\\s*\\)\\s*;[^}]*Dispose\\s*\\(",
+          "using\\s*\\([^)]+\\)[^{]*\\{[^}]*\\.Dispose\\s*\\("
+        ],
+        "message": "Object may be disposed more than once.",
+        "suggestion": "Use 'using' statement or ensure Dispose is called only once."
+      },
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1\\s*;"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect. Remove or fix the assignment."
+      }
+    ],
+    "codeSmells": [
+      {
+        "ruleId": "S107",
+        "patterns": [
+          "(?:public|private|protected|internal)\\s+\\w+\\s+\\w+\\s*\\([^)]*,[^)]*,[^)]*,[^)]*,[^)]*,[^)]*,[^)]*,"
+        ],
+        "message": "Method has too many parameters (more than 7).",
+        "suggestion": "Consider using a parameter object or builder pattern."
+      },
+      {
+        "ruleId": "S1135",
+        "patterns": [
+          "//\\s*TODO",
+          "//\\s*FIXME",
+          "//\\s*HACK",
+          "/\\*\\s*TODO",
+          "#\\s*TODO"
+        ],
+        "message": "TODO comment found.",
+        "suggestion": "Track this task in your issue tracker and remove the TODO comment when done."
+      }
+    ]
+  },
+
+  "typescript": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "\\$\\{[^}]*\\}[^`]*(?:SELECT|INSERT|UPDATE|DELETE|WHERE)",
+          "query\\s*\\([^)]*\\$\\{",
+          "execute\\s*\\([^)]*\\+",
+          "\\.raw\\s*\\(`[^`]*\\$\\{"
+        ],
+        "message": "SQL query may be vulnerable to injection attacks.",
+        "suggestion": "Use parameterized queries or prepared statements."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "execSync\\s*\\([^)]*\\+",
+          "spawn\\s*\\([^)]*\\$\\{",
+          "child_process\\.[^(]*\\([^)]*\\+"
+        ],
+        "message": "OS command may be vulnerable to injection attacks.",
+        "suggestion": "Validate input and avoid shell execution. Use spawn with arguments array."
+      },
+      {
+        "ruleId": "S5696",
+        "patterns": [
+          "\\.innerHTML\\s*=\\s*[^;]*(?:req\\.|request\\.|params\\.|query\\.)",
+          "document\\.write\\s*\\([^)]*(?:req\\.|request\\.)",
+          "insertAdjacentHTML\\s*\\([^)]*(?:req\\.|request\\.)"
+        ],
+        "message": "DOM update may lead to XSS attacks.",
+        "suggestion": "Use textContent instead of innerHTML, or sanitize input with DOMPurify."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "fs\\.(?:readFile|writeFile|unlink|rmdir)\\s*\\([^)]*\\+",
+          "fs\\.(?:readFile|writeFile|unlink|rmdir)\\s*\\([^)]*\\$\\{",
+          "path\\.join\\s*\\([^)]*req\\.",
+          "require\\s*\\([^)]*\\$\\{"
+        ],
+        "message": "File operation may be vulnerable to path traversal.",
+        "suggestion": "Validate and sanitize file paths. Use path.resolve and check against base directory."
+      },
+      {
+        "ruleId": "S5147",
+        "patterns": [
+          "\\$where\\s*:\\s*[^}]*\\$\\{",
+          "find\\s*\\(\\s*\\{[^}]*\\$\\{",
+          "aggregate\\s*\\(\\s*\\[[^\\]]*\\$\\{"
+        ],
+        "message": "NoSQL query may be vulnerable to injection.",
+        "suggestion": "Validate input types and use MongoDB's query sanitization."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|secret|apikey|api_key|token|auth)\\s*[:=]\\s*['\"][^'\"]{8,}['\"]",
+          "const\\s+(?:PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*['\"][^'\"]+['\"]",
+          "Bearer\\s+[a-zA-Z0-9_-]{20,}"
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use environment variables or a secrets manager."
+      },
+      {
+        "ruleId": "S5122",
+        "patterns": [
+          "cors\\s*\\(\\s*\\{[^}]*origin\\s*:\\s*['\"]\\*['\"]",
+          "Access-Control-Allow-Origin.*\\*",
+          "cors\\s*\\(\\s*\\)"
+        ],
+        "message": "CORS policy is too permissive.",
+        "suggestion": "Restrict CORS to specific trusted origins."
+      },
+      {
+        "ruleId": "S4502",
+        "patterns": [
+          "csrf\\s*:\\s*false",
+          "csrfProtection\\s*:\\s*false",
+          "ignoreMethods\\s*:\\s*\\[[^\\]]*POST"
+        ],
+        "message": "CSRF protection may be disabled.",
+        "suggestion": "Enable CSRF protection for state-changing operations."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S2688",
+        "patterns": [
+          "===?\\s*NaN",
+          "NaN\\s*===?",
+          "!==?\\s*NaN",
+          "NaN\\s*!==?"
+        ],
+        "message": "NaN comparison will always be false.",
+        "suggestion": "Use Number.isNaN() instead of comparing with NaN."
+      },
+      {
+        "ruleId": "S2871",
+        "patterns": [
+          "\\.sort\\s*\\(\\s*\\)"
+        ],
+        "message": "Array.sort() without compare function may produce unexpected results.",
+        "suggestion": "Provide a compare function for consistent sorting."
+      },
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1\\s*;"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      }
+    ],
+    "react": [
+      {
+        "ruleId": "S6479",
+        "patterns": [
+          "key\\s*=\\s*\\{\\s*(?:index|i|idx)\\s*\\}"
+        ],
+        "message": "Using array index as key is not recommended.",
+        "suggestion": "Use a unique identifier from your data as the key."
+      },
+      {
+        "ruleId": "S6789",
+        "patterns": [
+          "if\\s*\\([^)]*\\)\\s*\\{[^}]*use(?:State|Effect|Memo|Callback|Ref)\\s*\\(",
+          "\\?\\s*use(?:State|Effect|Memo|Callback|Ref)\\s*\\(",
+          "&&\\s*use(?:State|Effect|Memo|Callback|Ref)\\s*\\("
+        ],
+        "message": "React hooks called conditionally.",
+        "suggestion": "Hooks must be called in the same order on every render. Move them outside conditionals."
+      },
+      {
+        "ruleId": "S6766",
+        "patterns": [
+          "useEffect\\s*\\(\\s*\\(\\s*\\)\\s*=>\\s*\\{[^}]*\\}\\s*,\\s*\\[\\s*\\]\\s*\\)"
+        ],
+        "message": "useEffect may be missing dependencies.",
+        "suggestion": "Add all reactive values used inside the effect to the dependency array."
+      }
+    ]
+  },
+
+  "python": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "execute\\s*\\([^)]*%\\s*\\(",
+          "execute\\s*\\([^)]*\\.format\\s*\\(",
+          "execute\\s*\\(\\s*f['\"]",
+          "cursor\\.execute\\s*\\([^)]*\\+"
+        ],
+        "message": "SQL query may be vulnerable to injection attacks.",
+        "suggestion": "Use parameterized queries with placeholders."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "subprocess\\.(?:call|run|Popen)\\s*\\([^)]*shell\\s*=\\s*True",
+          "subprocess\\.(?:call|run|Popen)\\s*\\([^)]*\\+",
+          "subprocess\\.(?:call|run|Popen)\\s*\\(\\s*f['\"]"
+        ],
+        "message": "OS command may be vulnerable to injection.",
+        "suggestion": "Avoid shell=True. Use list of arguments instead of string."
+      },
+      {
+        "ruleId": "S5135",
+        "patterns": [
+          "yaml\\.(?:load|unsafe_load)\\s*\\([^)]*(?!Loader=yaml\\.SafeLoader)",
+          "marshal\\.loads\\s*\\(",
+          "shelve\\.open\\s*\\("
+        ],
+        "message": "Deserialization of untrusted data detected.",
+        "suggestion": "Use yaml.safe_load() or json instead of unsafe deserialization."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "open\\s*\\([^)]*\\+",
+          "open\\s*\\(\\s*f['\"]",
+          "Path\\s*\\([^)]*request\\.",
+          "os\\.path\\.join\\s*\\([^)]*request\\."
+        ],
+        "message": "File operation may be vulnerable to path traversal.",
+        "suggestion": "Validate and sanitize file paths. Use os.path.realpath and check against base directory."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|secret|api_key|token)\\s*=\\s*['\"][^'\"]{8,}['\"]",
+          "(?:PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*['\"][^'\"]+['\"]"
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use environment variables or a secrets manager."
+      },
+      {
+        "ruleId": "S4507",
+        "patterns": [
+          "DEBUG\\s*=\\s*True",
+          "app\\.debug\\s*=\\s*True",
+          "FLASK_DEBUG\\s*=\\s*1"
+        ],
+        "message": "Debug mode may be enabled in production.",
+        "suggestion": "Disable debug mode in production environments."
+      },
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "hashlib\\.md5\\s*\\(",
+          "hashlib\\.sha1\\s*\\(",
+          "md5\\s*\\(",
+          "sha1\\s*\\("
+        ],
+        "message": "Weak hashing algorithm detected.",
+        "suggestion": "Use SHA-256 or stronger for security-sensitive operations."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1(?:\\s*$|\\s*#)"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      },
+      {
+        "ruleId": "S3518",
+        "patterns": [
+          "/\\s*0\\b",
+          "%\\s*0\\b"
+        ],
+        "message": "Division by zero.",
+        "suggestion": "Check for zero before division."
+      }
+    ]
+  },
+
+  "go": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "db\\.(?:Query|Exec|QueryRow)\\s*\\([^)]*\\+",
+          "fmt\\.Sprintf\\s*\\([^)]*(?:SELECT|INSERT|UPDATE|DELETE)",
+          "db\\.(?:Query|Exec|QueryRow)\\s*\\(\\s*fmt\\.Sprintf"
+        ],
+        "message": "SQL query may be vulnerable to injection.",
+        "suggestion": "Use parameterized queries with placeholders."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "exec\\.Command\\s*\\([^)]*\\+",
+          "exec\\.CommandContext\\s*\\([^)]*\\+"
+        ],
+        "message": "OS command may be vulnerable to injection.",
+        "suggestion": "Validate and sanitize command arguments."
+      },
+      {
+        "ruleId": "S4830",
+        "patterns": [
+          "InsecureSkipVerify\\s*:\\s*true",
+          "TLSClientConfig\\s*:\\s*&tls\\.Config\\s*\\{[^}]*InsecureSkipVerify"
+        ],
+        "message": "TLS certificate verification is disabled.",
+        "suggestion": "Enable TLS certificate verification in production."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "os\\.(?:Open|Create|Remove|ReadFile|WriteFile)\\s*\\([^)]*\\+",
+          "filepath\\.Join\\s*\\([^)]*r\\.(?:URL|Form)"
+        ],
+        "message": "File operation may be vulnerable to path traversal.",
+        "suggestion": "Validate and sanitize file paths."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|secret|apiKey|token)\\s*:?=\\s*\"[^\"]{8,}\"",
+          "const\\s+(?:Password|Secret|ApiKey|Token)\\s*=\\s*\"[^\"]+\""
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use environment variables or a secrets manager."
+      },
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "md5\\.(?:New|Sum)",
+          "sha1\\.(?:New|Sum)",
+          "crypto/md5",
+          "crypto/sha1"
+        ],
+        "message": "Weak hashing algorithm detected.",
+        "suggestion": "Use SHA-256 or stronger for security-sensitive operations."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1(?:\\s*$|\\s*//)"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      },
+      {
+        "ruleId": "S8208",
+        "patterns": [
+          "http\\.(?:Get|Post|Do)\\s*\\([^)]*\\)[^{]*\\{(?![^}]*\\.Body\\.Close)"
+        ],
+        "message": "HTTP response body may not be closed.",
+        "suggestion": "Always close the response body with defer resp.Body.Close()."
+      }
+    ]
+  },
+
+  "java": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "Statement\\s*\\.[^;]*execute(?:Query|Update)?\\s*\\([^)]*\\+",
+          "createQuery\\s*\\([^)]*\\+",
+          "createNativeQuery\\s*\\([^)]*\\+"
+        ],
+        "message": "SQL query may be vulnerable to injection.",
+        "suggestion": "Use PreparedStatement with parameterized queries."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "Runtime\\.getRuntime\\s*\\(\\s*\\)\\.exec\\s*\\([^)]*\\+",
+          "ProcessBuilder\\s*\\([^)]*\\+",
+          "new\\s+ProcessBuilder\\s*\\([^)]*\\+"
+        ],
+        "message": "OS command may be vulnerable to injection.",
+        "suggestion": "Validate and sanitize command arguments."
+      },
+      {
+        "ruleId": "S2755",
+        "patterns": [
+          "DocumentBuilderFactory\\.newInstance\\s*\\(\\s*\\)(?![^;]*setFeature)",
+          "SAXParserFactory\\.newInstance\\s*\\(\\s*\\)(?![^;]*setFeature)",
+          "XMLInputFactory\\.newInstance\\s*\\(\\s*\\)(?![^;]*setProperty)"
+        ],
+        "message": "XML parser may be vulnerable to XXE attacks.",
+        "suggestion": "Configure XML parser to disable DTD and external entities."
+      },
+      {
+        "ruleId": "S5135",
+        "patterns": [
+          "ObjectInputStream\\s*\\([^)]*\\)\\.readObject\\s*\\(",
+          "XMLDecoder\\s*\\([^)]*\\)\\.readObject\\s*\\(",
+          "new\\s+ObjectInputStream"
+        ],
+        "message": "Deserialization of untrusted data detected.",
+        "suggestion": "Use allowlists for deserialization or avoid deserializing untrusted data."
+      },
+      {
+        "ruleId": "S5131",
+        "patterns": [
+          "response\\.getWriter\\s*\\(\\s*\\)\\.(?:print|write)\\s*\\([^)]*request\\.",
+          "out\\.println\\s*\\([^)]*request\\."
+        ],
+        "message": "Endpoint may be vulnerable to XSS.",
+        "suggestion": "Encode user input before output."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|secret|apiKey|token)\\s*=\\s*\"[^\"]{8,}\"",
+          "final\\s+String\\s+(?:PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*\"[^\"]+\""
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use environment variables or a secrets manager."
+      },
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "MessageDigest\\.getInstance\\s*\\(\\s*\"MD5\"\\s*\\)",
+          "MessageDigest\\.getInstance\\s*\\(\\s*\"SHA-1\"\\s*\\)",
+          "DigestUtils\\.md5",
+          "DigestUtils\\.sha1"
+        ],
+        "message": "Weak hashing algorithm detected.",
+        "suggestion": "Use SHA-256 or stronger."
+      },
+      {
+        "ruleId": "S4502",
+        "patterns": [
+          "\\.csrf\\s*\\(\\s*\\)\\.disable\\s*\\(",
+          "http\\.csrf\\s*\\(\\s*\\)\\.disable"
+        ],
+        "message": "CSRF protection is disabled.",
+        "suggestion": "Enable CSRF protection for state-changing operations."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S2259",
+        "patterns": [
+          "\\.equals\\s*\\(\\s*null\\s*\\)",
+          "null\\.equals"
+        ],
+        "message": "Possible null pointer dereference.",
+        "suggestion": "Add null checks before method calls."
+      },
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1\\s*;"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      }
+    ]
+  },
+
+  "rust": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S6915",
+        "patterns": [
+          "\\.unwrap\\(\\s*\\)",
+          "\\.expect\\(\\s*\"[^\"]+\"\\s*\\)"
+        ],
+        "message": "Unsafe unwrap/expect detected. Use proper error handling with match or ? operator.",
+        "suggestion": "Replace unwrap with match or use ? operator for error propagation."
+      },
+      {
+        "ruleId": "S6913",
+        "patterns": [
+          "unsafe\\s*\\{",
+          "unsafe\\s+fn\\s+\\w+"
+        ],
+        "message": "Unsafe block detected. Ensure memory safety guarantees.",
+        "suggestion": "Minimize unsafe blocks and document safety invariants."
+      },
+      {
+        "ruleId": "S6918",
+        "patterns": [
+          "\\*mut\\s+\\w+",
+          "raw_const!",
+          "raw_mut!"
+        ],
+        "message": "Raw pointer usage detected.",
+        "suggestion": "Prefer safe abstractions over raw pointers."
+      },
+      {
+        "ruleId": "S6919",
+        "patterns": [
+          "std::mem::transmute"
+        ],
+        "message": "Transmute is highly unsafe and should be avoided.",
+        "suggestion": "Use safe conversion methods or From/Into traits."
+      },
+      {
+        "ruleId": "S6922",
+        "patterns": [
+          "\\.overflowing_",
+          "\\.wrapping_",
+          "\\.saturating_"
+        ],
+        "message": "Potential integer overflow handling.",
+        "suggestion": "Use checked arithmetic or ensure values cannot overflow."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "Command::new\\s*\\([^)]*format!",
+          "spawn\\s*\\([^)]*format!"
+        ],
+        "message": "OS command may be vulnerable to injection.",
+        "suggestion": "Pass command arguments as separate parameters, not formatted strings."
+      },
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "query\\s*\\([^)]*format!",
+          "execute\\s*\\([^)]*format!"
+        ],
+        "message": "SQL query may be vulnerable to injection.",
+        "suggestion": "Use parameterized queries with placeholders."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|secret|token|key|credential)s?\\s*[=:]\\s*\"[^\"]+\"",
+          "env::var\\(\\s*\"[^\"]*(?:PASSWORD|SECRET|TOKEN|KEY)"
+        ],
+        "message": "Possible hard-coded credential.",
+        "suggestion": "Use environment variables or secure vaults for secrets."
+      },
+      {
+        "ruleId": "S2245",
+        "patterns": [
+          "rand::thread_rng",
+          "random\\s*\\("
+        ],
+        "message": "Pseudorandom number generator used. May not be suitable for security purposes.",
+        "suggestion": "Use cryptographically secure random number generators for security purposes."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S2189",
+        "patterns": [
+          "loop\\s*\\{[^}]*\\}\\s*$",
+          "while\\s+true"
+        ],
+        "message": "Potential infinite loop.",
+        "suggestion": "Ensure loop has a clear exit condition."
+      },
+      {
+        "ruleId": "S2190",
+        "patterns": [
+          "fn\\s+(\\w+)\\s*\\([^)]*\\)[^\\{]*\\{[^}]*\\1\\s*\\("
+        ],
+        "message": "Potential infinite recursion.",
+        "suggestion": "Add base case to prevent infinite recursion."
+      },
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1\\s*;"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      }
+    ],
+    "codeSmells": [
+      {
+        "ruleId": "S2325",
+        "patterns": [
+          "fn\\s+\\w+\\s*\\([^)]*\\)\\s*->\\s*\\(\\)",
+          "->\\s*\\(\\)\\s*\\{"
+        ],
+        "message": "Functions should not return unit type explicitly.",
+        "suggestion": "Remove explicit unit return type."
+      },
+      {
+        "ruleId": "S6944",
+        "patterns": [
+          "TODO|FIXME|XXX|HACK"
+        ],
+        "message": "TODO/FIXME comment found.",
+        "suggestion": "Address the technical debt before merging."
+      }
+    ]
+  },
+
+  "php": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S2078",
+        "patterns": [
+          "mysql_query\\s*\\([^)]*\\$",
+          "mysqli_query\\s*\\([^)]*\\$",
+          "PDO::query\\s*\\([^)]*\\$",
+          "->query\\s*\\([^)]*\\$",
+          "->exec\\s*\\([^)]*\\$"
+        ],
+        "message": "Potential SQL injection. Use prepared statements with parameter binding.",
+        "suggestion": "Use prepared statements with bindParam() or bindValue()."
+      },
+      {
+        "ruleId": "S5328",
+        "patterns": [
+          "echo\\s+.*\\$_[REQUEST|GET|POST]",
+          "print\\s+.*\\$_[REQUEST|GET|POST]",
+          "echo\\s+.*\\$",
+          "print\\s+.*\\$"
+        ],
+        "message": "Potential XSS vulnerability. User input may not be escaped.",
+        "suggestion": "Use htmlspecialchars() when outputting user input."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "exec\\s*\\([^)]*\\$",
+          "system\\s*\\([^)]*\\$",
+          "passthru\\s*\\([^)]*\\$",
+          "shell_exec\\s*\\([^)]*\\$",
+          "proc_open\\s*\\([^)]*\\$"
+        ],
+        "message": "OS command may be vulnerable to injection.",
+        "suggestion": "Validate and escape user input before passing to system commands."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "file_get_contents\\s*\\([^)]*\\$",
+          "file_put_contents\\s*\\([^)]*\\$",
+          "fopen\\s*\\([^)]*\\$",
+          "unlink\\s*\\([^)]*\\$"
+        ],
+        "message": "File operation may be vulnerable to path traversal.",
+        "suggestion": "Validate file paths against allowed directories."
+      },
+      {
+        "ruleId": "S5135",
+        "patterns": [
+          "unserialize\\s*\\([^)]*\\$",
+          "ObjectInputStream"
+        ],
+        "message": "Deserialization of untrusted data detected.",
+        "suggestion": "Avoid deserializing untrusted data or use allowlists."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "\\$.*(?:password|secret|token|key)\\s*=\\s*['\"][^'\"]{8,}['\"]",
+          "define\\s*\\(\\s*['\"].*(?:PASSWORD|SECRET|TOKEN|KEY)"
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use environment variables or a secrets manager."
+      },
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "md5\\s*\\(",
+          "sha1\\s*\\(",
+          "hash\\s*\\(\\s*['\"]md5['\"]",
+          "hash\\s*\\(\\s*['\"]sha1['\"]"
+        ],
+        "message": "Weak hashing algorithm detected.",
+        "suggestion": "Use password_hash() with PASSWORD_DEFAULT or SHA-256+."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S3518",
+        "patterns": [
+          "/\\s*\\$[^=;]+\\s*===?\\s*0",
+          "/\\s*\\$[^=;]+\\s*===?\\s*['\"]0['\"]"
+        ],
+        "message": "Potential division by zero or type juggling issue.",
+        "suggestion": "Validate divisor before division."
+      },
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "\\$\\w+\\s*=\\s*\\$\\w+\\s*;"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      }
+    ],
+    "codeSmells": [
+      {
+        "ruleId": "S1788",
+        "patterns": [
+          "die\\s*\\(",
+          "exit\\s*\\("
+        ],
+        "message": "Use of die() or exit() found.",
+        "suggestion": "Use exceptions for error handling instead of die()/exit()."
+      }
+    ]
+  },
+
+  "kotlin": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S2078",
+        "patterns": [
+          "executeQuery\\s*\\([^)]*\\+",
+          "rawQuery\\s*\\([^)]*\\$",
+          "execSQL\\s*\\([^)]*\\+",
+          "query\\s*\\([^)]*\\$"
+        ],
+        "message": "Potential SQL injection. Use parameterized queries or Room.",
+        "suggestion": "Use Room's @Query annotation with parameters or PreparedStatement."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "File\\s*\\([^)]*\\+",
+          "FileInputStream\\s*\\([^)]*\\+",
+          "FileOutputStream\\s*\\([^)]*\\+",
+          "FileReader\\s*\\([^)]*\\+"
+        ],
+        "message": "File operation may be vulnerable to path traversal.",
+        "suggestion": "Validate file paths and use canonical paths."
+      },
+      {
+        "ruleId": "S5135",
+        "patterns": [
+          "ObjectInputStream\\s*\\([^)]*\\)",
+          "readObject\\s*\\(\\s*\\)"
+        ],
+        "message": "Deserialization of untrusted data detected.",
+        "suggestion": "Avoid deserializing untrusted data or use serialization allowlists."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "Runtime\\.getRuntime\\s*\\(\\)\\.exec",
+          "ProcessBuilder"
+        ],
+        "message": "OS command execution detected.",
+        "suggestion": "Validate and sanitize command arguments."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "val\\s+(?:password|secret|token|apiKey)\\s*:?=\\s*\"[^\"]{8,}\"",
+          "const\\s+val\\s+(?:PASSWORD|SECRET|TOKEN)\\s*=\\s*\"[^\"]+\""
+        ],
+        "message": "Possible hard-coded credentials detected.",
+        "suggestion": "Use BuildConfig fields from environment or Android Keystore."
+      },
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "MessageDigest\\.getInstance\\s*\\(\\s*\"MD5\"\\s*\\)",
+          "MessageDigest\\.getInstance\\s*\\(\\s*\"SHA-1\"\\s*\\)"
+        ],
+        "message": "Weak hashing algorithm detected.",
+        "suggestion": "Use SHA-256 or stronger."
+      },
+      {
+        "ruleId": "S5332",
+        "patterns": [
+          "http://",
+          "cleartextTrafficPermitted\\s*=*\\s*true"
+        ],
+        "message": "Clear-text protocol detected.",
+        "suggestion": "Use HTTPS for network communications."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S2259",
+        "patterns": [
+          "\\!\\!\\!",
+          "\\?."  
+        ],
+        "message": "Null safety bypass or potential NPE.",
+        "suggestion": "Use proper null handling with ?. or ?: instead of !!"
+      },
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "(\\w+)\\s*=\\s*\\1"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      }
+    ]
+  },
+
+  "ruby": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S2078",
+        "patterns": [
+          "execute\\s*\\([^)]*#\\{",
+          "find_by_sql\\s*\\([^)]*#\\{",
+          "where\\s*\\(\\s*['\"][^'\"]*#\\{",
+          "select_all\\s*\\([^)]*#\\{"
+        ],
+        "message": "Potential SQL injection. Use parameterized queries.",
+        "suggestion": "Use ActiveRecord's parameterized methods or bind parameters."
+      },
+      {
+        "ruleId": "S2076",
+        "patterns": [
+          "`[^`]*#\\{[^}]*\\}`",
+          "system\\s*\\([^)]*#\\{",
+          "exec\\s*\\([^)]*#\\{",
+          "%x\\{[^}]*#\\{"
+        ],
+        "message": "OS command may be vulnerable to injection.",
+        "suggestion": "Validate and sanitize user input before passing to system commands."
+      },
+      {
+        "ruleId": "S5135",
+        "patterns": [
+          "Marshal\\.load\\s*\\([^)]*",
+          "YAML\\.load\\s*\\([^)]*(?!safe_load)",
+          "JSON\\.parse\\s*\\([^)]*",
+          "OX\\.parse_obj"
+        ],
+        "message": "Deserialization of untrusted data detected.",
+        "suggestion": "Use safe loading methods or validate input before deserialization."
+      },
+      {
+        "ruleId": "S5328",
+        "patterns": [
+          "<%=\\s*.*params\\[",
+          "<%=\\s*.*request\\.",
+          "<%=\\s*.*@.*\\.html_safe"
+        ],
+        "message": "Potential XSS vulnerability.",
+        "suggestion": "Use html_escape() or Rails' built-in escaping. Avoid html_safe."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "File\\.open\\s*\\([^)]*params",
+          "File\\.read\\s*\\([^)]*params",
+          "IO\\.read\\s*\\([^)]*params",
+          "send_file\\s*\\([^)]*params"
+        ],
+        "message": "File operation may be vulnerable to path traversal.",
+        "suggestion": "Validate file paths against allowed directories."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "(?:password|secret|token|api_key)\\s*=\\s*['\"][^'\"]{8,}['\"]",
+          "ENV\\[['\"](?:PASSWORD|SECRET|TOKEN)['\"]\\]\\s*||"
+        ],
+        "message": "Possible hard-coded credentials or fallback detected.",
+        "suggestion": "Use environment variables without fallbacks for secrets."
+      },
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "Digest::MD5",
+          "Digest::SHA1",
+          "OpenSSL::Digest::MD5",
+          "OpenSSL::Digest::SHA1"
+        ],
+        "message": "Weak hashing algorithm detected.",
+        "suggestion": "Use SHA-256 or stronger. For passwords, use bcrypt or Argon2."
+      },
+      {
+        "ruleId": "S4507",
+        "patterns": [
+          "config\\.consider_all_requests_local\\s*=\\s*true",
+          "Rails\\.env\\.development\\?"
+        ],
+        "message": "Debug mode may be enabled.",
+        "suggestion": "Ensure debug features are only enabled in development."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S1656",
+        "patterns": [
+          "@?(\\w+)\\s*=\\s*\\1\\s*$"
+        ],
+        "message": "Variable is self-assigned.",
+        "suggestion": "This assignment has no effect."
+      },
+      {
+        "ruleId": "S3518",
+        "patterns": [
+          "/\\s*0\\b",
+          "%\\s*0\\b",
+          "divmod\\s*\\([^,]*,\\s*0\\)"
+        ],
+        "message": "Division by zero.",
+        "suggestion": "Check for zero before division."
+      }
+    ],
+    "codeSmells": [
+      {
+        "ruleId": "S1135",
+        "patterns": [
+          "#\\s*TODO",
+          "#\\s*FIXME",
+          "#\\s*HACK"
+        ],
+        "message": "TODO/FIXME comment found.",
+        "suggestion": "Track this task in your issue tracker."
+      }
+    ]
+  },
+  "cpp": {
+    "vulnerabilities": [
+      {
+        "ruleId": "S3519",
+        "patterns": [
+          "strcpy\\s*\\(",
+          "strcat\\s*\\(",
+          "sprintf\\s*\\(",
+          "gets\\s*\\(",
+          "scanf\\s*\\("
+        ],
+        "message": "Potential buffer overflow. Use safer alternatives like strncpy, strncat, snprintf.",
+        "suggestion": "Replace with bounded versions: strncpy, strncat, snprintf, or use std::string."
+      },
+      {
+        "ruleId": "S5332",
+        "patterns": [
+          "http://[^\\s\"']*",
+          "ftp://[^\\s\"']*",
+          "telnet://[^\\s\"']*"
+        ],
+        "message": "Using clear-text protocols is security-sensitive.",
+        "suggestion": "Use HTTPS instead of HTTP."
+      },
+      {
+        "ruleId": "S2068",
+        "patterns": [
+          "password\\s*=\\s*\"[^\"]+\"",
+          "passwd\\s*=\\s*\"[^\"]+\"",
+          "pwd\\s*=\\s*\"[^\"]+\"",
+          "secret\\s*=\\s*\"[^\"]+\"",
+          "api_key\\s*=\\s*\"[^\"]+\""
+        ],
+        "message": "Hard-coded credentials are security-sensitive.",
+        "suggestion": "Use environment variables or a secure credential store."
+      },
+      {
+        "ruleId": "S2245",
+        "patterns": [
+          "rand\\s*\\(",
+          "random\\s*\\("
+        ],
+        "message": "Using weak random number generators is security-sensitive.",
+        "suggestion": "Use cryptographically secure random number generators."
+      },
+      {
+        "ruleId": "S2083",
+        "patterns": [
+          "fopen\\s*\\([^)]*\\+",
+          "open\\s*\\([^)]*\\+",
+          "std::ifstream\\s*\\([^)]*\\+"
+        ],
+        "message": "I/O operation may be vulnerable to path injection attacks.",
+        "suggestion": "Validate and sanitize file paths before use."
+      },
+      {
+        "ruleId": "S5131",
+        "patterns": [
+          "printf\\s*\\([^)]*%s",
+          "cout\\s*<<.*<<",
+          "fprintf\\s*\\([^)]*%s"
+        ],
+        "message": "Potential format string vulnerability or XSS.",
+        "suggestion": "Use parameterized output or sanitize user input."
+      },
+      {
+        "ruleId": "S3649",
+        "patterns": [
+          "mysql_query\\s*\\(",
+          "sqlite3_exec\\s*\\(",
+          "PQexec\\s*\\(",
+          "SQLExecDirect"
+        ],
+        "message": "Database query may be vulnerable to SQL injection.",
+        "suggestion": "Use parameterized queries or prepared statements."
+      },
+      {
+        "ruleId": "S3518",
+        "patterns": [
+          "memcpy\\s*\\(",
+          "memmove\\s*\\(",
+          "memset\\s*\\("
+        ],
+        "message": "Memory operations should be bounded.",
+        "suggestion": "Ensure size parameters are properly validated."
+      }
+    ],
+    "securityHotspots": [
+      {
+        "ruleId": "S4790",
+        "patterns": [
+          "MD5\\s*\\(",
+          "SHA1\\s*\\(",
+          "md5\\s*\\(",
+          "sha1\\s*\\("
+        ],
+        "message": "Using weak hashing algorithms is security-sensitive.",
+        "suggestion": "Use stronger hashing algorithms like SHA-256 or bcrypt."
+      },
+      {
+        "ruleId": "S4818",
+        "patterns": [
+          "socket\\s*\\(",
+          "accept\\s*\\(",
+          "bind\\s*\\("
+        ],
+        "message": "Using sockets is security-sensitive.",
+        "suggestion": "Ensure proper authentication and encryption."
+      },
+      {
+        "ruleId": "S5042",
+        "patterns": [
+          "unzip",
+          "tar\\s+-x",
+          "gzip\\s+-d"
+        ],
+        "message": "Expanding archive files is security-sensitive.",
+        "suggestion": "Validate archive contents before extraction."
+      },
+      {
+        "ruleId": "S5443",
+        "patterns": [
+          "sprintf.*SELECT",
+          "sprintf.*INSERT",
+          "sprintf.*UPDATE",
+          "sprintf.*DELETE"
+        ],
+        "message": "Using dynamically formatted SQL queries is security-sensitive.",
+        "suggestion": "Use parameterized queries."
+      }
+    ],
+    "bugs": [
+      {
+        "ruleId": "S3518",
+        "patterns": [
+          "malloc\\s*\\([^)]*\\*",
+          "new\\s+\\w+\\s*\\[",
+          "alloca\\s*\\("
+        ],
+        "message": "Potential memory allocation issues.",
+        "suggestion": "Check allocation size and handle failures."
+      },
+      {
+        "ruleId": "S5000",
+        "patterns": [
+          "malloc\\s*\\(",
+          "calloc\\s*\\(",
+          "realloc\\s*\\(",
+          "new\\s+(?!\\w+\\s*\\[)"
+        ],
+        "message": "Memory allocated but potentially not freed.",
+        "suggestion": "Ensure memory is freed or use smart pointers."
+      },
+      {
+        "ruleId": "S5027",
+        "patterns": [
+          "NULL.*->",
+          "nullptr.*->",
+          "\\*.*nullptr",
+          "\\*.*NULL"
+        ],
+        "message": "Potential null pointer dereference.",
+        "suggestion": "Check for null before dereferencing."
+      },
+      {
+        "ruleId": "S5354",
+        "patterns": [
+          "delete\\s+\\w+",
+          "delete\\[\\]\\s+\\w+"
+        ],
+        "message": "Memory deallocation mismatch.",
+        "suggestion": "Use delete[] for arrays, delete for single objects."
+      },
+      {
+        "ruleId": "S5353",
+        "patterns": [
+          "return\\s+&",
+          "return\\s+.*local"
+        ],
+        "message": "Returning address of local variable.",
+        "suggestion": "Avoid returning pointers to stack variables."
+      },
+      {
+        "ruleId": "S1764",
+        "patterns": [
+          "\\w+\\s*==\\s*\\w+",
+          "\\w+\\s*!=\\s*\\w+"
+        ],
+        "message": "Identical expressions on both sides.",
+        "suggestion": "Review the comparison logic."
+      },
+      {
+        "ruleId": "S131",
+        "patterns": [
+          "switch\\s*\\([^)]+\\)\\s*\\{[^}]*case[^}]*$"
+        ],
+        "message": "Switch case may be missing break.",
+        "suggestion": "Ensure each case ends with break or return."
+      }
+    ],
+    "codeSmells": [
+      {
+        "ruleId": "S106",
+        "patterns": [
+          "\\b[0-9]+\\b.*=",
+          "=\\s*[0-9]+"
+        ],
+        "message": "Magic numbers should not be used.",
+        "suggestion": "Define constants with meaningful names."
+      },
+      {
+        "ruleId": "S107",
+        "patterns": [
+          "\\w+\\s*\\([^)]{100,}\\)"
+        ],
+        "message": "Function has too many parameters.",
+        "suggestion": "Consider grouping parameters into a struct."
+      },
+      {
+        "ruleId": "S113",
+        "patterns": [
+          "^\\s*#ifndef\\s+\\w+_H",
+          "^\\s*#pragma\\s+once"
+        ],
+        "message": "Header file should use include guards.",
+        "suggestion": "Add proper include guards to header files."
+      },
+      {
+        "ruleId": "S121",
+        "patterns": [
+          "if\\s*\\([^)]+\\)\\s*[^{;]$",
+          "for\\s*\\([^)]+\\)\\s*[^{;]$",
+          "while\\s*\\([^)]+\\)\\s*[^{;]$"
+        ],
+        "message": "Control structures should use curly braces.",
+        "suggestion": "Always use braces even for single-line blocks."
+      },
+      {
+        "ruleId": "S5025",
+        "patterns": [
+          "int\\s+\\w+\\s*=\\s*[^;]+;\\s*//.*unused",
+          "char\\s*\\*.*unused"
+        ],
+        "message": "Unused local variables should be removed.",
+        "suggestion": "Remove unused variables."
+      },
+      {
+        "ruleId": "S1135",
+        "patterns": [
+          "//\\s*TODO",
+          "//\\s*FIXME",
+          "//\\s*HACK",
+          "\\*\\s*TODO",
+          "\\*\\s*FIXME"
+        ],
+        "message": "TODO/FIXME comment found.",
+        "suggestion": "Track this task in your issue tracker."
+      }
+    ]
+  }
+}

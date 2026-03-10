@@ -1,0 +1,967 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.1.0",
+  "description": "Language-specific analysis prompts for Scrutin AI code review",
+  "languages": {
+    "csharp": {
+      "displayName": "C#",
+      "fileExtensions": [
+        ".cs"
+      ],
+      "securityFocus": [
+        "SQL Injection via string concatenation in database queries (use parameterized queries or ORM)",
+        "Path traversal through unsanitized file path inputs (validate and sanitize paths)",
+        "Command injection via Process.Start with user input (avoid shell execution with user input)",
+        "XXE vulnerabilities in XML parsing (disable DTD: XmlReaderSettings.DtdProcessing = Prohibit)",
+        "XSS in ASP.NET applications (use encoding and HtmlSanitizer)",
+        "SSRF when making HTTP requests with user-supplied URLs (validate and whitelist domains)",
+        "Hard-coded credentials, API keys, or connection strings (use secrets management / IConfiguration)",
+        "Weak cryptographic algorithms (MD5, SHA1, DES) — use SHA256+ and AES",
+        "Insecure random number generation (use RandomNumberGenerator, not System.Random for security)",
+        "Weak SSL/TLS protocols (enforce TLS 1.2+, disable SSLv3/TLS 1.0)"
+      ],
+      "bugPatterns": [
+        "Null reference exceptions — missing null checks before member access",
+        "Async void methods that swallow exceptions (use async Task instead)",
+        "Infinite recursion without base case",
+        "Double dispose of IDisposable objects",
+        "Race conditions in multi-threaded code without proper locking",
+        "Unreachable code after return/throw statements",
+        "Collection modified during enumeration",
+        "Route parameter type mismatch — controller expects int/Guid but route template allows any string",
+        "Missing [FromBody]/[FromQuery]/[FromRoute] attributes causing incorrect model binding",
+        "Missing ModelState.IsValid check (or [ApiController] auto-validation not applied)",
+        "Missing CancellationToken propagation in async chains (tokens created but not passed downstream)"
+      ],
+      "performancePatterns": [
+        "HttpClient instantiated per-request causing connection exhaustion — use IHttpClientFactory or a static/singleton HttpClient",
+        "HttpClient without timeout — requests may hang indefinitely (set Timeout property or use Polly timeout policy)",
+        "DbContext not disposed or scoped incorrectly causing connection pool exhaustion",
+        "N+1 queries in Entity Framework (use Include/ThenInclude for eager loading)",
+        "Synchronous database calls in async context (use async versions — ToListAsync, FirstOrDefaultAsync)",
+        "String concatenation in loops (use StringBuilder)",
+        "Boxing/unboxing in hot paths",
+        "LINQ queries that enumerate multiple times (materialize with ToList/ToArray once)",
+        "Large object allocations in frequently called methods",
+        "Missing ConfigureAwait(false) in library code causing deadlocks in sync-over-async contexts"
+      ],
+      "bestPractices": [
+        "Use records for immutable DTOs",
+        "Prefer async/await over Task.Result or .Wait() (causes deadlocks in ASP.NET context)",
+        "Use ILogger instead of Console.WriteLine",
+        "Follow repository pattern for data access",
+        "Use dependency injection instead of new keyword for services",
+        "Avoid public fields, use properties",
+        "Controllers should delegate to services (thin controllers)"
+      ],
+      "frameworkSpecific": {
+        "aspnetcore": [
+          "Missing [Authorize] attribute on sensitive endpoints",
+          "Missing CSRF protection on state-changing operations",
+          "Exposing stack traces in production (disable detailed errors in appsettings.Production.json)",
+          "Missing rate limiting on authentication endpoints",
+          "Insecure CORS configuration (avoid wildcard origins with credentials)"
+        ],
+        "entityframework": [
+          "Missing transaction for multiple related operations",
+          "Tracking queries when read-only would suffice (use AsNoTracking())",
+          "Missing index hints for frequently filtered columns",
+          "Open DbContext longer than a single unit of work"
+        ]
+      }
+    },
+    "typescript": {
+      "displayName": "TypeScript",
+      "fileExtensions": [
+        ".ts",
+        ".tsx"
+      ],
+      "securityFocus": [
+        "XSS via innerHTML or React dangerous HTML props (use textContent or sanitize with DOMPurify)",
+        "Prototype pollution through Object.assign or lodash merge with user input",
+        "Hard-coded secrets, API keys, or tokens (use environment variables via process.env)",
+        "Dynamic code execution risks (avoid eval and new Function constructor)",
+        "Permissive CORS configuration in APIs",
+        "Insecure localStorage usage for sensitive data (use httpOnly cookies)",
+        "URL manipulation without validation (validate URLs before use)",
+        "JWT secrets hard-coded or weak (use strong random secrets, rotate regularly)"
+      ],
+      "bugPatterns": [
+        "Missing await on async functions (fire-and-forget — errors silently lost)",
+        "Ignored Promise rejections (always handle with .catch() or try/catch)",
+        "Type assertions (as) bypassing actual type safety",
+        "Optional chaining without fallback for required values",
+        "Array/object mutation when immutability expected",
+        "Strict equality issues (=== vs ==)",
+        "Wrong HTTP route path — typo or missing leading slash in API route definition",
+        "Missing request body/query parameter validation (use zod, joi, or class-validator)",
+        "Type mismatch in API handler — expecting number but JSON sends string (use parseInt/coercion)",
+        "fetch/axios without timeout — requests may hang indefinitely (use AbortController with setTimeout)"
+      ],
+      "performancePatterns": [
+        "Creating new database connection/client per request instead of using a shared connection pool",
+        "HTTP client (axios/fetch) not reused — configure a shared instance with base URL and interceptors",
+        "Unnecessary re-renders in React (missing memo, useMemo, useCallback for expensive operations)",
+        "Large bundle imports (import specific modules instead of entire libraries)",
+        "Synchronous operations blocking the event loop",
+        "Memory leaks from uncleared intervals/timeouts/subscriptions (cleanup in useEffect return)"
+      ],
+      "bestPractices": [
+        "Use strict TypeScript configuration (strict: true in tsconfig.json)",
+        "Prefer unknown over any type",
+        "Use const assertions for literal types",
+        "Avoid type assertions, prefer type guards",
+        "Use interface for object shapes, type for unions/intersections",
+        "Handle all Promise rejections — attach .catch() or use unhandledRejection handler"
+      ],
+      "frameworkSpecific": {
+        "react": [
+          "Missing key prop in list rendering (use stable unique keys, not array index)",
+          "Missing or incorrect useEffect dependencies (causes stale closures or infinite loops)",
+          "State updates on unmounted components (cleanup in useEffect)",
+          "Mutating state directly instead of using setState"
+        ],
+        "nextjs": [
+          "Exposing server secrets to client (NEXT_PUBLIC_ prefix leaks to browser bundle)",
+          "Missing error boundaries for client components",
+          "Improper use of 'use client' directive — pushing too much to client bundle"
+        ]
+      }
+    },
+    "javascript": {
+      "displayName": "JavaScript",
+      "fileExtensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs"
+      ],
+      "securityFocus": [
+        "XSS through DOM manipulation with user input (innerHTML, document.write)",
+        "Dynamic code execution risks (avoid eval and new Function constructor)",
+        "Hard-coded credentials or API keys",
+        "Prototype pollution vulnerabilities (Object.assign, merge functions with user input)",
+        "Insecure regular expressions (ReDoS — catastrophic backtracking)",
+        "Open redirects with unvalidated URLs"
+      ],
+      "bugPatterns": [
+        "Implicit global variables (missing var/let/const)",
+        "Callback hell without error handling",
+        "Type coercion issues (use strict equality ===)",
+        "Empty catch blocks swallowing errors silently",
+        "This binding issues in callbacks (use arrow functions or .bind())",
+        "Hoisting confusion with var",
+        "fetch/axios without timeout or AbortController — connection may hang indefinitely",
+        "Missing input type validation before using as number, date, or object key"
+      ],
+      "performancePatterns": [
+        "Creating new DB connection per request instead of reusing a connection pool",
+        "Synchronous file/IO operations in Node.js blocking the event loop (use async variants)",
+        "Memory leaks from closures retaining large objects or event listeners not removed",
+        "Excessive DOM manipulation (batch updates, use DocumentFragment)",
+        "Blocking operations in main thread"
+      ],
+      "bestPractices": [
+        "Use const by default, let when reassignment needed, avoid var",
+        "Use template literals instead of string concatenation",
+        "Use arrow functions for callbacks",
+        "Use destructuring for cleaner code",
+        "Handle all Promise rejections (.catch() or try/catch in async)",
+        "Enable strict mode ('use strict')"
+      ]
+    },
+    "python": {
+      "displayName": "Python",
+      "fileExtensions": [
+        ".py"
+      ],
+      "securityFocus": [
+        "SQL injection through string formatting in queries (use parameterized queries with %s or ?)",
+        "Command injection via subprocess with shell=True (use subprocess.run with a list, never shell=True with user input)",
+        "Pickle deserialization of untrusted data (use JSON instead)",
+        "Hard-coded credentials or secrets",
+        "SSL certificate verification disabled (verify=False in requests)",
+        "YAML unsafe load (use yaml.safe_load instead of yaml.load)",
+        "Path traversal in file operations"
+      ],
+      "bugPatterns": [
+        "Mutable default arguments in functions (def f(x=[]) — shared across all calls)",
+        "Bare except clauses catching all exceptions including SystemExit and KeyboardInterrupt",
+        "Variable shadowing in nested scopes",
+        "Late binding closures in loops (lambdas capturing loop variable by reference)",
+        "requests library used without timeout parameter — connection may hang indefinitely (add timeout=30)",
+        "Database connections not closed or not returned to pool (use context managers or connection pooling)"
+      ],
+      "performancePatterns": [
+        "String concatenation in loops (use ''.join(list) instead)",
+        "Repeated list/dict lookups in hot path (cache in local variable)",
+        "Not using generators for large datasets (loading everything into memory at once)",
+        "Opening too many files or DB connections without closing them (use 'with' statement)",
+        "Global Interpreter Lock bottlenecks — use multiprocessing for CPU-bound tasks"
+      ],
+      "bestPractices": [
+        "Use type hints (typing module) for all function signatures",
+        "Follow PEP 8 style guide",
+        "Use context managers (with statement) for all resources — files, DB connections, locks",
+        "Prefer list comprehensions over map/filter for readability",
+        "Use f-strings for string formatting (Python 3.6+)",
+        "Use pathlib instead of os.path for file operations"
+      ]
+    },
+    "go": {
+      "displayName": "Go",
+      "fileExtensions": [
+        ".go"
+      ],
+      "securityFocus": [
+        "SQL injection through string concatenation (use db.Query with placeholders $1 or ?)",
+        "Command injection via exec.Command with shell-interpreted user input",
+        "Hard-coded credentials or secrets in source code",
+        "Insecure TLS configuration (InsecureSkipVerify: true — never in production)",
+        "Path traversal in file handling (sanitize with filepath.Clean and validate prefix)",
+        "Race conditions in goroutines accessing shared state without mutex"
+      ],
+      "bugPatterns": [
+        "Ignoring error return values (all errors in Go must be checked)",
+        "Goroutine leaks — goroutines started without a way to stop or cancel them",
+        "Nil pointer dereference without nil check before access",
+        "Data races — shared state accessed from multiple goroutines without sync.Mutex or atomic",
+        "Deferred function call inside a loop causing resource exhaustion (defer runs at function end, not loop end)",
+        "Integer overflow in calculations",
+        "sql.Rows not closed after query — causes DB connection pool exhaustion (use defer rows.Close())",
+        "http.Response.Body not closed after reading — causes TCP connection leak (use defer resp.Body.Close())",
+        "Context without timeout for external calls — HTTP or DB requests may hang indefinitely"
+      ],
+      "performancePatterns": [
+        "http.Client created per-request — reuse a shared http.Client with transport configured (connection pooling built-in)",
+        "http.Client without Timeout field — requests may hang indefinitely",
+        "DB connection pool not configured (db.SetMaxOpenConns, db.SetMaxIdleConns, db.SetConnMaxLifetime)",
+        "Excessive allocations in hot paths (use sync.Pool for frequently allocated objects)",
+        "Inefficient string building using + in loops (use strings.Builder)",
+        "Unbuffered channels causing blocking when buffer would suffice",
+        "Excessive goroutine creation — use worker pool pattern with semaphore or errgroup"
+      ],
+      "bestPractices": [
+        "Always handle errors explicitly — do not use _ for error return values",
+        "Use defer for cleanup of resources (files, DB rows, response bodies)",
+        "Prefer composition over inheritance (embed structs)",
+        "Use context for cancellation and deadlines across goroutine boundaries",
+        "Keep functions small and focused",
+        "Use interfaces for dependency injection and testability"
+      ]
+    },
+    "java": {
+      "displayName": "Java",
+      "fileExtensions": [
+        ".java"
+      ],
+      "securityFocus": [
+        "SQL injection through string concatenation (use PreparedStatement with ?)",
+        "XXE vulnerabilities in XML parsing (disable DOCTYPE, set FEATURE_SECURE_PROCESSING)",
+        "Deserialization of untrusted data via ObjectInputStream",
+        "LDAP injection in directory queries",
+        "Hard-coded credentials or secrets",
+        "Path traversal in file operations",
+        "Weak cryptography (MD5, SHA1, DES) — use SHA-256+ and AES-256"
+      ],
+      "bugPatterns": [
+        "Null pointer exceptions (missing null checks before member access)",
+        "Resource leaks — streams, connections, ResultSet not closed (use try-with-resources)",
+        "Equals and hashCode contract violations",
+        "ConcurrentModificationException — collection modified during iteration",
+        "Infinite loops without exit condition",
+        "Missing @Valid/@Validated on controller method parameters (request body not validated)",
+        "Route mapping returns wrong HTTP status for error cases (returning 200 on validation error)"
+      ],
+      "performancePatterns": [
+        "HttpClient instances not reused — create once (static/singleton), reuse across requests",
+        "JDBC Connection not closed or not returned to pool — use try-with-resources or connection pool",
+        "Connection pool misconfigured — too few connections (HikariCP maxPoolSize too low for load)",
+        "Missing transaction rollback on exception — partial writes left in inconsistent state",
+        "String concatenation in loops (use StringBuilder)",
+        "Boxing/unboxing in loops (use primitive types)",
+        "N+1 query problems with JPA/Hibernate (use JOIN FETCH or @BatchSize)",
+        "Inefficient collection operations"
+      ],
+      "bestPractices": [
+        "Use try-with-resources for AutoCloseable (Connection, Stream, ResultSet)",
+        "Prefer Optional<T> over null returns from methods",
+        "Use final for immutable fields",
+        "Follow SOLID principles",
+        "Use dependency injection (Spring @Autowired, @Bean)",
+        "Write unit tests for all public methods"
+      ]
+    },
+    "kotlin": {
+      "displayName": "Kotlin",
+      "fileExtensions": [
+        ".kt",
+        ".kts"
+      ],
+      "securityFocus": [
+        "SQL injection in database queries (use parameterized queries)",
+        "Hard-coded credentials or secrets",
+        "Insecure network configuration (cleartext traffic, disabled certificate validation)",
+        "Path traversal vulnerabilities"
+      ],
+      "bugPatterns": [
+        "Null safety bypasses (!! operator overuse — use safe call ?. or let {})",
+        "Coroutine scope leaks (GlobalScope usage, coroutines not cancelled on lifecycle end)",
+        "Late init var used before initialization",
+        "Type casting without safety (as instead of as? — throws ClassCastException)",
+        "Missing timeout in coroutine network or DB calls (use withTimeout {})"
+      ],
+      "performancePatterns": [
+        "Creating new OkHttpClient per request — reuse a shared instance with connection pool",
+        "Blocking calls on Dispatchers.Main (use Dispatchers.IO for all IO operations)",
+        "Unnecessary object allocations in hot paths",
+        "Inefficient collection operations (prefer sequences for large collections)",
+        "Database connections not returned to pool"
+      ],
+      "bestPractices": [
+        "Use data classes for DTOs",
+        "Prefer val over var",
+        "Use sealed classes for restricted hierarchies (state machines, result types)",
+        "Use extension functions appropriately — avoid polluting types",
+        "Handle nullability properly with safe calls and elvis operator"
+      ]
+    },
+    "ruby": {
+      "displayName": "Ruby",
+      "fileExtensions": [
+        ".rb",
+        ".rake"
+      ],
+      "securityFocus": [
+        "SQL injection through string interpolation in ActiveRecord queries (use ? placeholders or Arel)",
+        "Command injection via backticks, system(), or Open3 with user input",
+        "Mass assignment vulnerabilities in Rails (use strong parameters — permit only expected attrs)",
+        "Hard-coded credentials or secrets",
+        "Unsafe YAML loading (Psych.safe_load instead of YAML.load)",
+        "CSRF protection bypass (protect_from_forgery should not be disabled)"
+      ],
+      "bugPatterns": [
+        "Method visibility issues (public methods intended to be private)",
+        "Mutable default values in method signatures",
+        "Exception handling too broad (rescue StandardError vs rescue specific exception)",
+        "Missing HTTP timeout on external calls (Net::HTTP, Faraday, HTTParty without timeout)"
+      ],
+      "performancePatterns": [
+        "N+1 queries in ActiveRecord (use includes, eager_load, or preload)",
+        "Database connections not returned to pool (ActiveRecord connection pool exhaustion)",
+        "Inefficient database queries (select * when only few columns needed)",
+        "Memory bloat from loading large ActiveRecord collections (use find_each with batches)"
+      ],
+      "bestPractices": [
+        "Follow Ruby style guide (enforce with RuboCop)",
+        "Use strong parameters in Rails controllers",
+        "Prefer symbols over strings for hash keys",
+        "Use service objects for complex business logic"
+      ]
+    },
+    "php": {
+      "displayName": "PHP",
+      "fileExtensions": [
+        ".php"
+      ],
+      "securityFocus": [
+        "SQL injection through string concatenation (use PDO prepared statements with ? or :param)",
+        "XSS through unescaped output (use htmlspecialchars() or Twig auto-escape)",
+        "Command injection via shell execution functions (shell_exec, passthru, system with user input)",
+        "File inclusion vulnerabilities (require/include with user-controlled path)",
+        "Hard-coded credentials in source code",
+        "Insecure session configuration (session.cookie_httponly, session.cookie_secure not set)",
+        "Unrestricted file upload (missing MIME type validation and extension whitelist)"
+      ],
+      "bugPatterns": [
+        "Type coercion issues — loose comparison (== instead of ===) causing unexpected matches",
+        "Undefined variable usage without isset() check",
+        "Reference vs value confusion in arrays (& modifier side effects)",
+        "HTTP requests without timeout — file_get_contents or cURL without CURLOPT_TIMEOUT"
+      ],
+      "performancePatterns": [
+        "N+1 queries in database operations (eager load with JOINs or ORM relationships)",
+        "Creating new database connection per request instead of using PDO persistent connections",
+        "Large file processing without streaming (use fgets/fread instead of file_get_contents for large files)"
+      ],
+      "bestPractices": [
+        "Use strict type declarations (declare(strict_types=1))",
+        "Follow PSR-12 coding standards",
+        "Use dependency injection and containers",
+        "Validate all input data with filter_var or a validation library"
+      ]
+    },
+    "rust": {
+      "displayName": "Rust",
+      "fileExtensions": [
+        ".rs"
+      ],
+      "securityFocus": [
+        "Unsafe blocks with memory safety issues — document invariants and minimize scope",
+        "SQL injection in raw queries (use sqlx bind parameters, not format! macro)",
+        "Hard-coded credentials or secrets",
+        "Integer overflow — use checked_add/checked_mul or saturating arithmetic in critical paths"
+      ],
+      "bugPatterns": [
+        "Panic in production code via unwrap() or expect() on None/Err (use ? operator or match)",
+        "Deadlocks from incorrect lock ordering (always acquire multiple locks in the same order)",
+        "Memory leaks through Rc<RefCell<T>> reference cycles (use Weak for back-references)",
+        "HTTP client (reqwest) created per-request — build Client once and reuse (connection pooling built-in)"
+      ],
+      "performancePatterns": [
+        "Unnecessary cloning of large data structures (pass references where ownership not needed)",
+        "Blocking operations inside async context (use tokio::task::spawn_blocking for CPU-bound work)",
+        "Inefficient string operations — use String::with_capacity when size is known",
+        "Excessive heap allocations in hot paths (use stack-allocated arrays when size is bounded)"
+      ],
+      "bestPractices": [
+        "Use clippy and address all warnings before merging",
+        "Prefer ? operator over unwrap/expect in functions that return Result",
+        "Use appropriate error types (thiserror for libraries, anyhow for applications)",
+        "Document public APIs with doc comments including examples",
+        "Write tests including edge cases and error paths"
+      ]
+    },
+    "cpp": {
+      "displayName": "C/C++",
+      "fileExtensions": [
+        ".c",
+        ".cc",
+        ".cpp",
+        ".cxx",
+        ".h",
+        ".hh",
+        ".hpp",
+        ".hxx"
+      ],
+      "securityFocus": [
+        "Buffer overflows — use strncpy, snprintf; avoid strcpy/sprintf; always check bounds",
+        "Format string vulnerabilities — always use format specifiers in printf/scanf",
+        "Use after free and double free — set pointers to nullptr after freeing",
+        "Integer overflows in arithmetic — check bounds before operations, use safe integer libraries",
+        "NULL pointer dereferences — validate pointers before dereferencing",
+        "Uninitialized variable usage — always initialize variables at declaration",
+        "Memory leaks — every malloc/calloc must have a corresponding free (prefer RAII/smart pointers)",
+        "Unsafe string functions — avoid gets(); use fgets() with size limit",
+        "Command injection via system() or popen() with user-controlled input — sanitize all input",
+        "TOCTOU race conditions in file operations",
+        "Return of stack address — never return pointers to local variables",
+        "Hard-coded credentials or encryption keys"
+      ],
+      "bugPatterns": [
+        "Missing break in switch statements causing fall-through",
+        "Off-by-one errors in array indexing and loops",
+        "Signed/unsigned comparison issues causing incorrect branch logic",
+        "Resource leaks — files not closed, sockets not closed, memory not freed on error paths",
+        "Dangling pointers after freeing memory",
+        "Incorrect use of sizeof (sizeof(ptr) vs sizeof(*ptr))",
+        "Infinite loops without proper termination conditions",
+        "Stack overflow from deep recursion or large stack allocations",
+        "Incorrect error handling — ignoring return values of system calls (open, read, write)",
+        "File descriptor or socket exhaustion — not closing on all error paths"
+      ],
+      "performancePatterns": [
+        "Unnecessary memory copies (use pointers or references instead of passing large objects by value)",
+        "Inefficient string concatenation in loops",
+        "Repeated calculations that could be cached in a local variable",
+        "Poor cache locality in data structures",
+        "Unnecessary dynamic allocations in hot paths (prefer stack or pool allocation)",
+        "Virtual function calls in performance-critical inner loops",
+        "Not using const references for large object parameters"
+      ],
+      "bestPractices": [
+        "Use RAII for all resource management (files, memory, locks, sockets)",
+        "Prefer smart pointers (unique_ptr, shared_ptr) over raw pointers",
+        "Use const correctness for function parameters and methods",
+        "Initialize all variables at declaration",
+        "Check return values of all system calls and allocation functions",
+        "Use static analysis tools (cppcheck, clang-static-analyzer, AddressSanitizer)",
+        "Prefer std::vector over raw arrays",
+        "Use nullptr instead of NULL or 0 for null pointers"
+      ]
+    },
+    "swift": {
+      "displayName": "Swift",
+      "fileExtensions": [
+        ".swift"
+      ],
+      "securityFocus": [
+        "Hard-coded credentials, API keys, or tokens in source code (use Keychain or environment config)",
+        "Insecure URLSession configuration — disabled certificate validation",
+        "Sensitive data logged via print() — avoid logging PII, passwords, or tokens",
+        "Keychain misuse — storing secrets in UserDefaults instead of Keychain",
+        "Cleartext HTTP traffic (missing NSAllowsArbitraryLoads restriction in Info.plist)"
+      ],
+      "bugPatterns": [
+        "Force unwrapping with ! on Optional — use guard let, if let, or ?? instead",
+        "Force casting with as! — use as? and handle nil case explicitly",
+        "Retain cycles in closures — capture self weakly ([weak self]) in escaping closures",
+        "URLSession data tasks without timeout — requests may hang indefinitely",
+        "NotificationCenter observer not removed on deinit — causes crashes on deallocated observer",
+        "Accessing UIKit/SwiftUI from background thread — all UI updates must be on main thread"
+      ],
+      "performancePatterns": [
+        "URLSession shared instance overused — configure a custom session with timeout and cache policy",
+        "Blocking main thread with synchronous network calls (use async/await or completion handlers)",
+        "Excessive view re-rendering due to unnecessary @State/@ObservedObject updates",
+        "Large images loaded without resizing/downsampling before display",
+        "Memory leaks from strong reference cycles in delegate patterns"
+      ],
+      "bestPractices": [
+        "Use guard let/if let for safe Optional unwrapping",
+        "Use Result<Success, Failure> type for error-returning functions",
+        "Prefer value types (struct, enum) over reference types (class) where appropriate",
+        "Use weak/unowned references to break retain cycles",
+        "Mark classes as final when subclassing is not intended"
+      ]
+    },
+    "scala": {
+      "displayName": "Scala",
+      "fileExtensions": [
+        ".scala",
+        ".sc"
+      ],
+      "securityFocus": [
+        "SQL injection in raw query strings (use parameterized queries with Slick/Doobie bind variables)",
+        "Hard-coded credentials or secrets in source code",
+        "Unsafe deserialization of untrusted data",
+        "Missing input validation on HTTP request parameters and body"
+      ],
+      "bugPatterns": [
+        "Blocking a Future with Await.result in a thread pool context — causes thread starvation",
+        "Using null instead of Option[T] — prefer Option and pattern matching",
+        "Mutable shared state without synchronization (use Atomic or Actor model)",
+        "Uncaught exceptions in Future — always attach .recover or .recoverWith",
+        "HTTP client created per request — reuse a shared client (Akka HTTP, sttp) with connection pool"
+      ],
+      "performancePatterns": [
+        "Blocking IO operations on Futures running on computation ExecutionContext (use IO ExecutionContext)",
+        "Collecting entire DB resultset into memory instead of streaming (use Slick streaming/Reactive Streams)",
+        "Unnecessary serialization/deserialization in hot paths",
+        "Excessive object creation triggering GC pressure"
+      ],
+      "bestPractices": [
+        "Prefer Option[T] over null; use Either[Error, T] for error handling in functions",
+        "Use sealed traits for ADTs to enable exhaustive pattern matching",
+        "Handle all Future failures — a Future with no failure handling loses errors silently",
+        "Use case classes for immutable data",
+        "Avoid mutable state; prefer immutable collections"
+      ]
+    },
+    "apex": {
+      "displayName": "Apex (Salesforce)",
+      "fileExtensions": [
+        ".cls",
+        ".trigger"
+      ],
+      "securityFocus": [
+        "SOQL injection — never concatenate user input into dynamic SOQL (use Database.query with bind variables)",
+        "XSS in Visualforce controllers — escape output with HTMLENCODE()",
+        "Hard-coded Salesforce IDs or credentials (use Custom Metadata / Custom Settings)",
+        "Missing 'with sharing' keyword — data visibility rules not enforced",
+        "Insecure direct object reference — missing ownership check before DML on records"
+      ],
+      "bugPatterns": [
+        "SOQL queries inside for loops — violates governor limits (max 100 SOQL per transaction)",
+        "DML operations inside for loops — violates governor limits (max 150 DML per transaction)",
+        "Hardcoded record type IDs or user IDs — not portable between orgs",
+        "Trigger without handler class — logic directly in trigger body is not testable",
+        "Missing null check on relationship fields accessed via dot notation"
+      ],
+      "performancePatterns": [
+        "Non-bulkified triggers — code must handle collections of records, not single records",
+        "Using Database.query when a static SOQL query would suffice (less efficient)",
+        "Querying more fields than needed in SOQL",
+        "Not using SOQL aggregate queries (COUNT, SUM) when only the aggregate value is needed"
+      ],
+      "bestPractices": [
+        "Always use 'with sharing' unless 'without sharing' is explicitly required and documented",
+        "Write bulk-safe code — all DML and SOQL must operate on collections",
+        "Use trigger handler pattern (one trigger per object, delegate to handler class)",
+        "Achieve 100% test coverage with meaningful assertions",
+        "Use Custom Metadata Types for configuration instead of hard-coded values"
+      ]
+    },
+    "ocaml": {
+      "displayName": "OCaml",
+      "fileExtensions": [
+        ".ml",
+        ".mli"
+      ],
+      "securityFocus": [
+        "Format string vulnerabilities via Printf with user-controlled format string",
+        "Hard-coded credentials or secrets",
+        "Insufficient input validation before processing external data"
+      ],
+      "bugPatterns": [
+        "Non-exhaustive pattern matching — missing cases cause Match_failure at runtime",
+        "Integer overflow in arithmetic operations",
+        "Ignored exceptions from functions that return unit — use try/with",
+        "Mutable state shared across threads without synchronization (use Mutex)"
+      ],
+      "performancePatterns": [
+        "Non-tail-recursive functions on large lists — causes stack overflow (use tail-recursive variants with accumulator)",
+        "Excessive allocations from list concatenation with @ (use List.rev_append or Buffer for strings)",
+        "Repeated list traversals that could be combined into one pass",
+        "Lazy values forced multiple times when result should be cached"
+      ],
+      "bestPractices": [
+        "Handle all match cases explicitly — use _ wildcard only when truly intentional",
+        "Use Result or option types for error handling instead of exceptions for control flow",
+        "Prefer immutable data structures",
+        "Use the type system to enforce invariants at compile time"
+      ]
+    },
+    "jsp": {
+      "displayName": "JSP",
+      "fileExtensions": [
+        ".jsp",
+        ".jspx"
+      ],
+      "securityFocus": [
+        "XSS via unescaped EL expressions (${user.name} — use fn:escapeXml or c:out)",
+        "SQL injection in scriptlets that build query strings by concatenation",
+        "Session fixation — not invalidating session on authentication",
+        "Sensitive data exposed in HTML comments (visible in page source)"
+      ],
+      "bugPatterns": [
+        "Missing null checks on EL expressions — NullPointerException at render time",
+        "Unclosed resources (Connection, Statement, ResultSet) in scriptlets",
+        "Business logic in JSP scriptlets instead of Servlet/Controller layer (violates MVC)"
+      ],
+      "performancePatterns": [
+        "Heavy business logic or database queries directly in JSP (move to Servlet/Service layer)",
+        "Not using JSTL sql tags with connection pooling",
+        "Synchronizing on JSP page object — serializes all requests to the page"
+      ],
+      "bestPractices": [
+        "Use JSTL (c:out, c:forEach) instead of scriptlets",
+        "Use c:out or fn:escapeXml for all user-provided output to prevent XSS",
+        "Follow MVC pattern — JSP only for presentation, no business logic",
+        "Use JSP include directive for reusable fragments"
+      ]
+    },
+    "vf": {
+      "displayName": "Visualforce (Salesforce)",
+      "fileExtensions": [
+        ".page",
+        ".component"
+      ],
+      "securityFocus": [
+        "XSS via apex:outputText or apex:outputLabel with escape='false' (default is true — do not override)",
+        "Exposing sensitive record fields without checking user permissions in controller",
+        "SOQL injection in controller methods backing VF components (use bind variables)"
+      ],
+      "bugPatterns": [
+        "Controller action methods not checking record ownership before DML",
+        "Missing null check on controller properties accessed in VF expressions",
+        "Large data sets rendered without pagination — causes view state and memory issues",
+        "View state too large — store large data in transient variables"
+      ],
+      "performancePatterns": [
+        "Fetching all records without LIMIT in controller SOQL (use pagination / StandardSetController)",
+        "Non-bulkified controller actions performing DML inside loops",
+        "Expensive operations in getter methods (called multiple times per page render — cache result)"
+      ],
+      "bestPractices": [
+        "Always use escape='true' on outputText (it is the default — do not override to false)",
+        "Use 'with sharing' on all Apex controllers",
+        "Use StandardSetController for list views with pagination",
+        "Avoid inline SOQL in getters — query once in constructor or init action"
+      ]
+    },
+    "terraform": {
+      "displayName": "Terraform",
+      "fileExtensions": [
+        ".tf",
+        ".tfvars",
+        ".hcl"
+      ],
+      "securityFocus": [
+        "Hard-coded credentials, passwords, or secrets in .tf or .tfvars files (use Vault, environment variables, or cloud secret manager data sources)",
+        "Overly permissive IAM policies — wildcard actions (*) or wildcard resources (*) in production",
+        "Public network access to databases or storage — ensure databases are not publicly accessible",
+        "Unencrypted storage — S3 buckets, RDS, EBS volumes should have encryption enabled",
+        "S3 bucket without block_public_access settings — can expose data publicly",
+        "Security group with wide port ranges open to 0.0.0.0/0 — overly permissive ingress",
+        "Missing deletion protection on production databases (deletion_protection = false)",
+        "Sensitive output values exposed without sensitive = true flag"
+      ],
+      "bugPatterns": [
+        "Provider version not pinned — required_providers version constraint missing, breaks on provider update",
+        "Missing required_providers block — implicit provider version causes inconsistency across environments",
+        "Missing depends_on for implicit resource dependencies not captured by references",
+        "count used instead of for_each for resources with keys — causes ordering issues on removal",
+        "Referencing data source that may not exist without a lifecycle precondition",
+        "Missing backend configuration — state stored locally is not suitable for team use"
+      ],
+      "performancePatterns": [
+        "Data source queried on every plan when result is stable — use locals or outputs to cache",
+        "Large number of resources in a single state file — split into modules/workspaces to reduce blast radius",
+        "Missing lifecycle { create_before_destroy = true } for resources that cause downtime on replacement"
+      ],
+      "bestPractices": [
+        "Use remote state backend with state locking (S3 + DynamoDB, Terraform Cloud, GitLab-managed)",
+        "Pin all provider versions with ~> X.Y",
+        "Use workspaces or separate state files for environments (dev/staging/prod)",
+        "Run terraform fmt and terraform validate in CI pipeline",
+        "Use tflint and tfsec/checkov for security scanning",
+        "Mark sensitive variables with sensitive = true to prevent leakage in plan output",
+        "Use modules for reusable infrastructure patterns"
+      ]
+    },
+    "dockerfile": {
+      "displayName": "Dockerfile",
+      "fileExtensions": [],
+      "fileNames": [
+        "Dockerfile",
+        "Containerfile"
+      ],
+      "securityFocus": [
+        "Running as root — always add USER instruction with a non-root user before CMD/ENTRYPOINT",
+        "Secrets in ENV or ARG instructions — visible in image layers and docker history (use build secrets or runtime injection)",
+        "Using ADD with remote URLs instead of COPY + RUN curl with checksum verification",
+        "Exposing unnecessary ports in EXPOSE — only expose what is needed",
+        "Installing packages without version pinning — not reproducible (pin versions: apt-get install curl=7.x)"
+      ],
+      "bugPatterns": [
+        "Using :latest tag for base image — not reproducible, can silently break builds (use specific version or digest)",
+        "Running apt-get update in a separate RUN from apt-get install — stale package index in cached layer",
+        "COPY . . before installing dependencies — invalidates dependency cache on every code change",
+        "Missing .dockerignore file — copies .git, node_modules, secrets into image",
+        "CMD as shell string instead of JSON array — PID 1 is shell, not app (signals not forwarded properly)"
+      ],
+      "performancePatterns": [
+        "Not using multi-stage builds — final image includes build tools, compilers, dev dependencies",
+        "Missing --no-install-recommends on apt-get install — installs unnecessary packages",
+        "Copying large directories unnecessarily before filtering (rely on .dockerignore)",
+        "Not combining RUN commands — creates unnecessary layers increasing image size"
+      ],
+      "bestPractices": [
+        "Use specific base image versions with digest pinning (FROM node:20.11.0-alpine)",
+        "Add HEALTHCHECK instruction for service containers",
+        "Run as non-root user (addgroup + adduser or useradd, then USER instruction)",
+        "Combine apt-get update and install in single RUN and clean up apt lists afterward",
+        "Use multi-stage builds to minimize final image size",
+        "Order instructions from least to most frequently changed to maximize layer cache hits"
+      ]
+    },
+    "docker-compose": {
+      "displayName": "Docker Compose",
+      "fileExtensions": [],
+      "fileNames": [
+        "docker-compose.yml",
+        "docker-compose.yaml",
+        "compose.yml",
+        "compose.yaml"
+      ],
+      "securityFocus": [
+        "Privileged containers (privileged: true) — grants all Linux capabilities to container",
+        "Port bindings to all interfaces (- '5432:5432' exposes to network — use '127.0.0.1:5432:5432' for local-only services)",
+        "Secrets as plain-text environment variables — use Docker secrets or external secret manager",
+        "Missing read-only filesystem (read_only: true) for containers that do not need to write to disk",
+        "Mounting Docker socket (/var/run/docker.sock) — allows container to escape to host"
+      ],
+      "bugPatterns": [
+        "Missing depends_on with condition: service_healthy — service starts before dependency is ready",
+        "Hard-coded volume host paths — not portable across environments (use named volumes)",
+        "Missing restart policy — containers do not recover from crashes (add restart: unless-stopped)",
+        "Services sharing a network with more access than needed — use separate networks per service group"
+      ],
+      "performancePatterns": [
+        "Missing resource limits (deploy.resources.limits for memory and CPU) — single container can starve host",
+        "No health check defined for depends_on — compose cannot wait for readiness properly",
+        "Logging driver not configured — logs accumulate unbounded on host filesystem"
+      ],
+      "bestPractices": [
+        "Use named volumes instead of bind mounts for persistent data",
+        "Use .env file for environment-specific configuration (never commit .env with secrets)",
+        "Define resource limits for all services in production-like environments",
+        "Use healthcheck for all stateful services (databases, caches)",
+        "Use specific image versions, not :latest"
+      ]
+    },
+    "gitlab-ci": {
+      "displayName": "GitLab CI",
+      "fileExtensions": [],
+      "fileNames": [
+        ".gitlab-ci.yml"
+      ],
+      "securityFocus": [
+        "Hard-coded credentials or tokens in script steps — use CI/CD masked variables",
+        "Pulling and running unverified external scripts (curl https://... | bash) — verify checksums or use internal mirrors",
+        "Missing secret masking — variables containing secrets must be marked as Masked in CI/CD settings",
+        "Overly permissive job rules (when: always on protected branches) — require manual approval for production deployments",
+        "Using shell executor with insufficient isolation — prefer Docker executor"
+      ],
+      "bugPatterns": [
+        "Missing set -e in script blocks — errors silently ignored and job reports success",
+        "Cache key not including lock file — stale dependencies served from cache after package updates",
+        "Artifact paths do not match actual output paths — artifacts silently empty",
+        "Wrong stage ordering causing jobs to run before their dependencies complete",
+        "Missing needs or dependencies declaration — jobs wait unnecessarily in sequential stages"
+      ],
+      "performancePatterns": [
+        "Downloading dependencies on every job without cache — use cache: with correct key and paths",
+        "Not parallelizing independent jobs (test matrix, linting, security scan can run in parallel)",
+        "Uploading large artifacts that are not consumed by downstream jobs",
+        "Not using extends or !reference for shared job templates — duplicated configuration"
+      ],
+      "bestPractices": [
+        "Pin image tags with digest for reproducibility",
+        "Use extends or !reference for reusable job templates",
+        "Set timeout on jobs to prevent hung jobs from blocking runners indefinitely",
+        "Use needs: [] for DAG pipeline to skip unnecessary stage waits",
+        "Use environments with protection rules for production deployments",
+        "Run SAST and secret detection jobs on all merge requests"
+      ]
+    },
+    "azure-pipelines": {
+      "displayName": "Azure Pipelines",
+      "fileExtensions": [],
+      "fileNames": [
+        "azure-pipelines.yml",
+        "azure-pipelines.yaml"
+      ],
+      "securityFocus": [
+        "Hard-coded secrets in script steps — use secret pipeline variables or Azure Key Vault task",
+        "Missing secret masking — all sensitive variables must be marked as Secret in pipeline settings",
+        "Overly permissive service connections — scope to specific resource groups/subscriptions",
+        "Missing environment approvals for production deployments — add approval gates on environments",
+        "Using self-hosted agents for untrusted fork PR builds — fork PRs can access agent environment"
+      ],
+      "bugPatterns": [
+        "Missing dependsOn for pipeline stages — stages may run in wrong order",
+        "Condition expression referencing undefined variable — evaluates to empty string silently",
+        "Incorrect artifact download path — DownloadPipelineArtifact without explicit path causes confusion",
+        "continueOnError: true on critical steps — failures silently ignored and pipeline reports success",
+        "Missing checkout: self step in jobs that need source code"
+      ],
+      "performancePatterns": [
+        "Not caching dependencies between pipeline runs (NuGet, npm, pip cache tasks available)",
+        "Downloading unnecessary artifacts in every job — scope artifact downloads to jobs that need them",
+        "Sequential stages for independent workloads — use parallel jobs within a stage"
+      ],
+      "bestPractices": [
+        "Use pipeline templates (extends, template references) for reusable steps and policies",
+        "Pin task versions (e.g., DotNetCoreCLI@2) to avoid unexpected behavior after task updates",
+        "Use variable groups for shared configuration across pipelines",
+        "Store secrets in Azure Key Vault and reference via variable group + Key Vault link",
+        "Add timeout to jobs and steps to prevent indefinitely hanging pipelines"
+      ]
+    },
+    "json": {
+      "displayName": "JSON",
+      "fileExtensions": [
+        ".json"
+      ],
+      "securityFocus": [
+        "Hard-coded credentials, API keys, or connection strings in JSON config files",
+        "Sensitive default values in example/template JSON files committed to repository"
+      ],
+      "bugPatterns": [
+        "Trailing commas in JSON (not valid per spec — causes parse failure in strict parsers)",
+        "Incorrect data types for configuration values (string '80' instead of number 80 for port)"
+      ],
+      "performancePatterns": [],
+      "bestPractices": [
+        "Use JSON Schema validation for configuration files",
+        "Keep JSON config files free of secrets — use environment-specific overrides outside the repo"
+      ]
+    },
+    "xml": {
+      "displayName": "XML",
+      "fileExtensions": [
+        ".xml"
+      ],
+      "securityFocus": [
+        "XXE (XML External Entity) injection — DOCTYPE declarations with SYSTEM or PUBLIC entities",
+        "Sensitive data or credentials embedded in XML configuration files",
+        "XPath injection when building XPath queries from user input"
+      ],
+      "bugPatterns": [
+        "Missing XML namespace declarations causing parser failures",
+        "Encoding declaration mismatch between XML header and actual file encoding"
+      ],
+      "performancePatterns": [
+        "Loading entire large XML document into DOM (use SAX or StAX streaming parser for large files)"
+      ],
+      "bestPractices": [
+        "Disable DOCTYPE/DTD processing in XML parsers to prevent XXE",
+        "Use XML Schema (XSD) validation for configuration and data exchange files"
+      ]
+    },
+    "shell": {
+      "displayName": "Shell/Bash",
+      "fileExtensions": [
+        ".sh",
+        ".bash",
+        ".zsh",
+        ".ksh",
+        ".csh"
+      ],
+      "securityFocus": [
+        "Command injection via unquoted variables (always double-quote variable expansions: \"$var\")",
+        "Path traversal through unsanitized file paths",
+        "Unsafe evaluation of dynamic content (avoid eval on any external or user-controlled input)",
+        "Hard-coded credentials and API keys in scripts",
+        "Improper temporary file creation (use mktemp, never predictable names in /tmp)",
+        "Unsafe pipe-to-shell patterns — verify checksums or use package managers",
+        "Word splitting on unquoted variables causing unexpected behavior",
+        "Insecure use of sudo without input validation"
+      ],
+      "bugPatterns": [
+        "Missing error handling — use set -euo pipefail at script start",
+        "Uninitialized variables causing silent empty string substitution (use set -u or default: ${var:-default})",
+        "Incorrect test syntax ([ ] vs [[ ]] in Bash) — prefer [[ ]] for string comparisons",
+        "Missing shebang line — interpreter undefined",
+        "cd without error handling — subsequent commands run in wrong directory if cd fails",
+        "Using $? after multiple commands — $? only captures last command exit code",
+        "Missing quotes around variables with spaces causing word splitting and globbing"
+      ],
+      "performancePatterns": [
+        "Unnecessary subshells and command substitutions in tight loops",
+        "Useless use of cat (cat file | grep — use grep directly with file argument)",
+        "Multiple grep/sed/awk in a pipeline when single awk command would suffice",
+        "Forking external commands in tight loops (use Bash built-ins where possible)"
+      ],
+      "bestPractices": [
+        "Always use shebang (#!/usr/bin/env bash or #!/bin/sh for portability)",
+        "Enable strict mode: set -euo pipefail",
+        "Quote all variable expansions: \"$var\", \"$@\", \"${array[@]}\"",
+        "Use local for function-scoped variables",
+        "Prefer [[ ]] over [ ] for conditionals in Bash",
+        "Use $() instead of backticks for command substitution",
+        "Validate all external inputs before use",
+        "Use ShellCheck for static analysis"
+      ]
+    }
+  },
+  "detectionPatterns": {
+    "credentials": {
+      "description": "Patterns to detect hard-coded credentials",
+      "severity": "Critical",
+      "category": "Security"
+    },
+    "sqlInjection": {
+      "description": "Patterns to detect SQL injection vulnerabilities",
+      "severity": "Critical",
+      "category": "Security"
+    },
+    "commandInjection": {
+      "description": "Patterns to detect command injection vulnerabilities",
+      "severity": "Critical",
+      "category": "Security"
+    },
+    "resourceExhaustion": {
+      "description": "Patterns to detect HTTP/DB/file descriptor connection exhaustion",
+      "severity": "High",
+      "category": "Performance"
+    },
+    "inputValidation": {
+      "description": "Patterns to detect missing input/parameter validation in API routes",
+      "severity": "Medium",
+      "category": "Bug"
+    }
+  }
+}
