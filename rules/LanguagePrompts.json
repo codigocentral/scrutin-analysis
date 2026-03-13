@@ -142,7 +142,11 @@
         "Hard-coded credentials or API keys",
         "Prototype pollution vulnerabilities (Object.assign, merge functions with user input)",
         "Insecure regular expressions (ReDoS — catastrophic backtracking)",
-        "Open redirects with unvalidated URLs"
+        "Open redirects with unvalidated URLs",
+        "Server-side request forgery (SSRF) when proxying user-supplied URLs without validation",
+        "Insecure deserialization of JSON with reviver functions that execute code",
+        "Missing Content-Security-Policy headers in Express/Fastify responses",
+        "JWT verification bypass — using algorithm 'none' or symmetric key confusion"
       ],
       "bugPatterns": [
         "Implicit global variables (missing var/let/const)",
@@ -152,14 +156,18 @@
         "This binding issues in callbacks (use arrow functions or .bind())",
         "Hoisting confusion with var",
         "fetch/axios without timeout or AbortController — connection may hang indefinitely",
-        "Missing input type validation before using as number, date, or object key"
+        "Missing input type validation before using as number, date, or object key",
+        "Event listener not removed on cleanup — causes memory leaks in long-lived applications",
+        "Circular dependency between modules causing undefined imports at runtime"
       ],
       "performancePatterns": [
         "Creating new DB connection per request instead of reusing a connection pool",
         "Synchronous file/IO operations in Node.js blocking the event loop (use async variants)",
         "Memory leaks from closures retaining large objects or event listeners not removed",
         "Excessive DOM manipulation (batch updates, use DocumentFragment)",
-        "Blocking operations in main thread"
+        "Blocking operations in main thread",
+        "Large JSON.parse/stringify on main thread for big payloads — use streaming or web workers",
+        "Not using pagination or cursor-based fetching for large database result sets"
       ],
       "bestPractices": [
         "Use const by default, let when reassignment needed, avoid var",
@@ -167,8 +175,23 @@
         "Use arrow functions for callbacks",
         "Use destructuring for cleaner code",
         "Handle all Promise rejections (.catch() or try/catch in async)",
-        "Enable strict mode ('use strict')"
-      ]
+        "Enable strict mode ('use strict')",
+        "Use ESLint with a shared config for consistent code style",
+        "Validate all external inputs at API boundaries with a schema library (Joi, Zod, Yup)"
+      ],
+      "frameworkSpecific": {
+        "express": [
+          "Missing error-handling middleware (4-argument function) — unhandled errors crash the process",
+          "Not using helmet() middleware for security headers",
+          "Missing rate limiting on public endpoints (use express-rate-limit)",
+          "Serving static files without cache headers"
+        ],
+        "node": [
+          "Unhandled promise rejections crashing the process (listen for unhandledRejection event)",
+          "Using process.env without validation — missing required variables cause runtime errors",
+          "Child process spawned with shell: true and user input — command injection risk"
+        ]
+      }
     },
     "python": {
       "displayName": "Python",
@@ -299,32 +322,65 @@
         ".kts"
       ],
       "securityFocus": [
-        "SQL injection in database queries (use parameterized queries)",
-        "Hard-coded credentials or secrets",
-        "Insecure network configuration (cleartext traffic, disabled certificate validation)",
-        "Path traversal vulnerabilities"
+        "SQL injection in database queries (use parameterized queries with ? placeholders or ORM bind variables)",
+        "Hard-coded credentials, API keys, or secrets in source code (use environment variables or secret managers)",
+        "Insecure network configuration (cleartext traffic, disabled certificate validation in OkHttp)",
+        "Path traversal vulnerabilities in file operations (validate and sanitize file paths)",
+        "Insecure WebView configuration — JavaScript enabled with addJavascriptInterface exposes native methods",
+        "Sensitive data stored in SharedPreferences without encryption (use EncryptedSharedPreferences)",
+        "Improper SSL pinning implementation — missing or bypassable certificate pinning in OkHttp",
+        "Exported Android components (Activity, BroadcastReceiver) without permission restrictions",
+        "Weak cryptographic algorithms (MD5, SHA1) — use SHA-256+ for hashing and AES-256 for encryption"
       ],
       "bugPatterns": [
         "Null safety bypasses (!! operator overuse — use safe call ?. or let {})",
         "Coroutine scope leaks (GlobalScope usage, coroutines not cancelled on lifecycle end)",
-        "Late init var used before initialization",
+        "Late init var used before initialization (causes UninitializedPropertyAccessException)",
         "Type casting without safety (as instead of as? — throws ClassCastException)",
-        "Missing timeout in coroutine network or DB calls (use withTimeout {})"
+        "Missing timeout in coroutine network or DB calls (use withTimeout {})",
+        "Coroutine exception handler not set — unhandled exceptions crash the application",
+        "Flow collection in wrong lifecycle state — collect in repeatOnLifecycle for Android UI",
+        "Sealed class when branch missing in exhaustive matching — compiler warning but runtime risk",
+        "Data class with mutable properties used as Map key — hashCode changes after insertion",
+        "Channel not closed after use — receiving coroutine hangs indefinitely"
       ],
       "performancePatterns": [
         "Creating new OkHttpClient per request — reuse a shared instance with connection pool",
         "Blocking calls on Dispatchers.Main (use Dispatchers.IO for all IO operations)",
-        "Unnecessary object allocations in hot paths",
-        "Inefficient collection operations (prefer sequences for large collections)",
-        "Database connections not returned to pool"
+        "Unnecessary object allocations in hot paths (use inline functions and value classes)",
+        "Inefficient collection operations (prefer sequences for large collections with chained transformations)",
+        "Database connections not returned to pool — use use {} extension or try-with-resources pattern",
+        "Room database queries on main thread — use suspend functions or Flow for async queries",
+        "Excessive Bitmap allocations without recycling — causes OutOfMemoryError on Android"
       ],
       "bestPractices": [
-        "Use data classes for DTOs",
-        "Prefer val over var",
+        "Use data classes for DTOs and value objects",
+        "Prefer val over var — immutability by default",
         "Use sealed classes for restricted hierarchies (state machines, result types)",
-        "Use extension functions appropriately — avoid polluting types",
-        "Handle nullability properly with safe calls and elvis operator"
-      ]
+        "Use extension functions appropriately — avoid polluting types with unrelated extensions",
+        "Handle nullability properly with safe calls (?.) and elvis operator (?:)",
+        "Use coroutines with structured concurrency (CoroutineScope, supervisorScope)",
+        "Prefer Flow over LiveData for reactive streams in new code",
+        "Use Kotlin DSL for Gradle build scripts (build.gradle.kts)"
+      ],
+      "frameworkSpecific": {
+        "android": [
+          "Activity/Fragment leaks — ViewModel should not hold references to Activity or Context",
+          "Missing lifecycle-aware coroutine scope — use viewModelScope or lifecycleScope",
+          "Network calls on main thread — causes NetworkOnMainThreadException",
+          "Missing runtime permission checks for dangerous permissions (camera, location, storage)"
+        ],
+        "ktor": [
+          "Missing authentication plugin on protected routes",
+          "Not configuring HttpClient engine timeout (connectTimeout, requestTimeout)",
+          "Content negotiation not installed — JSON serialization fails silently"
+        ],
+        "spring": [
+          "Missing @Transactional on service methods that perform multiple database operations",
+          "Coroutine controller methods not returning Flow or suspend — blocks reactor thread",
+          "Missing validation annotations (@Valid, @NotNull) on request DTOs"
+        ]
+      }
     },
     "ruby": {
       "displayName": "Ruby",
@@ -336,28 +392,56 @@
         "SQL injection through string interpolation in ActiveRecord queries (use ? placeholders or Arel)",
         "Command injection via backticks, system(), or Open3 with user input",
         "Mass assignment vulnerabilities in Rails (use strong parameters — permit only expected attrs)",
-        "Hard-coded credentials or secrets",
+        "Hard-coded credentials or secrets (use Rails credentials or environment variables)",
         "Unsafe YAML loading (Psych.safe_load instead of YAML.load)",
-        "CSRF protection bypass (protect_from_forgery should not be disabled)"
+        "CSRF protection bypass (protect_from_forgery should not be disabled)",
+        "Open redirect via redirect_to with user-controlled URL (validate redirect target)",
+        "Insecure direct object reference — missing authorization check before accessing records",
+        "ERB template rendering user input without escaping (use html_safe only on trusted content)"
       ],
       "bugPatterns": [
         "Method visibility issues (public methods intended to be private)",
-        "Mutable default values in method signatures",
+        "Mutable default values in method signatures (frozen string literals prevent some issues)",
         "Exception handling too broad (rescue StandardError vs rescue specific exception)",
-        "Missing HTTP timeout on external calls (Net::HTTP, Faraday, HTTParty without timeout)"
+        "Missing HTTP timeout on external calls (Net::HTTP, Faraday, HTTParty without timeout)",
+        "N+1 query not detected — accessing association in loop without preloading",
+        "Symbol to proc (&:method) on nil receiver — causes NoMethodError",
+        "Missing return value check on save/update — use save! or check boolean return",
+        "Thread-unsafe code in multi-threaded servers (Puma) — shared mutable state without Mutex",
+        "Circular require dependencies causing partially loaded constants"
       ],
       "performancePatterns": [
         "N+1 queries in ActiveRecord (use includes, eager_load, or preload)",
         "Database connections not returned to pool (ActiveRecord connection pool exhaustion)",
-        "Inefficient database queries (select * when only few columns needed)",
-        "Memory bloat from loading large ActiveRecord collections (use find_each with batches)"
+        "Inefficient database queries (select * when only few columns needed — use select or pluck)",
+        "Memory bloat from loading large ActiveRecord collections (use find_each with batches)",
+        "String concatenation in loops — use Array#join or StringIO",
+        "Not using counter_cache for has_many count queries — triggers COUNT query each time",
+        "Excessive object allocations in hot paths — use frozen string literals and avoid unnecessary intermediate arrays"
       ],
       "bestPractices": [
         "Follow Ruby style guide (enforce with RuboCop)",
         "Use strong parameters in Rails controllers",
         "Prefer symbols over strings for hash keys",
-        "Use service objects for complex business logic"
-      ]
+        "Use service objects for complex business logic",
+        "Use frozen_string_literal: true magic comment for performance",
+        "Prefer keyword arguments for methods with multiple parameters",
+        "Use ActiveRecord scopes for reusable query conditions",
+        "Write request specs and model specs with RSpec and FactoryBot"
+      ],
+      "frameworkSpecific": {
+        "rails": [
+          "Missing authentication check (before_action :authenticate_user!) on controllers",
+          "Missing authorization — user can access records they do not own (use Pundit or CanCanCan)",
+          "Callbacks (before_save, after_create) with side effects — hard to test and debug",
+          "Database migrations without rollback method — deploy cannot be reverted safely"
+        ],
+        "sidekiq": [
+          "Job arguments not serializable to JSON — complex objects cause serialization errors",
+          "Missing retry configuration — failed jobs retry indefinitely by default",
+          "Long-running jobs without heartbeat — Sidekiq may kill them after timeout"
+        ]
+      }
     },
     "php": {
       "displayName": "PHP",
@@ -371,25 +455,53 @@
         "File inclusion vulnerabilities (require/include with user-controlled path)",
         "Hard-coded credentials in source code",
         "Insecure session configuration (session.cookie_httponly, session.cookie_secure not set)",
-        "Unrestricted file upload (missing MIME type validation and extension whitelist)"
+        "Unrestricted file upload (missing MIME type validation and extension whitelist)",
+        "Insecure deserialization via unserialize() with user-controlled input (use json_decode instead)",
+        "SSRF when making HTTP requests with user-supplied URLs (validate and whitelist allowed hosts)"
       ],
       "bugPatterns": [
         "Type coercion issues — loose comparison (== instead of ===) causing unexpected matches",
         "Undefined variable usage without isset() check",
         "Reference vs value confusion in arrays (& modifier side effects)",
-        "HTTP requests without timeout — file_get_contents or cURL without CURLOPT_TIMEOUT"
+        "HTTP requests without timeout — file_get_contents or cURL without CURLOPT_TIMEOUT",
+        "Missing return type declarations causing unexpected null returns",
+        "Error suppression with @ operator hiding real issues",
+        "Incorrect use of empty() — returns true for '0' and 0 which may be valid values",
+        "Foreach by reference (&$item) without unset after loop — last element mutated unexpectedly",
+        "DateTime mutation — DateTime::modify changes the original object (use DateTimeImmutable)"
       ],
       "performancePatterns": [
         "N+1 queries in database operations (eager load with JOINs or ORM relationships)",
-        "Creating new database connection per request instead of using PDO persistent connections",
-        "Large file processing without streaming (use fgets/fread instead of file_get_contents for large files)"
+        "Creating new database connection per request instead of using PDO persistent connections or connection pool",
+        "Large file processing without streaming (use fgets/fread instead of file_get_contents for large files)",
+        "Not using opcode cache (OPcache) in production — every request re-compiles PHP files",
+        "Autoloading entire dependency tree when only a subset is needed",
+        "Regex compilation in tight loops — compile once and reuse with preg_match on stored pattern",
+        "Loading entire database result set into memory — use cursor or chunked iteration"
       ],
       "bestPractices": [
         "Use strict type declarations (declare(strict_types=1))",
         "Follow PSR-12 coding standards",
-        "Use dependency injection and containers",
-        "Validate all input data with filter_var or a validation library"
-      ]
+        "Use dependency injection and containers (Laravel container, Symfony DI)",
+        "Validate all input data with filter_var or a validation library",
+        "Use Composer for dependency management with pinned versions",
+        "Use PHP static analysis tools (PHPStan, Psalm) at high levels",
+        "Prefer DateTimeImmutable over DateTime to avoid mutation bugs",
+        "Use enums (PHP 8.1+) instead of class constants for enumerated values"
+      ],
+      "frameworkSpecific": {
+        "laravel": [
+          "Missing authorization policy — gates and policies not defined for resource access",
+          "Mass assignment vulnerability — $fillable or $guarded not properly configured on Eloquent models",
+          "Missing validation in form requests — controller logic handles unvalidated data",
+          "Queued jobs without retry/backoff configuration — failed jobs retry indefinitely"
+        ],
+        "symfony": [
+          "Missing CSRF token validation on forms (use csrf_token() in Twig templates)",
+          "Voter not implemented for fine-grained authorization",
+          "Service not properly tagged or autowired — dependency injection fails silently"
+        ]
+      }
     },
     "rust": {
       "displayName": "Rust",
@@ -399,28 +511,62 @@
       "securityFocus": [
         "Unsafe blocks with memory safety issues — document invariants and minimize scope",
         "SQL injection in raw queries (use sqlx bind parameters, not format! macro)",
-        "Hard-coded credentials or secrets",
-        "Integer overflow — use checked_add/checked_mul or saturating arithmetic in critical paths"
+        "Hard-coded credentials or secrets in source code",
+        "Integer overflow — use checked_add/checked_mul or saturating arithmetic in critical paths",
+        "Unvalidated user input passed to file system operations (path traversal via Path::join with ..)",
+        "Command injection via std::process::Command with shell interpolation of user input",
+        "Timing side-channel in secret comparison (use constant_time_eq for comparing hashes/tokens)",
+        "Unsafe Send/Sync implementations on types with interior mutability — causes data races",
+        "Deserialization of untrusted data with serde without size limits — denial of service via large payloads"
       ],
       "bugPatterns": [
         "Panic in production code via unwrap() or expect() on None/Err (use ? operator or match)",
         "Deadlocks from incorrect lock ordering (always acquire multiple locks in the same order)",
         "Memory leaks through Rc<RefCell<T>> reference cycles (use Weak for back-references)",
-        "HTTP client (reqwest) created per-request — build Client once and reuse (connection pooling built-in)"
+        "HTTP client (reqwest) created per-request — build Client once and reuse (connection pooling built-in)",
+        "Mutex poisoning not handled — lock() returns Err after a thread panicked while holding the lock",
+        "Tokio runtime blocked by synchronous code — use spawn_blocking for CPU-bound or blocking IO",
+        "Iterator consumed twice — iterators are single-use in Rust (clone or collect first)",
+        "Lifetime elision hiding borrow conflicts — explicit lifetime annotations clarify ownership",
+        "Off-by-one errors in slice indexing — prefer .get() with bounds checking over direct indexing",
+        "Drop order dependency — struct fields dropped in declaration order, may cause use-after-free in unsafe"
       ],
       "performancePatterns": [
         "Unnecessary cloning of large data structures (pass references where ownership not needed)",
         "Blocking operations inside async context (use tokio::task::spawn_blocking for CPU-bound work)",
         "Inefficient string operations — use String::with_capacity when size is known",
-        "Excessive heap allocations in hot paths (use stack-allocated arrays when size is bounded)"
+        "Excessive heap allocations in hot paths (use stack-allocated arrays when size is bounded)",
+        "Not using zero-copy deserialization (serde borrow) for large payloads where applicable",
+        "HashMap with default hasher in performance-critical code — consider FxHashMap or AHashMap",
+        "Excessive Arc<Mutex<T>> contention — consider lock-free data structures or sharding"
       ],
       "bestPractices": [
         "Use clippy and address all warnings before merging",
         "Prefer ? operator over unwrap/expect in functions that return Result",
         "Use appropriate error types (thiserror for libraries, anyhow for applications)",
         "Document public APIs with doc comments including examples",
-        "Write tests including edge cases and error paths"
-      ]
+        "Write tests including edge cases and error paths",
+        "Use #[must_use] on functions where ignoring the return value is likely a bug",
+        "Prefer Into/From trait implementations over manual conversion functions",
+        "Use cargo fmt and enforce formatting in CI"
+      ],
+      "frameworkSpecific": {
+        "actixweb": [
+          "Missing error response type — Handler returning String instead of proper HttpResponse with status code",
+          "Shared mutable state without web::Data<Mutex<T>> — causes data races",
+          "Missing extractors validation — Path, Query, Json extractors silently reject malformed input"
+        ],
+        "axum": [
+          "Missing tower middleware layers for timeout, rate limiting, or CORS",
+          "State not shared via Extension or State extractor — handler cannot access application state",
+          "Router fallback not configured — returns empty 404 without helpful error message"
+        ],
+        "tokio": [
+          "Blocking the tokio runtime with synchronous IO (use tokio::fs, not std::fs)",
+          "Spawned tasks not joined — errors and panics silently dropped",
+          "Missing timeout on async operations — use tokio::time::timeout to prevent hanging"
+        ]
+      }
     },
     "cpp": {
       "displayName": "C/C++",
@@ -487,33 +633,66 @@
       ],
       "securityFocus": [
         "Hard-coded credentials, API keys, or tokens in source code (use Keychain or environment config)",
-        "Insecure URLSession configuration — disabled certificate validation",
-        "Sensitive data logged via print() — avoid logging PII, passwords, or tokens",
-        "Keychain misuse — storing secrets in UserDefaults instead of Keychain",
-        "Cleartext HTTP traffic (missing NSAllowsArbitraryLoads restriction in Info.plist)"
+        "Insecure URLSession configuration — disabled certificate validation (never set serverTrustPolicy to .disableEvaluation in production)",
+        "Sensitive data logged via print() or os_log — avoid logging PII, passwords, or tokens",
+        "Keychain misuse — storing secrets in UserDefaults instead of Keychain (UserDefaults is not encrypted)",
+        "Cleartext HTTP traffic (missing App Transport Security enforcement in Info.plist — restrict NSAllowsArbitraryLoads)",
+        "SQL injection in SQLite queries via string interpolation (use parameterized queries with ? placeholders)",
+        "Jailbreak detection bypass — security checks relying solely on file existence are trivially bypassed",
+        "Improper data protection class — sensitive files should use .completeProtection (NSFileProtectionComplete)",
+        "WebView JavaScript injection — WKWebView with unrestricted evaluateJavaScript and addScriptMessageHandler allows code execution",
+        "Insecure clipboard usage — sensitive data copied to UIPasteboard is accessible by other apps"
       ],
       "bugPatterns": [
         "Force unwrapping with ! on Optional — use guard let, if let, or ?? instead",
         "Force casting with as! — use as? and handle nil case explicitly",
         "Retain cycles in closures — capture self weakly ([weak self]) in escaping closures",
-        "URLSession data tasks without timeout — requests may hang indefinitely",
+        "URLSession data tasks without timeout — requests may hang indefinitely (set timeoutIntervalForRequest)",
         "NotificationCenter observer not removed on deinit — causes crashes on deallocated observer",
-        "Accessing UIKit/SwiftUI from background thread — all UI updates must be on main thread"
+        "Accessing UIKit/SwiftUI from background thread — all UI updates must be on @MainActor or DispatchQueue.main",
+        "Unhandled async Task errors — Tasks that throw are silently dropped if not awaited or caught",
+        "Data race in actor-isolated state accessed from nonisolated context (use await for actor method calls)",
+        "Codable decoding failure on missing keys without default values — use decodeIfPresent or CodingKeys with defaults",
+        "Infinite recursion in computed properties that reference themselves"
       ],
       "performancePatterns": [
         "URLSession shared instance overused — configure a custom session with timeout and cache policy",
         "Blocking main thread with synchronous network calls (use async/await or completion handlers)",
-        "Excessive view re-rendering due to unnecessary @State/@ObservedObject updates",
-        "Large images loaded without resizing/downsampling before display",
-        "Memory leaks from strong reference cycles in delegate patterns"
+        "Excessive view re-rendering due to unnecessary @State/@ObservedObject updates in SwiftUI",
+        "Large images loaded without resizing/downsampling before display (use CGImageSource with kCGImageSourceThumbnailMaxPixelSize)",
+        "Memory leaks from strong reference cycles in delegate patterns (declare delegates as weak var)",
+        "Creating DateFormatter or NumberFormatter inside loops — cache formatters as static properties",
+        "Excessive use of AnyView in SwiftUI erasing type information and disabling diff optimization",
+        "Core Data fetch requests without fetch limits or batch sizes loading entire dataset into memory"
       ],
       "bestPractices": [
-        "Use guard let/if let for safe Optional unwrapping",
+        "Use guard let/if let for safe Optional unwrapping — avoid force unwrap (!)",
         "Use Result<Success, Failure> type for error-returning functions",
         "Prefer value types (struct, enum) over reference types (class) where appropriate",
-        "Use weak/unowned references to break retain cycles",
-        "Mark classes as final when subclassing is not intended"
-      ]
+        "Use weak/unowned references to break retain cycles in closures and delegates",
+        "Mark classes as final when subclassing is not intended (enables compiler optimizations)",
+        "Use Swift Concurrency (async/await, actors) instead of GCD for new code",
+        "Prefer Codable for JSON serialization instead of manual parsing",
+        "Use @MainActor for view models and UI-bound classes to ensure thread safety"
+      ],
+      "frameworkSpecific": {
+        "swiftui": [
+          "Missing @StateObject for owned observable objects (using @ObservedObject causes recreation on parent re-render)",
+          "Expensive computations in body property — extract to computed properties or cache in onAppear",
+          "Missing .task modifier for async loading — using .onAppear with Task {} does not auto-cancel",
+          "NavigationStack path not using NavigationPath for type-safe programmatic navigation"
+        ],
+        "uikit": [
+          "Missing dequeueReusableCell in UITableView/UICollectionView causing excessive cell allocation",
+          "Not invalidating layout on orientation change — constraints must adapt to size classes",
+          "Memory leaks from NotificationCenter observers not removed in deinit"
+        ],
+        "vapor": [
+          "Database queries not using async/await — blocking EventLoop threads causes thread starvation",
+          "Missing authentication middleware on protected routes",
+          "Returning raw SQL results without DTO mapping — leaks database schema to client"
+        ]
+      }
     },
     "scala": {
       "displayName": "Scala",
@@ -523,30 +702,64 @@
       ],
       "securityFocus": [
         "SQL injection in raw query strings (use parameterized queries with Slick/Doobie bind variables)",
-        "Hard-coded credentials or secrets in source code",
-        "Unsafe deserialization of untrusted data",
-        "Missing input validation on HTTP request parameters and body"
+        "Hard-coded credentials or secrets in source code (use environment variables or config files excluded from VCS)",
+        "Unsafe deserialization of untrusted data (Java serialization or Kryo without class whitelisting)",
+        "Missing input validation on HTTP request parameters and body (use Play validators or custom extractors)",
+        "Command injection via Runtime.exec or Process with user-controlled arguments",
+        "XML External Entity (XXE) injection in Scala XML library (disable DOCTYPE processing)",
+        "SSRF when making HTTP requests with user-supplied URLs (validate scheme and host whitelist)",
+        "Insecure random number generation (use java.security.SecureRandom, not scala.util.Random for security)",
+        "Logging sensitive data — PII, tokens, or passwords logged via slf4j/logback"
       ],
       "bugPatterns": [
         "Blocking a Future with Await.result in a thread pool context — causes thread starvation",
         "Using null instead of Option[T] — prefer Option and pattern matching",
-        "Mutable shared state without synchronization (use Atomic or Actor model)",
+        "Mutable shared state without synchronization (use Atomic, Actor model, or Ref from ZIO/Cats Effect)",
         "Uncaught exceptions in Future — always attach .recover or .recoverWith",
-        "HTTP client created per request — reuse a shared client (Akka HTTP, sttp) with connection pool"
+        "HTTP client created per request — reuse a shared client (Akka HTTP, sttp) with connection pool",
+        "Pattern match not exhaustive on sealed trait — missing cases cause MatchError at runtime",
+        "Implicit conversion hiding type errors — unexpected automatic conversions cause subtle bugs",
+        "Future callback executing on wrong ExecutionContext — blocking IO on computation pool",
+        "Using var in concurrent context without volatile or atomic — visibility issues across threads",
+        "Try.get without checking isSuccess — throws the original exception"
       ],
       "performancePatterns": [
-        "Blocking IO operations on Futures running on computation ExecutionContext (use IO ExecutionContext)",
-        "Collecting entire DB resultset into memory instead of streaming (use Slick streaming/Reactive Streams)",
+        "Blocking IO operations on Futures running on computation ExecutionContext (use blocking {} or separate IO pool)",
+        "Collecting entire DB resultset into memory instead of streaming (use Slick streaming/Reactive Streams/fs2)",
         "Unnecessary serialization/deserialization in hot paths",
-        "Excessive object creation triggering GC pressure"
+        "Excessive object creation triggering GC pressure — use value classes or opaque types",
+        "Repeated collection traversals — chain operations or use lazy views",
+        "Not using parallel collections or Futures for independent CPU-bound tasks",
+        "String interpolation in tight loops creating intermediate String objects"
       ],
       "bestPractices": [
         "Prefer Option[T] over null; use Either[Error, T] for error handling in functions",
         "Use sealed traits for ADTs to enable exhaustive pattern matching",
         "Handle all Future failures — a Future with no failure handling loses errors silently",
-        "Use case classes for immutable data",
-        "Avoid mutable state; prefer immutable collections"
-      ]
+        "Use case classes for immutable data with automatic equals/hashCode/copy",
+        "Avoid mutable state; prefer immutable collections and vals",
+        "Use for-comprehension for composing Futures, Options, or Either values",
+        "Prefer type classes over inheritance for polymorphism (ad-hoc polymorphism)",
+        "Use sbt-scalafmt for consistent formatting and scalafix for automated refactoring"
+      ],
+      "frameworkSpecific": {
+        "play": [
+          "Missing CSRF protection on state-changing routes (use CSRFCheck filter)",
+          "Action.async without recovery — unhandled Future failure returns 500 without logging",
+          "Blocking code in Action body — use play.api.libs.concurrent.CustomExecutionContext for IO",
+          "Hardcoded routes instead of using reverse routing (routes.controllers.*)"
+        ],
+        "akka": [
+          "Blocking inside Actor receive — use pipeTo pattern or separate dispatcher for IO",
+          "Actor not handling unknown messages — dead letters accumulate silently",
+          "Missing supervision strategy — child actor failures cause default restart behavior"
+        ],
+        "cats-effect": [
+          "Using IO.unsafeRunSync in production code — blocks the fiber scheduler",
+          "Resource not acquired with Resource.make — cleanup not guaranteed on failure",
+          "Missing error handling on IO — use handleErrorWith or attempt"
+        ]
+      }
     },
     "apex": {
       "displayName": "Apex (Salesforce)",
@@ -555,32 +768,60 @@
         ".trigger"
       ],
       "securityFocus": [
-        "SOQL injection — never concatenate user input into dynamic SOQL (use Database.query with bind variables)",
-        "XSS in Visualforce controllers — escape output with HTMLENCODE()",
-        "Hard-coded Salesforce IDs or credentials (use Custom Metadata / Custom Settings)",
-        "Missing 'with sharing' keyword — data visibility rules not enforced",
-        "Insecure direct object reference — missing ownership check before DML on records"
+        "SOQL injection — never concatenate user input into dynamic SOQL (use Database.query with bind variables or String.escapeSingleQuotes)",
+        "XSS in Visualforce controllers — escape output with HTMLENCODE() or JSENCODE() for JavaScript contexts",
+        "Hard-coded Salesforce IDs or credentials (use Custom Metadata Types, Custom Settings, or Named Credentials)",
+        "Missing 'with sharing' keyword — data visibility rules not enforced, user sees all records",
+        "Insecure direct object reference — missing ownership check or CRUD/FLS validation before DML on records",
+        "SOSL injection in dynamic search queries (use bind variables with Search.query)",
+        "Missing CRUD and FLS checks — Schema.sObjectType.Account.fields.Name.isAccessible() before field access",
+        "Open redirect in controller page references (validate URL before redirecting)",
+        "Exposing sensitive field data in debug logs — System.debug() output visible in production logs"
       ],
       "bugPatterns": [
         "SOQL queries inside for loops — violates governor limits (max 100 SOQL per transaction)",
         "DML operations inside for loops — violates governor limits (max 150 DML per transaction)",
-        "Hardcoded record type IDs or user IDs — not portable between orgs",
-        "Trigger without handler class — logic directly in trigger body is not testable",
-        "Missing null check on relationship fields accessed via dot notation"
+        "Hardcoded record type IDs or user IDs — not portable between orgs (query by DeveloperName)",
+        "Trigger without handler class — logic directly in trigger body is not testable or reusable",
+        "Missing null check on relationship fields accessed via dot notation (NullPointerException)",
+        "Map.get() without containsKey check — returns null and may cause NullPointerException downstream",
+        "Trigger.new vs Trigger.old confusion — using wrong context variable for before/after triggers",
+        "Missing Test.startTest()/Test.stopTest() around async operations in test methods",
+        "CPU timeout from inefficient loops or nested iterations over large record sets",
+        "Callout after DML in same transaction — causes CalloutException (reorder operations or use @future)"
       ],
       "performancePatterns": [
         "Non-bulkified triggers — code must handle collections of records, not single records",
-        "Using Database.query when a static SOQL query would suffice (less efficient)",
-        "Querying more fields than needed in SOQL",
-        "Not using SOQL aggregate queries (COUNT, SUM) when only the aggregate value is needed"
+        "Using Database.query when a static SOQL query would suffice (static SOQL is compiled and cached)",
+        "Querying more fields than needed in SOQL — select only required fields to reduce heap usage",
+        "Not using SOQL aggregate queries (COUNT, SUM) when only the aggregate value is needed",
+        "Recursive trigger execution without static flag guard — causes stack depth exception",
+        "Loading related records with subqueries instead of separate targeted queries when only parent data is needed",
+        "Not using Limits class to check remaining governor limits before expensive operations"
       ],
       "bestPractices": [
         "Always use 'with sharing' unless 'without sharing' is explicitly required and documented",
-        "Write bulk-safe code — all DML and SOQL must operate on collections",
+        "Write bulk-safe code — all DML and SOQL must operate on collections (List<SObject>)",
         "Use trigger handler pattern (one trigger per object, delegate to handler class)",
-        "Achieve 100% test coverage with meaningful assertions",
-        "Use Custom Metadata Types for configuration instead of hard-coded values"
-      ]
+        "Achieve 100% test coverage with meaningful assertions (System.assertEquals, System.assertNotEquals)",
+        "Use Custom Metadata Types for configuration instead of hard-coded values",
+        "Use Platform Events or Queueable for async processing instead of @future where possible",
+        "Implement error handling with Database.SaveResult and partial success patterns",
+        "Follow Salesforce naming conventions — classes PascalCase, methods camelCase, constants UPPER_SNAKE"
+      ],
+      "frameworkSpecific": {
+        "lightning": [
+          "Apex controller methods missing @AuraEnabled annotation — not accessible from Lightning components",
+          "Missing cacheable=true on read-only @AuraEnabled methods — unnecessary server round trips",
+          "Returning too much data to Lightning components — causes heap size issues on client",
+          "Missing error handling in @AuraEnabled methods — exceptions surface as unhelpful 'Internal Server Error'"
+        ],
+        "salesforce-api": [
+          "Missing Namespace prefix on custom objects/fields in managed packages",
+          "Hardcoded API version in endpoint URLs — use dynamic versioning",
+          "Not handling API rate limits (429 responses) with retry logic"
+        ]
+      }
     },
     "ocaml": {
       "displayName": "OCaml",
@@ -590,27 +831,57 @@
       ],
       "securityFocus": [
         "Format string vulnerabilities via Printf with user-controlled format string",
-        "Hard-coded credentials or secrets",
-        "Insufficient input validation before processing external data"
+        "Hard-coded credentials or secrets in source code",
+        "Insufficient input validation before processing external data",
+        "SQL injection in database queries using string concatenation (use parameterized queries with Caqti or PGOCaml)",
+        "Command injection via Unix.system or Unix.open_process with unsanitized user input",
+        "Deserialization of untrusted data with Marshal module — can execute arbitrary code (use Yojson/Sexplib instead)",
+        "Path traversal via Filename.concat with user-controlled path components (validate and sanitize paths)",
+        "Weak random number generation with Random module — use Mirage-crypto or Nocrypto for cryptographic randomness",
+        "Insecure temporary file creation — use Filename.temp_file instead of hand-crafted /tmp paths"
       ],
       "bugPatterns": [
-        "Non-exhaustive pattern matching — missing cases cause Match_failure at runtime",
-        "Integer overflow in arithmetic operations",
-        "Ignored exceptions from functions that return unit — use try/with",
-        "Mutable state shared across threads without synchronization (use Mutex)"
+        "Non-exhaustive pattern matching — missing cases cause Match_failure at runtime (always match all constructors)",
+        "Integer overflow in arithmetic operations — OCaml int is 63-bit, use Zarith for big integers",
+        "Ignored exceptions from functions that return unit — use try/with for all effectful operations",
+        "Mutable state shared across threads without synchronization (use Mutex or Lwt_mutex)",
+        "Partial functions (List.hd, List.tl) on empty lists — use pattern matching or Option-returning alternatives",
+        "String comparison with = on Unicode — use proper Unicode normalization before comparison",
+        "Forgetting to flush output channels — use flush stdout or close_out for reliable output",
+        "Recursive module initialization causing undefined behavior — order initialization carefully",
+        "Catching all exceptions with _ in try/with — hides programming errors and assertion failures"
       ],
       "performancePatterns": [
         "Non-tail-recursive functions on large lists — causes stack overflow (use tail-recursive variants with accumulator)",
         "Excessive allocations from list concatenation with @ (use List.rev_append or Buffer for strings)",
-        "Repeated list traversals that could be combined into one pass",
-        "Lazy values forced multiple times when result should be cached"
+        "Repeated list traversals that could be combined into one pass (use fold for multiple computations)",
+        "Lazy values forced multiple times when result should be cached",
+        "Using List when Array would be more cache-friendly for random access patterns",
+        "Hashtbl without initial size hint — causes repeated resizing for large tables (provide ~size_hint)",
+        "String concatenation with ^ in loops — use Buffer.t for incremental string building"
       ],
       "bestPractices": [
-        "Handle all match cases explicitly — use _ wildcard only when truly intentional",
+        "Handle all match cases explicitly — use _ wildcard only when truly intentional and add a comment",
         "Use Result or option types for error handling instead of exceptions for control flow",
-        "Prefer immutable data structures",
-        "Use the type system to enforce invariants at compile time"
-      ]
+        "Prefer immutable data structures — use mutable state only when performance requires it",
+        "Use the type system to enforce invariants at compile time (phantom types, private types)",
+        "Write .mli interface files for all public modules to control API surface",
+        "Use ppx_deriving for automatic generation of show, eq, ord, and sexp",
+        "Prefer Lwt or Async for concurrent IO instead of threads",
+        "Use dune build system with strict warnings enabled (-warn-error +a)"
+      ],
+      "frameworkSpecific": {
+        "lwt": [
+          "Lwt promise not awaited — fire-and-forget loses errors silently (use Lwt.async with error handler)",
+          "Blocking system calls inside Lwt — use Lwt_unix wrappers or Lwt_preemptive.detach",
+          "Missing Lwt.catch or Lwt.try_bind — unhandled promise rejection crashes the program"
+        ],
+        "dream": [
+          "Missing CSRF middleware on state-changing routes",
+          "SQL queries not using Dream.sql with parameterized placeholders",
+          "Missing error handler middleware — exceptions return raw stack traces to client"
+        ]
+      }
     },
     "jsp": {
       "displayName": "JSP",
@@ -619,27 +890,57 @@
         ".jspx"
       ],
       "securityFocus": [
-        "XSS via unescaped EL expressions (${user.name} — use fn:escapeXml or c:out)",
-        "SQL injection in scriptlets that build query strings by concatenation",
-        "Session fixation — not invalidating session on authentication",
-        "Sensitive data exposed in HTML comments (visible in page source)"
+        "XSS via unescaped EL expressions (${user.name} — use fn:escapeXml or c:out with escapeXml='true')",
+        "SQL injection in scriptlets that build query strings by concatenation (use PreparedStatement)",
+        "Session fixation — not invalidating session on authentication (call request.getSession(false) and invalidate)",
+        "Sensitive data exposed in HTML comments (visible in page source — never put server-side info in HTML comments)",
+        "CSRF vulnerability — forms without hidden token field and server-side validation",
+        "Path traversal via include/forward with user-controlled path (validate and whitelist allowed paths)",
+        "Information disclosure through detailed error pages (configure custom error pages in web.xml)",
+        "Insecure direct object reference in request parameters — missing authorization before accessing resources",
+        "Hard-coded database credentials in JSP scriptlets or included configuration"
       ],
       "bugPatterns": [
         "Missing null checks on EL expressions — NullPointerException at render time",
-        "Unclosed resources (Connection, Statement, ResultSet) in scriptlets",
-        "Business logic in JSP scriptlets instead of Servlet/Controller layer (violates MVC)"
+        "Unclosed resources (Connection, Statement, ResultSet) in scriptlets — resource leak on every request",
+        "Business logic in JSP scriptlets instead of Servlet/Controller layer (violates MVC, untestable)",
+        "Incorrect JSTL tag library URI — tags silently rendered as text instead of executed",
+        "Missing page directive for content type — character encoding issues with non-ASCII content",
+        "Using request.getParameter() without null check — NullPointerException when parameter absent",
+        "Include directive (<%@ include %>) vs include action (<jsp:include>) confusion — static vs dynamic inclusion",
+        "Form action URL not encoded — special characters in parameters break form submission",
+        "Thread-safety issues in JSP instance variables — JSPs are singletons, shared across requests"
       ],
       "performancePatterns": [
         "Heavy business logic or database queries directly in JSP (move to Servlet/Service layer)",
-        "Not using JSTL sql tags with connection pooling",
-        "Synchronizing on JSP page object — serializes all requests to the page"
+        "Not using JSTL sql tags with connection pooling (configure DataSource in container, not per-page connections)",
+        "Synchronizing on JSP page object — serializes all requests to the page",
+        "Large JSP pages without fragment caching — entire page regenerated on each request",
+        "Scriptlets creating new objects on every request that could be shared or pooled (use application scope)",
+        "Excessive custom tag library instantiation — use tag pooling or simple tags for lightweight operations"
       ],
       "bestPractices": [
-        "Use JSTL (c:out, c:forEach) instead of scriptlets",
+        "Use JSTL (c:out, c:forEach, c:if) instead of scriptlets (<% %>) for all logic",
         "Use c:out or fn:escapeXml for all user-provided output to prevent XSS",
-        "Follow MVC pattern — JSP only for presentation, no business logic",
-        "Use JSP include directive for reusable fragments"
-      ]
+        "Follow MVC pattern — JSP only for presentation, no business logic or data access",
+        "Use JSP include directive for reusable fragments and static content",
+        "Configure custom error pages in web.xml instead of showing stack traces",
+        "Use EL (Expression Language) instead of scriptlet expressions (<%= %>)",
+        "Set page encoding explicitly: <%@ page contentType='text/html;charset=UTF-8' %>",
+        "Prefer JSP tag files over tag handler classes for simple reusable components"
+      ],
+      "frameworkSpecific": {
+        "spring-mvc": [
+          "Using JSP scriptlets instead of Spring form tags (form:input, form:errors) for data binding",
+          "Missing BindingResult parameter after @ModelAttribute — validation errors cause exception instead of error page",
+          "Not using Spring Security taglib (sec:authorize) for conditional rendering based on roles"
+        ],
+        "struts": [
+          "Action form not validated — missing validate() method or validation.xml configuration",
+          "Using Struts 1 html:form without proper token handling for CSRF protection",
+          "Hardcoded forward names instead of using action mapping constants"
+        ]
+      }
     },
     "vf": {
       "displayName": "Visualforce (Salesforce)",
@@ -792,20 +1093,31 @@
         "Pulling and running unverified external scripts (curl https://... | bash) — verify checksums or use internal mirrors",
         "Missing secret masking — variables containing secrets must be marked as Masked in CI/CD settings",
         "Overly permissive job rules (when: always on protected branches) — require manual approval for production deployments",
-        "Using shell executor with insufficient isolation — prefer Docker executor"
+        "Using shell executor with insufficient isolation — prefer Docker executor",
+        "Forked pipeline access to parent project secrets — restrict CI variables to protected branches only",
+        "Artifacts containing secrets or credentials — mark sensitive files as excluded from artifacts",
+        "Missing SAST/secret-detection jobs — vulnerable code and leaked secrets reach production",
+        "Insecure Docker-in-Docker (dind) without TLS — use DOCKER_TLS_CERTDIR for encrypted communication"
       ],
       "bugPatterns": [
         "Missing set -e in script blocks — errors silently ignored and job reports success",
         "Cache key not including lock file — stale dependencies served from cache after package updates",
         "Artifact paths do not match actual output paths — artifacts silently empty",
         "Wrong stage ordering causing jobs to run before their dependencies complete",
-        "Missing needs or dependencies declaration — jobs wait unnecessarily in sequential stages"
+        "Missing needs or dependencies declaration — jobs wait unnecessarily in sequential stages",
+        "Variable expansion in wrong context — $CI_COMMIT_SHA empty in extends or include templates",
+        "Rules with conflicting conditions — only: and except: combined with rules: causes validation error",
+        "Missing allow_failure: true on optional quality gates — flaky lint blocks deployment",
+        "Incorrect when: condition in rules — job runs on wrong events (push vs merge_request)"
       ],
       "performancePatterns": [
         "Downloading dependencies on every job without cache — use cache: with correct key and paths",
         "Not parallelizing independent jobs (test matrix, linting, security scan can run in parallel)",
         "Uploading large artifacts that are not consumed by downstream jobs",
-        "Not using extends or !reference for shared job templates — duplicated configuration"
+        "Not using extends or !reference for shared job templates — duplicated configuration",
+        "Missing interruptible: true on jobs for superseded pipelines — old pipelines consume runner capacity",
+        "Docker image pulled on every job — use private registry mirror or pre-pulled images on runners",
+        "Not using parallel: keyword for splitting large test suites across multiple jobs"
       ],
       "bestPractices": [
         "Pin image tags with digest for reproducibility",
@@ -813,7 +1125,61 @@
         "Set timeout on jobs to prevent hung jobs from blocking runners indefinitely",
         "Use needs: [] for DAG pipeline to skip unnecessary stage waits",
         "Use environments with protection rules for production deployments",
-        "Run SAST and secret detection jobs on all merge requests"
+        "Run SAST and secret detection jobs on all merge requests",
+        "Use include: with remote or project templates for shared pipeline configuration",
+        "Add retry: configuration for jobs affected by transient infrastructure failures"
+      ]
+    },
+    "github-actions": {
+      "displayName": "GitHub Actions",
+      "fileExtensions": [],
+      "fileNames": [
+        "*.yml",
+        "*.yaml"
+      ],
+      "filePathPatterns": [
+        ".github/workflows/"
+      ],
+      "securityFocus": [
+        "Hard-coded secrets in workflow files — use GitHub encrypted secrets (${{ secrets.TOKEN }})",
+        "Using pull_request_target with checkout of PR head — allows fork PRs to access repository secrets",
+        "Script injection via untrusted expressions (${{ github.event.issue.title }}) in run: blocks — use environment variables instead",
+        "Third-party actions pinned by tag instead of commit SHA — tags can be moved to inject malicious code",
+        "Workflow triggered by pull_request from forks accessing secrets — use pull_request_target with caution",
+        "GITHUB_TOKEN with excessive permissions — set minimum permissions: block at workflow level",
+        "Artifact upload containing secrets or credentials — artifacts are accessible to anyone with repo read access",
+        "Self-hosted runner without isolation — fork PRs can execute arbitrary code on runner host",
+        "Missing environment protection rules for production deployment workflows"
+      ],
+      "bugPatterns": [
+        "Missing shell specification in run: steps — defaults vary by runner OS (use shell: bash explicitly)",
+        "Incorrect if: condition syntax — expressions must use ${{ }} wrapper for GitHub context",
+        "needs: referencing non-existent job ID — workflow fails at parse time",
+        "Matrix strategy without fail-fast: false — one failing combination cancels all other matrix jobs",
+        "Artifact name collision between jobs — later upload overwrites earlier artifact silently",
+        "Missing continue-on-error for non-critical steps — optional checks block the entire workflow",
+        "Checkout with wrong ref for pull request — actions/checkout defaults to merge commit, not PR head",
+        "Cache key not including lockfile hash — stale dependencies served from cache",
+        "Timeout not set on jobs — stuck jobs consume runner minutes indefinitely (set timeout-minutes:)"
+      ],
+      "performancePatterns": [
+        "Not caching dependencies between runs — use actions/cache or setup-* actions with built-in caching",
+        "Sequential jobs that could run in parallel — structure jobs with proper needs: dependencies",
+        "Downloading large artifacts in every job — scope artifact downloads to jobs that need them",
+        "Running full test suite on every push — use path filters to skip irrelevant workflows",
+        "Not using concurrency: groups to cancel superseded workflow runs",
+        "Building Docker images without layer caching — use docker/build-push-action with cache-from/cache-to",
+        "Checkout with full history (fetch-depth: 0) when only latest commit is needed"
+      ],
+      "bestPractices": [
+        "Pin all third-party actions to full commit SHA (uses: actions/checkout@abcdef123)",
+        "Set minimum GITHUB_TOKEN permissions at workflow level (permissions: block)",
+        "Use reusable workflows (workflow_call) for shared CI/CD logic across repositories",
+        "Add timeout-minutes to all jobs to prevent runaway billing",
+        "Use concurrency groups with cancel-in-progress for PR workflows",
+        "Use environment protection rules with required reviewers for production deployments",
+        "Add status badges and branch protection rules requiring workflow success",
+        "Use composite actions for reusable multi-step logic within a repository"
       ]
     },
     "azure-pipelines": {
@@ -850,23 +1216,137 @@
         "Add timeout to jobs and steps to prevent indefinitely hanging pipelines"
       ]
     },
+    "yaml": {
+      "displayName": "YAML",
+      "fileExtensions": [
+        ".yml",
+        ".yaml"
+      ],
+      "securityFocus": [
+        "Hard-coded credentials, API keys, or secrets in YAML config files (use environment variables or secret managers)",
+        "Sensitive data in Kubernetes ConfigMaps or Secrets YAML files committed to repository",
+        "Overly permissive RBAC rules in Kubernetes YAML (cluster-admin bindings, wildcard permissions)",
+        "Insecure container image references using :latest tag or untrusted registries",
+        "Missing resource limits in Kubernetes pod specs — potential DoS via resource exhaustion",
+        "Privileged containers in Kubernetes YAML (privileged: true, hostPID, hostNetwork)",
+        "Secrets mounted as environment variables instead of files (env vars may be exposed in process list)"
+      ],
+      "bugPatterns": [
+        "Incorrect indentation in YAML — causes parsing errors or unexpected structure",
+        "Using tabs instead of spaces for indentation — invalid YAML",
+        "Duplicate keys in YAML mappings — later value silently overwrites earlier",
+        "Unquoted strings that are interpreted as other types (yes/no/on/off as booleans)",
+        "Missing quotes around strings containing special characters (:, #, {, }, [, ], ,, &, *, ?, |, -, <, >, =, !, %, @, `)",
+        "Multi-line strings without proper chomping indicator (|- vs |) causing unexpected newlines",
+        "Anchor (&) without alias (*) or alias referencing non-existent anchor",
+        "Incorrect use of YAML anchors and aliases causing circular references",
+        "Numeric version strings parsed as numbers (1.10 becomes 1.1) — quote version strings"
+      ],
+      "performancePatterns": [
+        "Loading large YAML files entirely into memory — use streaming YAML parsers for large datasets",
+        "Deeply nested YAML structures that are hard to parse and query — flatten where possible",
+        "Redundant data duplication across YAML config files — use YAML anchors or shared templates"
+      ],
+      "bestPractices": [
+        "Use YAML Schema validation for configuration files to catch errors at build time",
+        "Keep YAML config files free of secrets — use environment-specific overrides or secret managers",
+        "Use consistent indentation (2 spaces) enforced by yamllint or similar tool",
+        "Quote all strings to avoid type coercion surprises",
+        "Validate YAML files in CI pipeline to catch syntax errors before deployment",
+        "Use anchors and aliases for DRY configuration, but document complex references"
+      ]
+    },
+    "cicd": {
+      "displayName": "CI/CD Generic",
+      "fileExtensions": [],
+      "fileNames": [
+        ".ci.yml",
+        ".ci.yaml"
+      ],
+      "filePathPatterns": [
+        ".ci/",
+        "ci/",
+        ".buildkite/",
+        "jenkins/",
+        ".circleci/",
+        ".travis.yml"
+      ],
+      "securityFocus": [
+        "Hard-coded credentials or tokens in CI configuration files — use CI-native secret management",
+        "Overly permissive pipeline permissions granting access to sensitive environments",
+        "Missing branch protection rules allowing direct pushes to main/production branches",
+        "Fork PR builds accessing repository secrets without approval workflow",
+        "Self-hosted runners without proper isolation for untrusted code",
+        "Missing secret masking in pipeline logs — secrets visible in build output"
+      ],
+      "bugPatterns": [
+        "Missing error handling in CI scripts — failures silently ignored",
+        "Incorrect path filters causing pipelines to run on irrelevant changes",
+        "Cache configuration not including lock files — stale dependencies",
+        "Missing timeout on jobs — stuck pipelines consume resources indefinitely",
+        "Race conditions in parallel jobs accessing shared resources",
+        "Incorrect environment variable scoping — variables not available where expected"
+      ],
+      "performancePatterns": [
+        "Downloading dependencies on every build without caching",
+        "Running full test suites when only linting is needed for certain changes",
+        "Not parallelizing independent jobs — sequential execution wastes time",
+        "Large artifact uploads/downloads that are not consumed by downstream jobs",
+        "Not using concurrency controls to cancel outdated pipeline runs"
+      ],
+      "bestPractices": [
+        "Use pipeline templates for reusable CI/CD patterns",
+        "Pin all tool and action versions for reproducible builds",
+        "Set timeouts on all jobs to prevent runaway resource consumption",
+        "Use path filters to skip unnecessary pipeline runs",
+        "Require manual approval for production deployments",
+        "Run security scans (SAST, dependency check) in all pipelines",
+        "Use concurrency groups to cancel superseded runs"
+      ]
+    },
     "json": {
       "displayName": "JSON",
       "fileExtensions": [
         ".json"
       ],
       "securityFocus": [
-        "Hard-coded credentials, API keys, or connection strings in JSON config files",
-        "Sensitive default values in example/template JSON files committed to repository"
+        "Hard-coded credentials, API keys, or connection strings in JSON config files (use environment variables or secret managers)",
+        "Sensitive default values in example/template JSON files committed to repository",
+        "Database connection strings with embedded passwords in appsettings.json or config.json",
+        "OAuth client secrets or private keys stored in JSON configuration",
+        "Overly permissive CORS origins configured in JSON (avoid wildcard * with credentials)",
+        "JWT signing keys or HMAC secrets in JSON configuration files",
+        "Cloud provider access keys (AWS, GCP, Azure) in JSON service account or credential files",
+        "Unmasked PII or test data with real user information in JSON fixtures or seed files"
       ],
       "bugPatterns": [
         "Trailing commas in JSON (not valid per spec — causes parse failure in strict parsers)",
-        "Incorrect data types for configuration values (string '80' instead of number 80 for port)"
+        "Incorrect data types for configuration values (string '80' instead of number 80 for port)",
+        "Duplicate keys in JSON objects — later value silently overwrites earlier (behavior varies by parser)",
+        "Comments in JSON (not valid per spec — use JSON5 or JSONC if comments are needed)",
+        "Missing required fields in configuration — application fails at runtime with cryptic error",
+        "Incorrect JSON escape sequences (\\n vs literal newline, \\u vs Unicode escape)",
+        "Deeply nested structures exceeding parser depth limits — causes stack overflow in some parsers",
+        "BOM (Byte Order Mark) at start of JSON file — causes parse failure in some implementations",
+        "Numeric precision loss for large integers (JSON numbers > 2^53 lose precision in JavaScript)"
       ],
-      "performancePatterns": [],
+      "performancePatterns": [
+        "Extremely large JSON files loaded entirely into memory — use streaming JSON parsers (SAX-style) for large datasets",
+        "Redundant data duplication across JSON config files — use shared base config with environment overrides",
+        "Deeply nested JSON structures that are hard to parse and query — flatten where possible",
+        "Large JSON payloads in API responses without pagination — causes client memory issues",
+        "Uncompressed JSON in network transfer — enable gzip/brotli compression for JSON API responses",
+        "JSON used for binary data (base64-encoded) — consider binary formats (protobuf, msgpack) for large payloads"
+      ],
       "bestPractices": [
-        "Use JSON Schema validation for configuration files",
-        "Keep JSON config files free of secrets — use environment-specific overrides outside the repo"
+        "Use JSON Schema validation for configuration files to catch errors at build time",
+        "Keep JSON config files free of secrets — use environment-specific overrides outside the repo",
+        "Use consistent formatting (2-space or 4-space indent) enforced by prettier or similar tool",
+        "Add $schema reference for IDE autocompletion and validation",
+        "Use .example.json files with placeholder values for configuration templates",
+        "Validate JSON files in CI pipeline to catch syntax errors before deployment",
+        "Use JSONC or JSON5 for files that benefit from comments (tsconfig.json, devcontainer.json)",
+        "Keep JSON API payloads flat and avoid unnecessary nesting for easier consumption"
       ]
     },
     "xml": {
@@ -908,7 +1388,9 @@
         "Improper temporary file creation (use mktemp, never predictable names in /tmp)",
         "Unsafe pipe-to-shell patterns — verify checksums or use package managers",
         "Word splitting on unquoted variables causing unexpected behavior",
-        "Insecure use of sudo without input validation"
+        "Insecure use of sudo without input validation",
+        "Sensitive data passed via command-line arguments (visible in ps output — use environment variables or stdin)",
+        "Permissions on script files too open (chmod 777) — use least-privilege permissions (755 for scripts, 600 for configs)"
       ],
       "bugPatterns": [
         "Missing error handling — use set -euo pipefail at script start",
@@ -917,13 +1399,18 @@
         "Missing shebang line — interpreter undefined",
         "cd without error handling — subsequent commands run in wrong directory if cd fails",
         "Using $? after multiple commands — $? only captures last command exit code",
-        "Missing quotes around variables with spaces causing word splitting and globbing"
+        "Missing quotes around variables with spaces causing word splitting and globbing",
+        "Arithmetic overflow in $(( )) expressions — Bash integers are 64-bit signed, no overflow detection",
+        "Using == inside [ ] instead of = for POSIX compatibility — [ ] uses single = for string comparison",
+        "Here-document delimiter not quoted — variables expanded unexpectedly (use <<'EOF' to prevent expansion)"
       ],
       "performancePatterns": [
         "Unnecessary subshells and command substitutions in tight loops",
         "Useless use of cat (cat file | grep — use grep directly with file argument)",
         "Multiple grep/sed/awk in a pipeline when single awk command would suffice",
-        "Forking external commands in tight loops (use Bash built-ins where possible)"
+        "Forking external commands in tight loops (use Bash built-ins where possible)",
+        "Reading file line-by-line with while read loop when awk/sed could process entire file at once",
+        "Not using GNU parallel or xargs -P for embarrassingly parallel operations"
       ],
       "bestPractices": [
         "Always use shebang (#!/usr/bin/env bash or #!/bin/sh for portability)",
@@ -934,7 +1421,19 @@
         "Use $() instead of backticks for command substitution",
         "Validate all external inputs before use",
         "Use ShellCheck for static analysis"
-      ]
+      ],
+      "frameworkSpecific": {
+        "makefiles": [
+          "Missing .PHONY declarations for non-file targets — make skips target if file with same name exists",
+          "Using shell variables without $$ escaping — make expands single $ as make variable",
+          "Missing error handling in recipe commands — prefix with set -e or use .SHELLFLAGS"
+        ],
+        "docker-entrypoint": [
+          "Missing exec before final command — shell remains PID 1, signals not forwarded to application",
+          "Not handling SIGTERM gracefully — container takes 10s to stop (Docker sends SIGKILL after timeout)",
+          "Environment variable substitution in config files without envsubst or sed validation"
+        ]
+      }
     }
   },
   "detectionPatterns": {

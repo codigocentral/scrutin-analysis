@@ -172,6 +172,378 @@
         {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER"},
         {"id": "S4784", "name": "Regex DoS", "severity": "CRITICAL"}
       ]
+    },
+
+    "java": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S3649", "name": "SQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S2755", "name": "XXE vulnerability", "severity": "BLOCKER", "cwe": ["CWE-611"]},
+        {"id": "S5144", "name": "SSRF vulnerability", "severity": "BLOCKER", "cwe": ["CWE-918"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S2245", "name": "Insecure random", "severity": "CRITICAL", "cwe": ["CWE-330"]},
+        {"id": "S5527", "name": "Insecure SSL/TLS", "severity": "CRITICAL", "cwe": ["CWE-295"]}
+      ],
+      "bugs": [
+        {"id": "S2259", "name": "Null dereference", "severity": "MAJOR"},
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"},
+        {"id": "S2142", "name": "InterruptedException not handled", "severity": "MAJOR"},
+        {"id": "S2272", "name": "Iterator next without hasNext", "severity": "MAJOR"},
+        {"id": "S2095", "name": "Resources not closed", "severity": "BLOCKER"},
+        {"id": "S2110", "name": "Invalid thread operations", "severity": "MAJOR"},
+        {"id": "S2274", "name": "Wait outside loop", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1192", "name": "Duplicated strings", "severity": "MINOR", "threshold": 3},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused methods", "severity": "MAJOR"},
+        {"id": "S1118", "name": "Utility class constructor", "severity": "MAJOR"}
+      ]
+    },
+
+    "kotlin": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S3649", "name": "SQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S5144", "name": "SSRF vulnerability", "severity": "BLOCKER", "cwe": ["CWE-918"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S2245", "name": "Insecure random", "severity": "CRITICAL", "cwe": ["CWE-330"]},
+        {"id": "S4423", "name": "Weak SSL/TLS", "severity": "CRITICAL", "cwe": ["CWE-326"]}
+      ],
+      "bugs": [
+        {"id": "S2259", "name": "Null dereference", "severity": "MAJOR"},
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"},
+        {"id": "S6524", "name": "Unused coroutine result", "severity": "MAJOR"},
+        {"id": "S6615", "name": "Redundant null check", "severity": "MINOR"},
+        {"id": "S6530", "name": "Unnecessary non-null assertion", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused methods", "severity": "MAJOR"},
+        {"id": "S6511", "name": "Data class without equals", "severity": "MAJOR"}
+      ]
+    },
+
+    "rust": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "RUST-S001", "name": "Unsafe block misuse", "severity": "CRITICAL", "cwe": ["CWE-787"]},
+        {"id": "RUST-S002", "name": "Unchecked unwrap on user input", "severity": "CRITICAL", "cwe": ["CWE-252"]},
+        {"id": "RUST-S003", "name": "Use of transmute", "severity": "CRITICAL", "cwe": ["CWE-843"]},
+        {"id": "RUST-S004", "name": "Unvalidated format string", "severity": "MAJOR", "cwe": ["CWE-134"]},
+        {"id": "RUST-S005", "name": "Insecure deserialization", "severity": "BLOCKER", "cwe": ["CWE-502"]}
+      ],
+      "bugs": [
+        {"id": "RUST-B001", "name": "Potential panic in production", "severity": "MAJOR"},
+        {"id": "RUST-B002", "name": "Integer overflow", "severity": "CRITICAL"},
+        {"id": "RUST-B003", "name": "Deadlock risk with nested locks", "severity": "BLOCKER"},
+        {"id": "RUST-B004", "name": "Unused Result or Option", "severity": "MAJOR"},
+        {"id": "RUST-B005", "name": "Race condition with interior mutability", "severity": "CRITICAL"},
+        {"id": "RUST-B006", "name": "Infinite recursion", "severity": "BLOCKER"}
+      ],
+      "codeSmells": [
+        {"id": "RUST-C001", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "RUST-C002", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "RUST-C003", "name": "Unnecessary clone", "severity": "MINOR"},
+        {"id": "RUST-C004", "name": "Unused imports", "severity": "MINOR"},
+        {"id": "RUST-C005", "name": "Overly broad error type", "severity": "MAJOR"}
+      ]
+    },
+
+    "php": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S3649", "name": "SQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S5334", "name": "Secrets exposure", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S2245", "name": "Insecure random", "severity": "CRITICAL", "cwe": ["CWE-330"]},
+        {"id": "S5328", "name": "Insecure session configuration", "severity": "CRITICAL", "cwe": ["CWE-384"]},
+        {"id": "S5042", "name": "File upload vulnerability", "severity": "BLOCKER", "cwe": ["CWE-434"]}
+      ],
+      "bugs": [
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"},
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S2201", "name": "Ignored return value", "severity": "MAJOR"},
+        {"id": "S1763", "name": "Unreachable code after jump", "severity": "MAJOR"},
+        {"id": "S2486", "name": "Empty catch", "severity": "MAJOR"},
+        {"id": "S3981", "name": "Redundant type check", "severity": "MINOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused methods", "severity": "MAJOR"},
+        {"id": "S1192", "name": "Duplicated strings", "severity": "MINOR", "threshold": 3}
+      ]
+    },
+
+    "ruby": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S3649", "name": "SQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S5334", "name": "Secrets exposure", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S4830", "name": "SSL verification disabled", "severity": "CRITICAL", "cwe": ["CWE-295"]}
+      ],
+      "bugs": [
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"},
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S2201", "name": "Ignored return value", "severity": "MAJOR"},
+        {"id": "S2486", "name": "Empty rescue", "severity": "MAJOR"},
+        {"id": "RUBY-B001", "name": "Mutable default argument", "severity": "MAJOR"},
+        {"id": "RUBY-B002", "name": "Symbol to proc misuse", "severity": "MINOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused methods", "severity": "MAJOR"},
+        {"id": "S1192", "name": "Duplicated strings", "severity": "MINOR", "threshold": 3}
+      ]
+    },
+
+    "cpp": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S5782", "name": "Buffer overflow", "severity": "BLOCKER", "cwe": ["CWE-120"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S5824", "name": "Format string vulnerability", "severity": "BLOCKER", "cwe": ["CWE-134"]},
+        {"id": "S5042", "name": "Unvalidated input to memory alloc", "severity": "CRITICAL", "cwe": ["CWE-789"]},
+        {"id": "S5814", "name": "Use after free", "severity": "BLOCKER", "cwe": ["CWE-416"]},
+        {"id": "S5815", "name": "Double free", "severity": "BLOCKER", "cwe": ["CWE-415"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]}
+      ],
+      "bugs": [
+        {"id": "S2259", "name": "Null dereference", "severity": "MAJOR"},
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S836", "name": "Uninitialized variable", "severity": "BLOCKER"},
+        {"id": "S5816", "name": "Out-of-bounds access", "severity": "BLOCKER"},
+        {"id": "S3519", "name": "Integer overflow", "severity": "CRITICAL"},
+        {"id": "S1232", "name": "Exception in destructor", "severity": "MAJOR"},
+        {"id": "S5276", "name": "Memory leak", "severity": "MAJOR"},
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused functions", "severity": "MAJOR"},
+        {"id": "S5025", "name": "Raw pointer ownership", "severity": "MAJOR"}
+      ]
+    },
+
+    "swift": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S5131", "name": "XSS in WebView", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S2245", "name": "Insecure random", "severity": "CRITICAL", "cwe": ["CWE-330"]},
+        {"id": "S4830", "name": "SSL verification disabled", "severity": "CRITICAL", "cwe": ["CWE-295"]},
+        {"id": "SWIFT-S001", "name": "Insecure data storage", "severity": "CRITICAL", "cwe": ["CWE-312"]},
+        {"id": "SWIFT-S002", "name": "Insecure keychain access", "severity": "CRITICAL", "cwe": ["CWE-522"]}
+      ],
+      "bugs": [
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "SWIFT-B001", "name": "Force unwrap crash risk", "severity": "MAJOR"},
+        {"id": "SWIFT-B002", "name": "Force cast crash risk", "severity": "MAJOR"},
+        {"id": "SWIFT-B003", "name": "Retain cycle", "severity": "MAJOR"},
+        {"id": "SWIFT-B004", "name": "Unhandled optional binding", "severity": "MAJOR"},
+        {"id": "SWIFT-B005", "name": "Unreachable code", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "S1144", "name": "Unused methods", "severity": "MAJOR"},
+        {"id": "SWIFT-C001", "name": "Redundant type annotation", "severity": "MINOR"}
+      ]
+    },
+
+    "scala": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S3649", "name": "SQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "S4790", "name": "Weak cryptography", "severity": "CRITICAL", "cwe": ["CWE-327"]},
+        {"id": "S2245", "name": "Insecure random", "severity": "CRITICAL", "cwe": ["CWE-330"]},
+        {"id": "S5527", "name": "Insecure SSL/TLS", "severity": "CRITICAL", "cwe": ["CWE-295"]}
+      ],
+      "bugs": [
+        {"id": "S2190", "name": "Infinite recursion", "severity": "BLOCKER"},
+        {"id": "S2583", "name": "Unreachable code", "severity": "MAJOR"},
+        {"id": "SCALA-B001", "name": "Unhandled Future failure", "severity": "MAJOR"},
+        {"id": "SCALA-B002", "name": "Null usage in Scala code", "severity": "MAJOR"},
+        {"id": "SCALA-B003", "name": "Partial function match", "severity": "MAJOR"},
+        {"id": "SCALA-B004", "name": "Unsafe type cast", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "S1481", "name": "Unused variables", "severity": "MINOR"},
+        {"id": "SCALA-C001", "name": "Mutable state in case class", "severity": "MAJOR"},
+        {"id": "SCALA-C002", "name": "Return keyword usage", "severity": "MINOR"}
+      ]
+    },
+
+    "apex": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S3649", "name": "SOQL injection", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "APEX-S001", "name": "CRUD/FLS not enforced", "severity": "CRITICAL", "cwe": ["CWE-862"]},
+        {"id": "APEX-S002", "name": "Sharing rules not declared", "severity": "CRITICAL", "cwe": ["CWE-284"]},
+        {"id": "APEX-S003", "name": "Sensitive data in debug logs", "severity": "MAJOR", "cwe": ["CWE-532"]}
+      ],
+      "bugs": [
+        {"id": "APEX-B001", "name": "SOQL in loop", "severity": "BLOCKER"},
+        {"id": "APEX-B002", "name": "DML in loop", "severity": "BLOCKER"},
+        {"id": "APEX-B003", "name": "Governor limit risk", "severity": "CRITICAL"},
+        {"id": "APEX-B004", "name": "Null dereference", "severity": "MAJOR"},
+        {"id": "APEX-B005", "name": "Unreachable code", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S107", "name": "Too many parameters", "severity": "MAJOR", "threshold": 7},
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "APEX-C001", "name": "Hardcoded Id", "severity": "MAJOR"},
+        {"id": "APEX-C002", "name": "Empty test method", "severity": "MAJOR"}
+      ]
+    },
+
+    "ocaml": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "S2076", "name": "Command injection", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "S2083", "name": "Path injection", "severity": "BLOCKER", "cwe": ["CWE-22"]},
+        {"id": "OCAML-S001", "name": "Unsafe Obj.magic usage", "severity": "CRITICAL", "cwe": ["CWE-843"]},
+        {"id": "OCAML-S002", "name": "Unvalidated external input", "severity": "CRITICAL", "cwe": ["CWE-20"]}
+      ],
+      "bugs": [
+        {"id": "OCAML-B001", "name": "Non-exhaustive pattern match", "severity": "MAJOR"},
+        {"id": "OCAML-B002", "name": "Unused match case", "severity": "MINOR"},
+        {"id": "OCAML-B003", "name": "Infinite recursion without base case", "severity": "BLOCKER"},
+        {"id": "OCAML-B004", "name": "Exception escaping handler", "severity": "MAJOR"},
+        {"id": "OCAML-B005", "name": "Partial function application error", "severity": "MAJOR"}
+      ],
+      "codeSmells": [
+        {"id": "S3776", "name": "Cognitive complexity", "severity": "CRITICAL", "threshold": 15},
+        {"id": "OCAML-C001", "name": "Unused let binding", "severity": "MINOR"},
+        {"id": "OCAML-C002", "name": "Imperative style overuse", "severity": "MAJOR"},
+        {"id": "OCAML-C003", "name": "Redundant type annotation", "severity": "MINOR"}
+      ]
+    },
+
+    "jsp": {
+      "security": [
+        {"id": "S5131", "name": "XSS vulnerability", "severity": "BLOCKER", "cwe": ["CWE-79"]},
+        {"id": "S3649", "name": "SQL injection via scriptlet", "severity": "BLOCKER", "cwe": ["CWE-89"]},
+        {"id": "JSP-S001", "name": "Scriptlet usage", "severity": "MAJOR", "cwe": ["CWE-94"]},
+        {"id": "JSP-S002", "name": "Unescaped EL expression", "severity": "CRITICAL", "cwe": ["CWE-79"]},
+        {"id": "JSP-S003", "name": "Session data in hidden field", "severity": "CRITICAL", "cwe": ["CWE-312"]},
+        {"id": "JSP-S004", "name": "Error page information leak", "severity": "MAJOR", "cwe": ["CWE-209"]}
+      ],
+      "bugs": [
+        {"id": "JSP-B001", "name": "Unclosed tag", "severity": "MAJOR"},
+        {"id": "JSP-B002", "name": "Duplicate attribute", "severity": "MAJOR"},
+        {"id": "JSP-B003", "name": "Missing required attribute", "severity": "MAJOR"},
+        {"id": "JSP-B004", "name": "Invalid directive", "severity": "MAJOR"}
+      ]
+    },
+
+    "terraform": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "TF-S001", "name": "Public S3 bucket", "severity": "CRITICAL", "cwe": ["CWE-284"]},
+        {"id": "TF-S002", "name": "Unencrypted storage", "severity": "CRITICAL", "cwe": ["CWE-311"]},
+        {"id": "TF-S003", "name": "Overly permissive security group", "severity": "CRITICAL", "cwe": ["CWE-284"]},
+        {"id": "TF-S004", "name": "Missing logging configuration", "severity": "MAJOR", "cwe": ["CWE-778"]},
+        {"id": "TF-S005", "name": "Unencrypted transport", "severity": "CRITICAL", "cwe": ["CWE-319"]},
+        {"id": "TF-S006", "name": "Public database instance", "severity": "BLOCKER", "cwe": ["CWE-284"]},
+        {"id": "TF-S007", "name": "Wildcard IAM permissions", "severity": "CRITICAL", "cwe": ["CWE-269"]}
+      ],
+      "iac": [
+        {"id": "TF-I001", "name": "Missing provider version constraint", "severity": "MAJOR"},
+        {"id": "TF-I002", "name": "Missing state backend configuration", "severity": "MAJOR"},
+        {"id": "TF-I003", "name": "Deprecated resource usage", "severity": "MAJOR"},
+        {"id": "TF-I004", "name": "Missing resource tags", "severity": "MINOR"},
+        {"id": "TF-I005", "name": "Hardcoded availability zone", "severity": "MINOR"},
+        {"id": "TF-I006", "name": "Missing lifecycle configuration", "severity": "MINOR"}
+      ]
+    },
+
+    "dockerfile": {
+      "security": [
+        {"id": "S2068", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "DK-S001", "name": "Running as root", "severity": "CRITICAL", "cwe": ["CWE-250"]},
+        {"id": "DK-S002", "name": "Latest tag in FROM", "severity": "MAJOR", "cwe": ["CWE-1104"]},
+        {"id": "DK-S003", "name": "Secrets in ENV or ARG", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "DK-S004", "name": "ADD from remote URL", "severity": "CRITICAL", "cwe": ["CWE-829"]},
+        {"id": "DK-S005", "name": "Missing HEALTHCHECK", "severity": "MINOR"}
+      ],
+      "iac": [
+        {"id": "DK-I001", "name": "Missing .dockerignore", "severity": "MAJOR"},
+        {"id": "DK-I002", "name": "Multiple CMD instructions", "severity": "MAJOR"},
+        {"id": "DK-I003", "name": "Missing WORKDIR", "severity": "MINOR"},
+        {"id": "DK-I004", "name": "Inefficient layer caching", "severity": "MINOR"},
+        {"id": "DK-I005", "name": "Unversioned package install", "severity": "MAJOR"}
+      ]
+    },
+
+    "cicd": {
+      "security": [
+        {"id": "CI-S001", "name": "Hard-coded secrets in pipeline", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "CI-S002", "name": "Untrusted script execution", "severity": "CRITICAL", "cwe": ["CWE-94"]},
+        {"id": "CI-S003", "name": "Privileged container execution", "severity": "CRITICAL", "cwe": ["CWE-250"]},
+        {"id": "CI-S004", "name": "Missing branch protection", "severity": "MAJOR", "cwe": ["CWE-284"]},
+        {"id": "CI-S005", "name": "Mutable action/image reference", "severity": "CRITICAL", "cwe": ["CWE-829"]},
+        {"id": "CI-S006", "name": "Secrets exposed in logs", "severity": "BLOCKER", "cwe": ["CWE-532"]}
+      ],
+      "pipeline": [
+        {"id": "CI-P001", "name": "Missing timeout configuration", "severity": "MAJOR"},
+        {"id": "CI-P002", "name": "No retry policy on flaky steps", "severity": "MINOR"},
+        {"id": "CI-P003", "name": "Missing artifact expiration", "severity": "MINOR"},
+        {"id": "CI-P004", "name": "Redundant pipeline steps", "severity": "MAJOR"},
+        {"id": "CI-P005", "name": "Missing cache configuration", "severity": "MINOR"}
+      ]
+    },
+
+    "shell": {
+      "security": [
+        {"id": "SH-S001", "name": "Command injection via variable", "severity": "BLOCKER", "cwe": ["CWE-78"]},
+        {"id": "SH-S002", "name": "Hard-coded credentials", "severity": "BLOCKER", "cwe": ["CWE-798"]},
+        {"id": "SH-S003", "name": "Insecure temp file creation", "severity": "CRITICAL", "cwe": ["CWE-377"]},
+        {"id": "SH-S004", "name": "Eval with user input", "severity": "BLOCKER", "cwe": ["CWE-94"]},
+        {"id": "SH-S005", "name": "Curl piped to shell", "severity": "CRITICAL", "cwe": ["CWE-829"]},
+        {"id": "SH-S006", "name": "World-writable file permissions", "severity": "CRITICAL", "cwe": ["CWE-276"]}
+      ],
+      "bugs": [
+        {"id": "SH-B001", "name": "Unquoted variable expansion", "severity": "MAJOR"},
+        {"id": "SH-B002", "name": "Missing error handling (set -e)", "severity": "MAJOR"},
+        {"id": "SH-B003", "name": "Uninitialized variable usage", "severity": "MAJOR"},
+        {"id": "SH-B004", "name": "Integer comparison with string operator", "severity": "MAJOR"},
+        {"id": "SH-B005", "name": "Unreachable code after exit", "severity": "MINOR"}
+      ]
     }
   },
 

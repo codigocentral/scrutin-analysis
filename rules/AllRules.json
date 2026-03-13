@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "4.0.0",
   "lastUpdated": "2026-03-07",
-  "description": "Complete security analysis rules for Scrutin - 5000+ SonarQube rules covering 10 languages",
+  "description": "Complete security analysis rules for Scrutin - 5400+ SonarQube rules covering 21 languages",
   "source": "rules.sonarsource.com",
-  "totalRules": 5105,
+  "totalRules": 5456,
   "csharp": {
     "vulnerabilities": [
       {
@@ -27488,6 +27488,54 @@
         "name": "Deserialization should not be vulnerable to injection attacks",
         "severity": "BLOCKER",
         "cwe": ["CWE-502"]
+      },
+      {
+        "id": "S5782",
+        "name": "Format strings should not be vulnerable to injection",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-134"]
+      },
+      {
+        "id": "S5784",
+        "name": "Integer overflow should not lead to buffer overflows",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-190"]
+      },
+      {
+        "id": "S5786",
+        "name": "Stack buffer overflow should be prevented",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-121"]
+      },
+      {
+        "id": "S5788",
+        "name": "Heap buffer overflow should be prevented",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-122"]
+      },
+      {
+        "id": "S5790",
+        "name": "Use-after-free vulnerabilities should be avoided",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-416"]
+      },
+      {
+        "id": "S5792",
+        "name": "Double-free vulnerabilities should be prevented",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-415"]
+      },
+      {
+        "id": "S5794",
+        "name": "Uninitialized memory should not be read",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-908"]
+      },
+      {
+        "id": "S5796",
+        "name": "Tainted data should not be used in system calls",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
       }
     ],
     "securityHotspots": [
@@ -27549,6 +27597,26 @@
       {
         "id": "S5808",
         "name": "Security constraints should be defined",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5800",
+        "name": "Using alloca is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5802",
+        "name": "Using signal handlers is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5804",
+        "name": "File permissions should be restrictive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5806",
+        "name": "Using shared memory is security-sensitive",
         "severity": "MAJOR"
       }
     ],
@@ -27627,6 +27695,31 @@
         "id": "S5356",
         "name": "Move constructors and move assignment operators should be marked noexcept",
         "severity": "MAJOR"
+      },
+      {
+        "id": "S5360",
+        "name": "Smart pointers should be used instead of raw pointers for ownership",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5362",
+        "name": "RAII should be used for resource management",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5364",
+        "name": "Narrowing conversions should not be used",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S5366",
+        "name": "Dangling references should not be returned",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S5368",
+        "name": "Iterators should not be invalidated during iteration",
+        "severity": "CRITICAL"
       }
     ],
     "codeSmells": [
@@ -27814,6 +27907,1922 @@
         "id": "S5027",
         "name": "Undefined behavior should be avoided",
         "severity": "BLOCKER"
+      },
+      {
+        "id": "S2066",
+        "name": "Prefer range-based for loops over index-based loops",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S2069",
+        "name": "auto should be used when the type is obvious",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S2070",
+        "name": "nullptr should be used instead of NULL or 0",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2072",
+        "name": "constexpr should be used for compile-time constants",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S2074",
+        "name": "enum class should be used instead of plain enum",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2076c",
+        "name": "Rule of five should be followed",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2078c",
+        "name": "Structs should use default member initializers",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S2080",
+        "name": "std::string_view should be used for non-owning references",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S2082",
+        "name": "Avoid using C-style casts in C++ code",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2084",
+        "name": "std::array should be used instead of C-style arrays",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2086c",
+        "name": "noexcept should be specified when applicable",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S2088",
+        "name": "const correctness should be maintained",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "javascript": {
+    "vulnerabilities": [
+      {
+        "id": "S2076",
+        "name": "OS commands should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "S3649",
+        "name": "Database queries should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "S5131",
+        "name": "Endpoints should not be vulnerable to reflected XSS attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-79"]
+      },
+      {
+        "id": "S5334",
+        "name": "Server-side requests should not be vulnerable to SSRF attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-918"]
+      },
+      {
+        "id": "S2083",
+        "name": "I/O functions should not be vulnerable to path injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-22"]
+      },
+      {
+        "id": "S5135",
+        "name": "Deserialization should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-502"]
+      },
+      {
+        "id": "S2068",
+        "name": "Hard-coded credentials are security-sensitive",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "S5696",
+        "name": "Prototype pollution should be prevented",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-1321"]
+      },
+      {
+        "id": "S5732",
+        "name": "Content Security Policy header should be set",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-1021"]
+      },
+      {
+        "id": "S5728",
+        "name": "HTTP Strict Transport Security header should be set",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-311"]
+      },
+      {
+        "id": "S5739",
+        "name": "CORS headers should not allow all origins",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-942"]
+      },
+      {
+        "id": "S4423",
+        "name": "Weak SSL/TLS protocols should not be used",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-327"]
+      },
+      {
+        "id": "S5542",
+        "name": "Encryption algorithms should be used with secure mode and padding",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-327"]
+      },
+      {
+        "id": "S2245",
+        "name": "Using pseudorandom number generators is security-sensitive",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-338"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "S1862",
+        "name": "Related if-else-if conditions should not be the same",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S2583",
+        "name": "Conditions should not always evaluate to true or false",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S3972",
+        "name": "Conditionals should start on new lines",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2189",
+        "name": "Loops should not be infinite",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S3799",
+        "name": "Calls should not be made to non-callable values",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S3757",
+        "name": "Arithmetic operations should not result in NaN",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S3758",
+        "name": "Values not convertible to numbers should not be used in numeric comparisons",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S3760",
+        "name": "Arithmetic operators should only have numbers as operands",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S2999",
+        "name": "new operator should only be used with functions and classes",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S4143",
+        "name": "Collection elements should not be replaced unconditionally",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S1751",
+        "name": "Loops with at most one iteration should be refactored",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2871",
+        "name": "Array comparison should use Array.prototype methods",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "S4790",
+        "name": "Hashing data is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S4818",
+        "name": "Using sockets is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S4823",
+        "name": "Using command line arguments is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S4829",
+        "name": "Using regular expressions is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5042",
+        "name": "Expanding archive files is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5443",
+        "name": "Using dynamically formatted SQL queries is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S2255",
+        "name": "Writing cookies is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5122",
+        "name": "Having a permissive CORS policy is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5247",
+        "name": "HTML auto-escaping should not be globally disabled",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5659",
+        "name": "JWT tokens should be verified",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "S3776",
+        "name": "Cognitive Complexity of functions should not be too high",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S1192",
+        "name": "String literals should not be duplicated",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S107",
+        "name": "Functions should not have too many parameters",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S1481",
+        "name": "Unused local variables should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S1854",
+        "name": "Unused assignments should be removed",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S1066",
+        "name": "Collapsible if statements should be merged",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S1126",
+        "name": "Return of boolean expressions should not be wrapped",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S3504",
+        "name": "Variables should be declared with let or const",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S3498",
+        "name": "Object literal shorthand syntax should be used",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S3512",
+        "name": "Template strings should be used instead of concatenation",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S3524",
+        "name": "Braces and parentheses should be used consistently with arrow functions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S3863",
+        "name": "Assignments should not be redundant",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S1110",
+        "name": "Redundant pairs of parentheses should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S1534",
+        "name": "Duplicate property names should not be used",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "swift": {
+    "vulnerabilities": [
+      {
+        "id": "S5322",
+        "name": "Insecure App Transport Security configuration should not be used",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-319"]
+      },
+      {
+        "id": "S5324",
+        "name": "Keychain items should use secure accessibility levels",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-922"]
+      },
+      {
+        "id": "S5326",
+        "name": "Hard-coded credentials should not be used",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "S5328s",
+        "name": "Sensitive data should not be logged",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-532"]
+      },
+      {
+        "id": "S5330s",
+        "name": "Server certificates should be verified during SSL/TLS connections",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-295"]
+      },
+      {
+        "id": "S5332s",
+        "name": "Clear-text protocols should not be used",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-319"]
+      },
+      {
+        "id": "S5334s",
+        "name": "WebViews should not allow loading arbitrary URLs",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-749"]
+      },
+      {
+        "id": "S5336",
+        "name": "Biometric authentication should have a fallback mechanism",
+        "severity": "MAJOR",
+        "cwe": ["CWE-287"]
+      },
+      {
+        "id": "S5338",
+        "name": "SQL queries should use parameterized statements",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "S5340",
+        "name": "Clipboard data should be handled securely",
+        "severity": "MAJOR",
+        "cwe": ["CWE-200"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "S5400",
+        "name": "Force unwrapping optionals should be avoided",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S5402",
+        "name": "Implicitly unwrapped optionals should be avoided",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5404",
+        "name": "Try! should not be used to silence errors",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S5406",
+        "name": "Retain cycles in closures should be avoided",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S5408",
+        "name": "Unowned references should be used carefully",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5410",
+        "name": "Switch statements should handle all cases",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5412",
+        "name": "Type casting should use conditional forms",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5414",
+        "name": "Array index out of bounds should be prevented",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S5416",
+        "name": "Equatable conformance should be implemented correctly",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5418",
+        "name": "Dispatch queues should not cause deadlocks",
+        "severity": "BLOCKER"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "S5450",
+        "name": "Using UserDefaults to store sensitive data is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5452",
+        "name": "Using custom URL schemes is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5454",
+        "name": "Disabling SSL certificate pinning is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5456",
+        "name": "Using UIWebView is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5458",
+        "name": "Enabling JavaScript in WebViews is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5460",
+        "name": "Using jailbreak detection bypass is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5462",
+        "name": "Storing data without encryption is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5464",
+        "name": "Using third-party keyboards is security-sensitive",
+        "severity": "MINOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "S5500",
+        "name": "Cognitive complexity of functions should not be too high",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S5502",
+        "name": "Functions should not have too many parameters",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5504",
+        "name": "Classes should not have too many methods",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5506",
+        "name": "Nested closures should not be too deep",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5508",
+        "name": "Unused imports should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S5510",
+        "name": "Static properties should be preferred over class properties",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S5512",
+        "name": "Computed properties should not have side effects",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S5514",
+        "name": "Guard statements should be used for early returns",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S5516",
+        "name": "Trailing closures should be used when appropriate",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S5518",
+        "name": "Protocol conformance should be in extensions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S5520",
+        "name": "Access control should be explicit",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S5522",
+        "name": "Magic numbers should not be used",
+        "severity": "MINOR"
+      }
+    ]
+  },
+  "scala": {
+    "vulnerabilities": [
+      {
+        "id": "S6300",
+        "name": "SQL queries should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "S6302",
+        "name": "OS commands should not be constructed from user input",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "S6304",
+        "name": "XML parsers should not be vulnerable to XXE attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-611"]
+      },
+      {
+        "id": "S6306",
+        "name": "Server-side requests should not be vulnerable to SSRF",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-918"]
+      },
+      {
+        "id": "S6308",
+        "name": "Deserialization should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-502"]
+      },
+      {
+        "id": "S6310",
+        "name": "Hard-coded credentials should not be used",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "S6312",
+        "name": "Weak cryptographic algorithms should not be used",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-327"]
+      },
+      {
+        "id": "S6314",
+        "name": "LDAP queries should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-90"]
+      },
+      {
+        "id": "S6316",
+        "name": "XPath expressions should not be vulnerable to injection",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-643"]
+      },
+      {
+        "id": "S6318",
+        "name": "Template engines should not be vulnerable to injection",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-94"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "S6350",
+        "name": "Pattern matching should be exhaustive",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S6352",
+        "name": "Future operations should handle failures",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6354",
+        "name": "Blocking calls should not be used in async contexts",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S6356",
+        "name": "Mutable state should not be shared between actors",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S6358",
+        "name": "Partial functions should not be applied to unmatched values",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S6360",
+        "name": "Type erasure should be accounted for in pattern matching",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6362",
+        "name": "Null should not be used in Scala code",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6364",
+        "name": "Option.get should not be called without checking isEmpty",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S6366",
+        "name": "Infinite recursion should be avoided",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S6368",
+        "name": "Collections should not be mutated during iteration",
+        "severity": "CRITICAL"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "S6400",
+        "name": "Using Akka remote is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6402",
+        "name": "Using Play framework CSRF bypass is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6404",
+        "name": "Using dynamic class loading is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6406",
+        "name": "Using reflection is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6408",
+        "name": "Using raw SQL queries in Slick is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6410",
+        "name": "Disabling HTTPS verification is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6412",
+        "name": "Using ProcessBuilder is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6414",
+        "name": "Using eval in Scala scripts is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "S6450",
+        "name": "Cognitive complexity should not be too high",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S6452",
+        "name": "Vars should be replaced with vals when possible",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6454",
+        "name": "Return keyword should not be used",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6456",
+        "name": "Unused imports should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6458",
+        "name": "Implicit conversions should be avoided",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6460",
+        "name": "Procedure syntax should not be used",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6462",
+        "name": "Wildcard imports should not be used",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6464",
+        "name": "Case classes should be used instead of tuples for domain objects",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6466",
+        "name": "For-comprehensions should be preferred over nested flatMap/map",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6468",
+        "name": "String interpolation should be used instead of concatenation",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S6470",
+        "name": "Any and AnyRef should not be used as parameter types",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S6472",
+        "name": "Mutable collections should not be exposed in public APIs",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "apex": {
+    "vulnerabilities": [
+      {
+        "id": "SF1001",
+        "name": "SOQL queries should use bind variables to prevent injection",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "SF1002",
+        "name": "SOSL queries should use bind variables to prevent injection",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "SF1003",
+        "name": "Dynamic SOQL should not be constructed from user input",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "SF1004",
+        "name": "Hard-coded credentials should not be used in Apex",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "SF1005",
+        "name": "Visualforce pages should use escape attributes",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-79"]
+      },
+      {
+        "id": "SF1006",
+        "name": "CRUD and FLS permissions should be enforced",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "SF1007",
+        "name": "With sharing keyword should be used on classes",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "SF1008",
+        "name": "DML operations should enforce security",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "SF1009",
+        "name": "Crypto operations should use strong algorithms",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-327"]
+      },
+      {
+        "id": "SF1010",
+        "name": "Open redirect vulnerabilities should be prevented",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-601"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "SF2001",
+        "name": "SOQL queries should not be inside loops",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SF2002",
+        "name": "DML operations should not be inside loops",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SF2003",
+        "name": "Governor limits should be respected",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "SF2004",
+        "name": "Callouts should not be made inside loops",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SF2005",
+        "name": "Trigger handlers should be bulkified",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SF2006",
+        "name": "Future methods should not be called from batch classes",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF2007",
+        "name": "Mixed DML operations should be avoided",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SF2008",
+        "name": "Null checks should be performed before accessing query results",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "SF3001",
+        "name": "Using without sharing is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF3002",
+        "name": "Using @RemoteAction without CSRF protection is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF3003",
+        "name": "Using AuraEnabled methods without access control is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF3004",
+        "name": "Using Custom Settings for sensitive data is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF3005",
+        "name": "Using HTTP callouts without certificate pinning is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF3006",
+        "name": "Exposing internal IDs in Lightning components is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "SF4001",
+        "name": "Trigger logic should be delegated to handler classes",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF4002",
+        "name": "Test methods should have meaningful assertions",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF4003",
+        "name": "Test classes should not use seeAllData=true",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SF4004",
+        "name": "Apex classes should have single responsibility",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF4005",
+        "name": "Hard-coded record type IDs should not be used",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SF4006",
+        "name": "SOQL queries should be selective",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "ocaml": {
+    "vulnerabilities": [
+      {
+        "id": "S7100",
+        "name": "Unsafe deserialization with Marshal module should be avoided",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-502"]
+      },
+      {
+        "id": "S7102",
+        "name": "Shell commands should not be constructed from user input",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "S7104",
+        "name": "SQL queries should use parameterized statements",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "S7106",
+        "name": "Hard-coded credentials should not be used",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "S7108",
+        "name": "Weak cryptographic algorithms should not be used",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-327"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "S7150",
+        "name": "Pattern matching should be exhaustive",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S7152",
+        "name": "Recursive functions should have a base case",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S7154",
+        "name": "Option.get should not be called without checking None",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S7156",
+        "name": "Array bounds should be checked before access",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S7158",
+        "name": "Exceptions should be caught and handled appropriately",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "S7200",
+        "name": "Using Obj.magic is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7202",
+        "name": "Using external C bindings is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7204",
+        "name": "Using Unix.system is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "S7250",
+        "name": "Functions should not be too complex",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S7252",
+        "name": "Unused let bindings should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7254",
+        "name": "Wildcard pattern matches should be avoided when possible",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7256",
+        "name": "Imperative style should be avoided when functional alternatives exist",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7258",
+        "name": "Module signatures should be explicit",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7260",
+        "name": "Type annotations should be provided for public functions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7262",
+        "name": "Nested match expressions should be refactored",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "jsp": {
+    "vulnerabilities": [
+      {
+        "id": "S7300",
+        "name": "JSP expressions should not be vulnerable to XSS attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-79"]
+      },
+      {
+        "id": "S7302",
+        "name": "EL expressions should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-917"]
+      },
+      {
+        "id": "S7304",
+        "name": "Scriptlets should not include user-controlled data",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-94"]
+      },
+      {
+        "id": "S7306",
+        "name": "JSTL sql:query should use parameterized queries",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-89"]
+      },
+      {
+        "id": "S7308",
+        "name": "Session data should not contain sensitive information",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-200"]
+      },
+      {
+        "id": "S7310",
+        "name": "File inclusion should not be based on user input",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-98"]
+      },
+      {
+        "id": "S7312",
+        "name": "Hidden form fields should not contain sensitive data",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-472"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "S7350",
+        "name": "JSP tags should be properly closed",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7352",
+        "name": "JSTL tags should use proper attribute types",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7354",
+        "name": "EL expressions should reference valid beans",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S7356",
+        "name": "Include directives should reference existing files",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7358",
+        "name": "Tag libraries should be properly declared",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7360",
+        "name": "Form actions should reference valid endpoints",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "S7400",
+        "name": "Using JSP scriptlets is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7402",
+        "name": "Disabling auto-escaping in JSTL is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7404",
+        "name": "Using request.getParameter directly in output is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7406",
+        "name": "Setting session timeout too high is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7408",
+        "name": "Exposing server-side error details is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "S7450",
+        "name": "JSP scriptlets should not be used",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7452",
+        "name": "Business logic should not be placed in JSP files",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7454",
+        "name": "JSP declarations should not be used",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7456",
+        "name": "JSP comments should be used instead of HTML comments for sensitive content",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7458",
+        "name": "Inline CSS and JavaScript should not be used in JSP",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7460",
+        "name": "Duplicate JSTL imports should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7462",
+        "name": "JSP pages should use UTF-8 encoding",
+        "severity": "MINOR"
+      }
+    ]
+  },
+  "json": {
+    "vulnerabilities": [
+      {
+        "id": "S7500",
+        "name": "JSON files should not contain secrets or API keys",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "S7502",
+        "name": "JSON files should not contain private keys or certificates",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-321"]
+      },
+      {
+        "id": "S7504",
+        "name": "JSON configuration should not expose internal endpoints",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-200"]
+      },
+      {
+        "id": "S7506",
+        "name": "JSON files should not contain database connection strings with credentials",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "S7550",
+        "name": "JSON files should be valid and well-formed",
+        "severity": "BLOCKER"
+      },
+      {
+        "id": "S7552",
+        "name": "Duplicate keys should not be used in JSON objects",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "S7554",
+        "name": "JSON values should match their expected schema types",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7556",
+        "name": "JSON files should use consistent encoding",
+        "severity": "MINOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "S7600",
+        "name": "Package.json dependencies should use fixed versions",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7602",
+        "name": "JSON configuration files with permission settings should be reviewed",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "S7604",
+        "name": "Enabling debug mode in JSON configuration is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "S7650",
+        "name": "JSON files should not contain comments workaround patterns",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7652",
+        "name": "JSON files should use consistent indentation",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7654",
+        "name": "JSON property names should follow consistent naming conventions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "S7656",
+        "name": "JSON files should not be excessively nested",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "terraform": {
+    "vulnerabilities": [
+      {
+        "id": "TF1001",
+        "name": "IAM policies should not grant full administrative privileges",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-250"]
+      },
+      {
+        "id": "TF1002",
+        "name": "S3 buckets should not be publicly accessible",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "TF1003",
+        "name": "Security groups should not allow unrestricted ingress",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "TF1004",
+        "name": "Database instances should not be publicly accessible",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "TF1005",
+        "name": "Secrets should not be hard-coded in Terraform files",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "TF1006",
+        "name": "Encryption at rest should be enabled for storage resources",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-311"]
+      },
+      {
+        "id": "TF1007",
+        "name": "Encryption in transit should be enabled",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-319"]
+      },
+      {
+        "id": "TF1008",
+        "name": "KMS keys should have rotation enabled",
+        "severity": "MAJOR",
+        "cwe": ["CWE-320"]
+      },
+      {
+        "id": "TF1009",
+        "name": "Cloud storage should not allow public read access",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "TF1010",
+        "name": "IAM users should not have inline policies",
+        "severity": "MAJOR",
+        "cwe": ["CWE-250"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "TF2001",
+        "name": "Resource references should point to existing resources",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "TF2002",
+        "name": "Variable types should match their usage",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF2003",
+        "name": "Required variables should have no default values",
+        "severity": "MINOR"
+      },
+      {
+        "id": "TF2004",
+        "name": "Count and for_each should not be used together",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "TF2005",
+        "name": "Module sources should use versioned references",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF2006",
+        "name": "Provider versions should be constrained",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF2007",
+        "name": "Terraform state should use remote backend",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "TF3001",
+        "name": "Using wildcard principals in IAM policies is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF3002",
+        "name": "Allowing SSH from 0.0.0.0/0 is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF3003",
+        "name": "Disabling VPC flow logs is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF3004",
+        "name": "Disabling CloudTrail is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF3005",
+        "name": "Using default VPC is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF3006",
+        "name": "Disabling access logging for load balancers is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF3007",
+        "name": "Disabling backup retention is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "TF4001",
+        "name": "Terraform resources should have description tags",
+        "severity": "MINOR"
+      },
+      {
+        "id": "TF4002",
+        "name": "Variables should have descriptions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "TF4003",
+        "name": "Outputs should have descriptions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "TF4004",
+        "name": "Resources should use consistent naming conventions",
+        "severity": "MINOR"
+      },
+      {
+        "id": "TF4005",
+        "name": "Modules should not be nested too deeply",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "TF4006",
+        "name": "Deprecated resource attributes should not be used",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "dockerfile": {
+    "vulnerabilities": [
+      {
+        "id": "DK1001",
+        "name": "Containers should not run as root user",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-250"]
+      },
+      {
+        "id": "DK1002",
+        "name": "Secrets should not be passed as build arguments",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      },
+      {
+        "id": "DK1003",
+        "name": "ADD should not be used to fetch remote resources",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-829"]
+      },
+      {
+        "id": "DK1004",
+        "name": "Base images should use specific tags, not latest",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-829"]
+      },
+      {
+        "id": "DK1005",
+        "name": "COPY --chown should be used instead of RUN chown",
+        "severity": "MAJOR",
+        "cwe": ["CWE-732"]
+      },
+      {
+        "id": "DK1006",
+        "name": "Sensitive files should not be copied into images",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-200"]
+      },
+      {
+        "id": "DK1007",
+        "name": "Package manager cache should be cleaned in the same layer",
+        "severity": "MAJOR",
+        "cwe": ["CWE-459"]
+      },
+      {
+        "id": "DK1008",
+        "name": "HEALTHCHECK should be defined",
+        "severity": "MAJOR",
+        "cwe": ["CWE-693"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "DK2001",
+        "name": "EXPOSE should match the application's listening port",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK2002",
+        "name": "WORKDIR should use absolute paths",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK2003",
+        "name": "Multiple CMD instructions should not be used",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "DK2004",
+        "name": "Multiple ENTRYPOINT instructions should not be used",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "DK2005",
+        "name": "COPY should use --from with valid build stages",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK2006",
+        "name": "Shell form should not be used for CMD and ENTRYPOINT",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "DK3001",
+        "name": "Exposing ports below 1024 is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK3002",
+        "name": "Using privileged mode is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK3003",
+        "name": "Disabling security features with --security-opt is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK3004",
+        "name": "Mounting host directories is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK3005",
+        "name": "Using host network mode is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "DK4001",
+        "name": "Dockerfile should use multi-stage builds",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "DK4002",
+        "name": "RUN instructions should be consolidated to reduce layers",
+        "severity": "MINOR"
+      },
+      {
+        "id": "DK4003",
+        "name": "LABEL maintainer should be used instead of MAINTAINER",
+        "severity": "MINOR"
+      },
+      {
+        "id": "DK4004",
+        "name": ".dockerignore should be used to exclude unnecessary files",
+        "severity": "MINOR"
+      },
+      {
+        "id": "DK4005",
+        "name": "Dockerfile instructions should be ordered optimally for caching",
+        "severity": "MINOR"
+      },
+      {
+        "id": "DK4006",
+        "name": "Base images should use digest pinning for reproducibility",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "cicd": {
+    "vulnerabilities": [
+      {
+        "id": "CI1001",
+        "name": "Pipeline scripts should not be vulnerable to injection attacks",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "CI1002",
+        "name": "Secrets should not be printed in pipeline logs",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-532"]
+      },
+      {
+        "id": "CI1003",
+        "name": "Third-party actions should be pinned to specific commit SHAs",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-829"]
+      },
+      {
+        "id": "CI1004",
+        "name": "Pipeline tokens should have minimum required permissions",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-250"]
+      },
+      {
+        "id": "CI1005",
+        "name": "Artifact uploads should not contain secrets",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-200"]
+      },
+      {
+        "id": "CI1006",
+        "name": "Self-hosted runners should not be used for public repositories",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "CI1007",
+        "name": "Pull request triggers should require approval for external contributors",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-284"]
+      },
+      {
+        "id": "CI1008",
+        "name": "Environment variables should not contain inline secrets",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-798"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "CI2001",
+        "name": "Pipeline steps should have timeout limits",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI2002",
+        "name": "Cache keys should be deterministic",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI2003",
+        "name": "Conditional expressions should use proper syntax",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "CI2004",
+        "name": "Job dependencies should form a valid DAG",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "CI2005",
+        "name": "Matrix strategies should not create empty combinations",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI2006",
+        "name": "Artifact paths should reference existing outputs",
+        "severity": "MAJOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "CI3001",
+        "name": "Using write permissions on GITHUB_TOKEN is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI3002",
+        "name": "Running pipelines on pull_request_target is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI3003",
+        "name": "Using repository dispatch without input validation is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI3004",
+        "name": "Caching sensitive directories is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI3005",
+        "name": "Using latest tag for CI images is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "CI4001",
+        "name": "Pipeline jobs should have descriptive names",
+        "severity": "MINOR"
+      },
+      {
+        "id": "CI4002",
+        "name": "Duplicate steps should be extracted into reusable workflows",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI4003",
+        "name": "Pipeline configuration should not be duplicated across branches",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI4004",
+        "name": "Deprecated CI features should not be used",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "CI4005",
+        "name": "Pipeline files should use consistent indentation",
+        "severity": "MINOR"
+      },
+      {
+        "id": "CI4006",
+        "name": "Long shell scripts in pipelines should be extracted to files",
+        "severity": "MAJOR"
+      }
+    ]
+  },
+  "shell": {
+    "vulnerabilities": [
+      {
+        "id": "SH1001",
+        "name": "Variables in commands should be properly quoted",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "SH1002",
+        "name": "eval should not be used with user input",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "SH1003",
+        "name": "Command substitution results should be quoted",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "SH1004",
+        "name": "Temporary files should be created securely",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-377"]
+      },
+      {
+        "id": "SH1005",
+        "name": "PATH should not include world-writable directories",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-426"]
+      },
+      {
+        "id": "SH1006",
+        "name": "Commands should not be constructed from untrusted input",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-78"]
+      },
+      {
+        "id": "SH1007",
+        "name": "Curl should verify SSL certificates",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-295"]
+      },
+      {
+        "id": "SH1008",
+        "name": "Sensitive data should not be passed as command arguments",
+        "severity": "CRITICAL",
+        "cwe": ["CWE-214"]
+      },
+      {
+        "id": "SH1009",
+        "name": "Scripts should not source files from untrusted locations",
+        "severity": "BLOCKER",
+        "cwe": ["CWE-829"]
+      },
+      {
+        "id": "SH1010",
+        "name": "File permissions should be set restrictively",
+        "severity": "MAJOR",
+        "cwe": ["CWE-732"]
+      }
+    ],
+    "bugs": [
+      {
+        "id": "SH2001",
+        "name": "Scripts should use set -e for error handling",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH2002",
+        "name": "Variables should be defined before use",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SH2003",
+        "name": "Test conditions should use double brackets",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH2004",
+        "name": "Glob patterns should not be used unquoted",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH2005",
+        "name": "Exit codes should be checked after command execution",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH2006",
+        "name": "Word splitting on variables should be intentional",
+        "severity": "CRITICAL"
+      },
+      {
+        "id": "SH2007",
+        "name": "Arithmetic expressions should use proper syntax",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH2008",
+        "name": "Here documents should use quoted delimiters when expansion is not needed",
+        "severity": "MINOR"
+      }
+    ],
+    "securityHotspots": [
+      {
+        "id": "SH3001",
+        "name": "Using sudo in scripts is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH3002",
+        "name": "Downloading and executing remote scripts is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH3003",
+        "name": "Using chmod 777 is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH3004",
+        "name": "Using netcat for data transfer is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH3005",
+        "name": "Running ssh with StrictHostKeyChecking=no is security-sensitive",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH3006",
+        "name": "Using SUID/SGID bits is security-sensitive",
+        "severity": "MAJOR"
+      }
+    ],
+    "codeSmells": [
+      {
+        "id": "SH4001",
+        "name": "Scripts should start with a proper shebang line",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH4002",
+        "name": "Unused variables should be removed",
+        "severity": "MINOR"
+      },
+      {
+        "id": "SH4003",
+        "name": "Functions should be used for repeated logic",
+        "severity": "MINOR"
+      },
+      {
+        "id": "SH4004",
+        "name": "Deprecated backtick syntax should not be used for command substitution",
+        "severity": "MINOR"
+      },
+      {
+        "id": "SH4005",
+        "name": "Script complexity should not be too high",
+        "severity": "MAJOR"
+      },
+      {
+        "id": "SH4006",
+        "name": "Useless cat usage should be avoided",
+        "severity": "MINOR"
       }
     ]
   },
@@ -27875,12 +29884,78 @@
         "codeSmells": 241
       },
       "cpp": {
-        "vulnerabilities": 15,
-        "securityHotspots": 12,
-        "bugs": 15,
-        "codeSmells": 45
+        "vulnerabilities": 23,
+        "securityHotspots": 16,
+        "bugs": 20,
+        "codeSmells": 49
+      },
+      "javascript": {
+        "vulnerabilities": 14,
+        "securityHotspots": 10,
+        "bugs": 12,
+        "codeSmells": 14
+      },
+      "swift": {
+        "vulnerabilities": 10,
+        "securityHotspots": 8,
+        "bugs": 10,
+        "codeSmells": 12
+      },
+      "scala": {
+        "vulnerabilities": 10,
+        "securityHotspots": 8,
+        "bugs": 10,
+        "codeSmells": 12
+      },
+      "apex": {
+        "vulnerabilities": 10,
+        "securityHotspots": 6,
+        "bugs": 8,
+        "codeSmells": 6
+      },
+      "ocaml": {
+        "vulnerabilities": 5,
+        "securityHotspots": 3,
+        "bugs": 5,
+        "codeSmells": 7
+      },
+      "jsp": {
+        "vulnerabilities": 7,
+        "securityHotspots": 5,
+        "bugs": 6,
+        "codeSmells": 7
+      },
+      "json": {
+        "vulnerabilities": 4,
+        "securityHotspots": 3,
+        "bugs": 4,
+        "codeSmells": 4
+      },
+      "terraform": {
+        "vulnerabilities": 10,
+        "securityHotspots": 7,
+        "bugs": 7,
+        "codeSmells": 6
+      },
+      "dockerfile": {
+        "vulnerabilities": 8,
+        "securityHotspots": 5,
+        "bugs": 6,
+        "codeSmells": 6
+      },
+      "cicd": {
+        "vulnerabilities": 8,
+        "securityHotspots": 5,
+        "bugs": 6,
+        "codeSmells": 6
+      },
+      "shell": {
+        "vulnerabilities": 10,
+        "securityHotspots": 6,
+        "bugs": 8,
+        "codeSmells": 6
       }
     },
-    "totalCount": 5105
+    "totalCount": 5456
   }
 }

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "2.0.0",
-  "description": "Auto-fix patterns for automatic code correction - ALL 10 LANGUAGES",
-  "lastUpdated": "2026-03-07",
-  "totalPatterns": 90,
+  "description": "Auto-fix patterns for automatic code correction - ALL 21 LANGUAGES",
+  "lastUpdated": "2026-03-10",
+  "totalPatterns": 115,
 
   "patterns": {
     "csharp": [
@@ -476,57 +476,8 @@
         "isSafe": true,
         "confidence": 0.95
       }
-    ]
-  },
+    ],
 
-  "transforms": {
-    "csharp": {
-      "extractToMethod": "Extract code block to new method",
-      "addUsing": "Add missing using directive",
-      "addAsync": "Add async/await keywords",
-      "addNullCheck": "Add null check before dereference"
-    },
-    "typescript": {
-      "extractComponent": "Extract JSX to new component",
-      "addType": "Add explicit type annotation",
-      "addGeneric": "Add generic type parameter",
-      "convertToHook": "Extract to custom hook"
-    },
-    "python": {
-      "extractFunction": "Extract code to function",
-      "addTypeHint": "Add type hints",
-      "convertToFstring": "Convert to f-string"
-    },
-    "go": {
-      "extractFunction": "Extract to function",
-      "handleError": "Add error handling",
-      "deferClose": "Add defer for Close()"
-    },
-    "java": {
-      "extractToMethod": "Extract to method",
-      "convertToStreams": "Convert to Stream API",
-      "addLombok": "Add Lombok annotations"
-    },
-    "rust": {
-      "extractFunction": "Extract to function",
-      "addErrorHandling": "Add ? operator",
-      "removeUnwrap": "Replace unwrap with match"
-    },
-    "php": {
-      "extractFunction": "Extract to function",
-      "addTypeHints": "Add type declarations",
-      "modernize": "Use modern PHP features"
-    },
-    "kotlin": {
-      "convertToWhen": "Convert to when expression",
-      "addNullSafety": "Add null safety",
-      "useScopeFunctions": "Use let/run/apply"
-    },
-    "ruby": {
-      "extractMethod": "Extract to method",
-      "modernize": "Use modern Ruby idioms",
-      "safeNavigation": "Add safe navigation operator"
-    },
     "cpp": [
       {
         "ruleId": "S3519",
@@ -612,6 +563,642 @@
         "isSafe": true,
         "confidence": 0.9
       }
+    ],
+
+    "javascript": [
+      {
+        "ruleId": "S6676",
+        "name": "Remove console.log",
+        "description": "Remove console.log statements from production code",
+        "findPattern": "console\\.(log|debug|info)\\s*\\([^)]*\\)\\s*;?",
+        "replaceTemplate": "",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract to environment variable",
+        "description": "Replace hardcoded credentials with env variable",
+        "findPattern": "(password|secret|apiKey|token)\\s*[:=]\\s*['\"]([^'\"]+)['\"]",
+        "replaceTemplate": "$1 = process.env.$1",
+        "isSafe": false,
+        "breakingChanges": ["Requires environment variable setup"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S3504",
+        "name": "Replace var with const",
+        "description": "Replace var declarations with const for immutable bindings",
+        "findPattern": "\\bvar\\s+(\\w+)\\s*=\\s*",
+        "replaceTemplate": "const $1 = ",
+        "isSafe": false,
+        "breakingChanges": ["May break if variable is reassigned later"],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S1656",
+        "name": "Remove self-assignment",
+        "description": "Remove variable self-assignment",
+        "findPattern": "(\\w+)\\s*=\\s*\\1\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2737",
+        "name": "Remove unused import",
+        "description": "Remove unused require statement",
+        "findPattern": "const\\s+\\w+\\s*=\\s*require\\s*\\(['\"][^'\"]+['\"]\\)\\s*;",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S1105",
+        "name": "Replace == with ===",
+        "description": "Use strict equality instead of loose equality",
+        "findPattern": "([^!=])\\s*==\\s*([^=])",
+        "replaceTemplate": "$1 === $2",
+        "isSafe": false,
+        "breakingChanges": ["May change behavior for type-coerced comparisons"],
+        "confidence": 0.85
+      }
+    ],
+
+    "swift": [
+      {
+        "ruleId": "S6900",
+        "name": "Replace force unwrap with optional binding",
+        "description": "Replace force unwrap (!) with if let or guard let",
+        "findPattern": "(\\w+)!\\.(\\w+)",
+        "isSafe": false,
+        "breakingChanges": ["Requires restructuring control flow"],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S6901",
+        "name": "Add access control",
+        "description": "Add explicit access control modifier to declaration",
+        "findPattern": "^\\s*(func|var|let|class|struct|enum)\\s+(\\w+)",
+        "isSafe": false,
+        "confidence": 0.6
+      },
+      {
+        "ruleId": "S6902",
+        "name": "Replace force try with do-catch",
+        "description": "Replace try! with proper do-catch error handling",
+        "findPattern": "try!\\s+(\\w+)",
+        "isSafe": false,
+        "breakingChanges": ["Requires adding error handling block"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S6903",
+        "name": "Use guard let for early return",
+        "description": "Replace if let with guard let for early exit",
+        "findPattern": "if\\s+let\\s+(\\w+)\\s*=\\s*(\\w+)\\s*\\{",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S6904",
+        "name": "Replace NSArray with Swift array",
+        "description": "Use native Swift Array instead of NSArray",
+        "findPattern": "\\bNSArray\\b",
+        "replaceTemplate": "[Any]",
+        "isSafe": false,
+        "breakingChanges": ["May require updating Objective-C bridge code"],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S6905",
+        "name": "Add weak self in closure",
+        "description": "Add [weak self] capture list to prevent retain cycles",
+        "findPattern": "\\{\\s*(?!\\[weak\\s+self\\])\\s*self\\.",
+        "isSafe": false,
+        "breakingChanges": ["Requires nil checks on self inside closure"],
+        "confidence": 0.8
+      }
+    ],
+
+    "scala": [
+      {
+        "ruleId": "S7000",
+        "name": "Replace var with val",
+        "description": "Use immutable val instead of mutable var",
+        "findPattern": "\\bvar\\s+(\\w+)\\s*[:=]",
+        "replaceTemplate": "val $1:",
+        "isSafe": false,
+        "breakingChanges": ["Will fail if variable is reassigned"],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S7001",
+        "name": "Use pattern matching",
+        "description": "Replace if-else type checks with pattern matching",
+        "findPattern": "if\\s*\\(\\s*(\\w+)\\.isInstanceOf\\[",
+        "isSafe": false,
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S7002",
+        "name": "Replace null with Option",
+        "description": "Use Option type instead of null checks",
+        "findPattern": "if\\s*\\(\\s*(\\w+)\\s*!=\\s*null\\s*\\)",
+        "isSafe": false,
+        "breakingChanges": ["Requires changing method signatures"],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S7003",
+        "name": "Use string interpolation",
+        "description": "Replace string concatenation with s-interpolation",
+        "findPattern": "\"[^\"]*\"\\s*\\+\\s*(\\w+)\\s*\\+\\s*\"",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7004",
+        "name": "Remove return keyword",
+        "description": "Remove explicit return keyword (last expression is returned)",
+        "findPattern": "\\breturn\\s+(.+)$",
+        "replaceTemplate": "$1",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ],
+
+    "apex": [
+      {
+        "ruleId": "S7100",
+        "name": "Add with sharing",
+        "description": "Add 'with sharing' keyword to enforce security",
+        "findPattern": "public\\s+class\\s+(\\w+)(?!\\s+(?:with|without)\\s+sharing)",
+        "replaceTemplate": "public with sharing class $1",
+        "isSafe": false,
+        "breakingChanges": ["May restrict record visibility"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7101",
+        "name": "Use bind variables in SOQL",
+        "description": "Replace string concatenation in SOQL with bind variables",
+        "findPattern": "Database\\.query\\s*\\(\\s*'[^']*'\\s*\\+",
+        "isSafe": false,
+        "breakingChanges": ["Requires restructuring query"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7102",
+        "name": "Move SOQL out of loop",
+        "description": "Extract SOQL query outside of for/while loop",
+        "findPattern": "for\\s*\\([^)]+\\)\\s*\\{[^}]*\\[SELECT",
+        "isSafe": false,
+        "breakingChanges": ["Requires restructuring data access logic"],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S7103",
+        "name": "Add CRUD check",
+        "description": "Add CRUD permission check before DML operation",
+        "findPattern": "(?:insert|update|delete|upsert)\\s+(\\w+)\\s*;",
+        "isSafe": false,
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S7104",
+        "name": "Bulkify trigger handler",
+        "description": "Replace single-record processing with bulk pattern",
+        "findPattern": "Trigger\\.(new|old)\\[0\\]",
+        "isSafe": false,
+        "breakingChanges": ["Requires restructuring trigger logic for collections"],
+        "confidence": 0.8
+      }
+    ],
+
+    "ocaml": [
+      {
+        "ruleId": "S7200",
+        "name": "Add type annotation",
+        "description": "Add explicit type annotation to let binding",
+        "findPattern": "let\\s+(\\w+)\\s*=",
+        "isSafe": true,
+        "confidence": 0.6
+      },
+      {
+        "ruleId": "S7201",
+        "name": "Replace deprecated String.create",
+        "description": "Replace deprecated String.create with Bytes.create",
+        "findPattern": "String\\.create\\s",
+        "replaceTemplate": "Bytes.create ",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S7202",
+        "name": "Use List.iter instead of ignore",
+        "description": "Replace List.map with ignore with List.iter",
+        "findPattern": "ignore\\s*\\(\\s*List\\.map\\b",
+        "replaceTemplate": "List.iter",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7203",
+        "name": "Replace open with local open",
+        "description": "Use local open to limit scope of module opening",
+        "findPattern": "^open\\s+(\\w+)$",
+        "isSafe": false,
+        "confidence": 0.5
+      }
+    ],
+
+    "jsp": [
+      {
+        "ruleId": "S7300",
+        "name": "Replace scriptlet with JSTL",
+        "description": "Replace Java scriptlet with JSTL tag",
+        "findPattern": "<%\\s*(?!=|@)(.+?)%>",
+        "isSafe": false,
+        "breakingChanges": ["Requires JSTL taglib declaration"],
+        "requiredImports": ["<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S7301",
+        "name": "Encode output to prevent XSS",
+        "description": "Replace expression with JSTL c:out for output encoding",
+        "findPattern": "<%=\\s*(\\w+)\\s*%>",
+        "replaceTemplate": "<c:out value=\"${$1}\" />",
+        "isSafe": true,
+        "requiredImports": ["<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7302",
+        "name": "Remove inline SQL",
+        "description": "Extract inline SQL from JSP to DAO class",
+        "findPattern": "<%[^>]*(?:SELECT|INSERT|UPDATE|DELETE)\\s+",
+        "isSafe": false,
+        "breakingChanges": ["Requires creating DAO class"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7303",
+        "name": "Replace page directive with include",
+        "description": "Replace repeated page directives with include directive",
+        "findPattern": "<%@\\s*page\\s+import\\s*=\\s*\"([^\"]+)\"\\s*%>",
+        "isSafe": true,
+        "confidence": 0.7
+      }
+    ],
+
+    "json": [
+      {
+        "ruleId": "S7400",
+        "name": "Remove sensitive values",
+        "description": "Replace hardcoded sensitive values with placeholder",
+        "findPattern": "\"(password|secret|apiKey|token|api_key)\"\\s*:\\s*\"([^\"]+)\"",
+        "replaceTemplate": "\"$1\": \"<REDACTED>\"",
+        "isSafe": false,
+        "breakingChanges": ["Requires replacing with actual secret management"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7401",
+        "name": "Fix schema reference",
+        "description": "Update deprecated JSON Schema draft reference",
+        "findPattern": "\"\\$schema\"\\s*:\\s*\"http://json-schema\\.org/draft-04/schema#?\"",
+        "replaceTemplate": "\"$schema\": \"https://json-schema.org/draft/2020-12/schema\"",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7402",
+        "name": "Remove trailing commas",
+        "description": "Remove trailing commas that cause parse errors",
+        "findPattern": ",\\s*([}\\]])",
+        "replaceTemplate": "$1",
+        "isSafe": true,
+        "confidence": 0.95
+      }
+    ],
+
+    "terraform": [
+      {
+        "ruleId": "S7500",
+        "name": "Add encryption at rest",
+        "description": "Enable encryption for storage resources",
+        "findPattern": "resource\\s+\"aws_(s3_bucket|ebs_volume|rds_instance)\"\\s+\"(\\w+)\"\\s*\\{(?!.*encryption)",
+        "isSafe": false,
+        "breakingChanges": ["May require KMS key setup"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7501",
+        "name": "Restrict security group CIDR",
+        "description": "Replace 0.0.0.0/0 with restricted CIDR block",
+        "findPattern": "cidr_blocks\\s*=\\s*\\[\"0\\.0\\.0\\.0/0\"\\]",
+        "isSafe": false,
+        "breakingChanges": ["May block legitimate traffic"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7502",
+        "name": "Use variables for secrets",
+        "description": "Replace hardcoded secrets with variable references",
+        "findPattern": "(password|secret_key|access_key)\\s*=\\s*\"([^\"]+)\"",
+        "replaceTemplate": "$1 = var.$1",
+        "isSafe": false,
+        "breakingChanges": ["Requires variable declaration"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7503",
+        "name": "Enable versioning on S3",
+        "description": "Add versioning configuration to S3 bucket",
+        "findPattern": "resource\\s+\"aws_s3_bucket\"\\s+\"(\\w+)\"\\s*\\{(?!.*versioning)",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7504",
+        "name": "Add lifecycle prevent_destroy",
+        "description": "Add prevent_destroy lifecycle rule to critical resources",
+        "findPattern": "resource\\s+\"aws_(db_instance|s3_bucket)\"\\s+\"(\\w+)\"\\s*\\{(?!.*prevent_destroy)",
+        "isSafe": true,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S7505",
+        "name": "Pin provider version",
+        "description": "Pin provider version to avoid unexpected upgrades",
+        "findPattern": "required_providers\\s*\\{[^}]*source\\s*=\\s*\"([^\"]+)\"(?!.*version)",
+        "isSafe": true,
+        "confidence": 0.9
+      }
+    ],
+
+    "dockerfile": [
+      {
+        "ruleId": "S7600",
+        "name": "Add USER directive",
+        "description": "Add USER directive to avoid running as root",
+        "findPattern": "^(?!.*USER\\s+\\w+).*CMD\\s+",
+        "isSafe": false,
+        "breakingChanges": ["May require adjusting file permissions"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7601",
+        "name": "Replace ADD with COPY",
+        "description": "Use COPY instead of ADD for simple file copying",
+        "findPattern": "^ADD\\s+([^h][^t][^t][^p]\\S+)\\s+(\\S+)",
+        "replaceTemplate": "COPY $1 $2",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7602",
+        "name": "Pin base image version",
+        "description": "Replace latest tag with specific version",
+        "findPattern": "FROM\\s+(\\w+):latest",
+        "isSafe": false,
+        "breakingChanges": ["Requires choosing specific version"],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S7603",
+        "name": "Combine RUN commands",
+        "description": "Combine consecutive RUN commands to reduce layers",
+        "findPattern": "RUN\\s+(.+)\\nRUN\\s+(.+)",
+        "replaceTemplate": "RUN $1 && \\\\\\n    $2",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7604",
+        "name": "Add HEALTHCHECK",
+        "description": "Add HEALTHCHECK instruction for container health monitoring",
+        "findPattern": "^(?!.*HEALTHCHECK).*EXPOSE\\s+(\\d+)",
+        "isSafe": true,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S7605",
+        "name": "Use multi-stage build",
+        "description": "Separate build and runtime stages",
+        "findPattern": "FROM\\s+(\\S+).*\\n(?!.*FROM).*(?:gcc|make|npm\\s+run\\s+build|mvn|gradle)",
+        "isSafe": false,
+        "breakingChanges": ["Requires restructuring Dockerfile"],
+        "confidence": 0.7
+      }
+    ],
+
+    "cicd": [
+      {
+        "ruleId": "S7700",
+        "name": "Pin action version to SHA",
+        "description": "Pin GitHub Actions to full commit SHA instead of tag",
+        "findPattern": "uses:\\s+(\\w+/\\w+)@v(\\d+)",
+        "isSafe": false,
+        "breakingChanges": ["Requires looking up commit SHA for the version"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7701",
+        "name": "Mask secret in output",
+        "description": "Add masking for secrets exposed in workflow output",
+        "findPattern": "echo\\s+[\"']?\\$\\{?\\{?\\s*secrets\\.",
+        "replaceTemplate": "echo \"::add-mask::${secrets.",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S7702",
+        "name": "Restrict permissions",
+        "description": "Add explicit permissions block to restrict token scope",
+        "findPattern": "^(jobs:|name:)(?!.*permissions:)",
+        "isSafe": true,
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S7703",
+        "name": "Add timeout-minutes",
+        "description": "Add timeout-minutes to prevent hung jobs",
+        "findPattern": "runs-on:\\s+\\S+(?!.*timeout-minutes)",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7704",
+        "name": "Use environment for secrets",
+        "description": "Use GitHub environment protection rules for sensitive deployments",
+        "findPattern": "\\$\\{\\{\\s*secrets\\.(PROD|PRODUCTION|DEPLOY)",
+        "isSafe": false,
+        "breakingChanges": ["Requires GitHub environment setup"],
+        "confidence": 0.7
+      }
+    ],
+
+    "shell": [
+      {
+        "ruleId": "S7800",
+        "name": "Quote variable expansion",
+        "description": "Add double quotes around variable expansions",
+        "findPattern": "(?<!\")\\$\\{?(\\w+)\\}?(?!\")",
+        "replaceTemplate": "\"${$1}\"",
+        "isSafe": false,
+        "breakingChanges": ["May affect word splitting behavior"],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S7801",
+        "name": "Replace eval with safer alternative",
+        "description": "Remove eval to prevent code injection",
+        "findPattern": "\\beval\\s+",
+        "isSafe": false,
+        "breakingChanges": ["Requires restructuring command construction"],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S7802",
+        "name": "Add set -euo pipefail",
+        "description": "Add strict mode to catch errors early",
+        "findPattern": "^#!/bin/(ba)?sh\\s*$",
+        "replaceTemplate": "#!/bin/$1sh\\nset -euo pipefail",
+        "isSafe": false,
+        "breakingChanges": ["Script may fail on previously ignored errors"],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7803",
+        "name": "Replace backticks with $()",
+        "description": "Use $() instead of backticks for command substitution",
+        "findPattern": "`([^`]+)`",
+        "replaceTemplate": "$($1)",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S7804",
+        "name": "Use [[ instead of [",
+        "description": "Replace [ with [[ for safer bash conditionals",
+        "findPattern": "\\[\\s+([^]]+)\\s+\\]",
+        "replaceTemplate": "[[ $1 ]]",
+        "isSafe": false,
+        "breakingChanges": ["Not POSIX compatible, requires bash"],
+        "confidence": 0.8
+      }
     ]
+  },
+
+  "transforms": {
+    "csharp": {
+      "extractToMethod": "Extract code block to new method",
+      "addUsing": "Add missing using directive",
+      "addAsync": "Add async/await keywords",
+      "addNullCheck": "Add null check before dereference"
+    },
+    "typescript": {
+      "extractComponent": "Extract JSX to new component",
+      "addType": "Add explicit type annotation",
+      "addGeneric": "Add generic type parameter",
+      "convertToHook": "Extract to custom hook"
+    },
+    "python": {
+      "extractFunction": "Extract code to function",
+      "addTypeHint": "Add type hints",
+      "convertToFstring": "Convert to f-string"
+    },
+    "go": {
+      "extractFunction": "Extract to function",
+      "handleError": "Add error handling",
+      "deferClose": "Add defer for Close()"
+    },
+    "java": {
+      "extractToMethod": "Extract to method",
+      "convertToStreams": "Convert to Stream API",
+      "addLombok": "Add Lombok annotations"
+    },
+    "rust": {
+      "extractFunction": "Extract to function",
+      "addErrorHandling": "Add ? operator",
+      "removeUnwrap": "Replace unwrap with match"
+    },
+    "php": {
+      "extractFunction": "Extract to function",
+      "addTypeHints": "Add type declarations",
+      "modernize": "Use modern PHP features"
+    },
+    "kotlin": {
+      "convertToWhen": "Convert to when expression",
+      "addNullSafety": "Add null safety",
+      "useScopeFunctions": "Use let/run/apply"
+    },
+    "ruby": {
+      "extractMethod": "Extract to method",
+      "modernize": "Use modern Ruby idioms",
+      "safeNavigation": "Add safe navigation operator"
+    },
+    "cpp": {
+      "useSmartPointers": "Replace raw pointers with smart pointers",
+      "addRaii": "Add RAII wrapper for resource management",
+      "modernizeCasts": "Replace C-style casts with static_cast/dynamic_cast"
+    },
+    "javascript": {
+      "extractFunction": "Extract to named function",
+      "convertToArrow": "Convert to arrow function",
+      "addErrorHandling": "Wrap in try-catch"
+    },
+    "swift": {
+      "addGuardLet": "Add guard let for early return",
+      "useProtocolExtension": "Extract to protocol extension",
+      "addCodable": "Add Codable conformance"
+    },
+    "scala": {
+      "convertToForComprehension": "Convert to for-comprehension",
+      "usePatternMatching": "Convert to pattern matching",
+      "addImplicits": "Add implicit conversions"
+    },
+    "apex": {
+      "bulkify": "Convert to bulk-safe pattern",
+      "addTestMethod": "Generate test method stub",
+      "extractService": "Extract to service class"
+    },
+    "ocaml": {
+      "addSignature": "Add module signature",
+      "usePipe": "Convert to pipe operator style",
+      "addMatchExhaustive": "Add exhaustive match branches"
+    },
+    "jsp": {
+      "convertToJstl": "Convert scriptlet to JSTL tags",
+      "extractBean": "Extract logic to JavaBean",
+      "addElEncoding": "Add EL output encoding"
+    },
+    "json": {
+      "sortKeys": "Sort JSON keys alphabetically",
+      "addSchema": "Add JSON Schema reference"
+    },
+    "terraform": {
+      "extractModule": "Extract to reusable module",
+      "addTags": "Add standard tagging",
+      "useDataSource": "Replace hardcoded values with data sources"
+    },
+    "dockerfile": {
+      "multiStage": "Convert to multi-stage build",
+      "optimizeLayers": "Optimize layer ordering for cache",
+      "addLabels": "Add OCI standard labels"
+    },
+    "cicd": {
+      "extractReusable": "Extract to reusable workflow",
+      "addCaching": "Add dependency caching steps",
+      "addMatrix": "Convert to matrix strategy"
+    },
+    "shell": {
+      "addErrorHandling": "Add error handling with trap",
+      "useFunction": "Extract to shell function",
+      "addLogging": "Add structured logging"
+    }
   }
 }
