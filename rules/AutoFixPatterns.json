@@ -1,10 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "version": "2.0.0",
+  "version": "2.9.0",
   "description": "Auto-fix patterns for automatic code correction - ALL 21 LANGUAGES",
-  "lastUpdated": "2026-03-10",
-  "totalPatterns": 115,
-
+  "lastUpdated": "2026-03-13",
+  "totalPatterns": 264,
   "patterns": {
     "csharp": [
       {
@@ -22,7 +21,9 @@
         "findPattern": "(password|secret|apikey|token)\\s*=\\s*\"([^\"]+)\"",
         "replaceTemplate": "$1 = _configuration[\"$1\"]",
         "isSafe": false,
-        "breakingChanges": ["Requires configuration setup"],
+        "breakingChanges": [
+          "Requires configuration setup"
+        ],
         "confidence": 0.9
       },
       {
@@ -40,7 +41,9 @@
         "description": "Convert string concatenation SQL to parameterized query",
         "findPattern": "ExecuteSqlRaw\\s*\\(\\s*\\$\"([^\"]+\\{[^}]+\\}[^\"]*)\"",
         "isSafe": false,
-        "breakingChanges": ["Requires parameter extraction"],
+        "breakingChanges": [
+          "Requires parameter extraction"
+        ],
         "confidence": 0.8
       },
       {
@@ -85,9 +88,88 @@
         "findPattern": "^\\s*//.*[{};=]",
         "isSafe": false,
         "confidence": 0.6
+      },
+      {
+        "ruleId": "SCR-CS-019",
+        "findPattern": "new\\s+MD5CryptoServiceProvider\\s*\\(\\)",
+        "replaceTemplate": "SHA256.Create()",
+        "description": "Replace MD5 with SHA256",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CS-020",
+        "findPattern": "new\\s+SHA1CryptoServiceProvider\\s*\\(\\)",
+        "replaceTemplate": "SHA256.Create()",
+        "description": "Replace SHA1 with SHA256",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CS-025",
+        "findPattern": "new\\s+Random\\s*\\(\\)",
+        "replaceTemplate": "RandomNumberGenerator.Create()",
+        "description": "Replace Random with cryptographic RNG",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CS-115",
+        "findPattern": "throw\\s+ex\\s*;",
+        "replaceTemplate": "throw;",
+        "description": "Preserve stack trace by using throw instead of throw ex",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-CS-083",
+        "findPattern": "async\\s+void\\s+(\\w+)\\s*\\(",
+        "replaceTemplate": "async Task $1(",
+        "description": "Change async void to async Task",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CS-155",
+        "findPattern": "Console\\.WriteLine\\s*\\((.*)\\)",
+        "replaceTemplate": "_logger.LogInformation($1)",
+        "description": "Replace Console.WriteLine with logger",
+        "isSafe": false,
+        "confidence": 0.6
+      },
+      {
+        "ruleId": "SCR-CS-035",
+        "findPattern": "SameSiteMode\\.None",
+        "replaceTemplate": "SameSiteMode.Strict",
+        "description": "Set SameSite cookie to Strict",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CS-094",
+        "findPattern": "==\\s*(\\d+\\.\\d+)",
+        "replaceTemplate": "- $1) < 0.0001",
+        "description": "Replace float equality with tolerance comparison",
+        "isSafe": false,
+        "confidence": 0.5
+      },
+      {
+        "ruleId": "SCR-CS-091",
+        "findPattern": "DateTime\\.Now",
+        "replaceTemplate": "DateTime.UtcNow",
+        "description": "Use UTC time for consistency",
+        "isSafe": false,
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-CS-164",
+        "findPattern": "#region\\s+.*\\n",
+        "replaceTemplate": "",
+        "description": "Remove region directives",
+        "isSafe": true,
+        "confidence": 0.9
       }
     ],
-
     "typescript": [
       {
         "ruleId": "S6747",
@@ -104,7 +186,9 @@
         "description": "Replace array index with unique identifier",
         "findPattern": "key=\\{index\\}|key=\\{i\\}|key=\\{idx\\}",
         "isSafe": false,
-        "breakingChanges": ["Requires unique identifier in data"],
+        "breakingChanges": [
+          "Requires unique identifier in data"
+        ],
         "confidence": 0.7
       },
       {
@@ -113,7 +197,9 @@
         "description": "Add missing dependencies to useEffect",
         "findPattern": "useEffect\\s*\\(\\s*\\(\\s*\\)\\s*=>",
         "isSafe": false,
-        "breakingChanges": ["May cause infinite loops if not careful"],
+        "breakingChanges": [
+          "May cause infinite loops if not careful"
+        ],
         "confidence": 0.6
       },
       {
@@ -131,7 +217,9 @@
         "findPattern": "(password|secret|apiKey|token)\\s*[:=]\\s*['\"]([^'\"]+)['\"]",
         "replaceTemplate": "$1: process.env.$1",
         "isSafe": false,
-        "breakingChanges": ["Requires environment variable setup"],
+        "breakingChanges": [
+          "Requires environment variable setup"
+        ],
         "confidence": 0.9
       },
       {
@@ -159,9 +247,94 @@
         "findPattern": "import\\s+\\{[^}]+\\}\\s+from\\s+['\"][^'\"]+['\"]",
         "isSafe": true,
         "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TS-002",
+        "name": "Replace dynamic code execution with safer alternative",
+        "description": "Replace dynamic code execution with JSON.parse() for JSON strings",
+        "findPattern": "eval\\s*\\(\\s*(['\"]\\{[^)]+['\"])\\s*\\)",
+        "replaceTemplate": "JSON.parse($1)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Only works for JSON-like strings, not arbitrary JS"
+        ],
+        "confidence": 0.6
+      },
+      {
+        "ruleId": "SCR-TS-062",
+        "name": "Replace @ts-ignore with @ts-expect-error",
+        "description": "Use @ts-expect-error which fails when suppression is unnecessary",
+        "findPattern": "\\/\\/\\s*@ts-ignore",
+        "replaceTemplate": "// @ts-expect-error TODO: fix type error",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-TS-012",
+        "name": "Replace Math.random with crypto",
+        "description": "Replace Math.random() with crypto.randomUUID() for security contexts",
+        "findPattern": "Math\\.random\\s*\\(\\s*\\)",
+        "replaceTemplate": "crypto.randomUUID()",
+        "isSafe": false,
+        "breakingChanges": [
+          "Return type changes from number to string"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-TS-043",
+        "name": "Replace forEach async with for...of",
+        "description": "Convert async forEach to for...of loop for proper await",
+        "findPattern": "(\\w+)\\.forEach\\s*\\(\\s*async\\s*\\(\\s*(\\w+)\\s*\\)\\s*=>",
+        "isSafe": false,
+        "breakingChanges": [
+          "Execution becomes sequential instead of parallel"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-TS-061",
+        "name": "Replace any with unknown",
+        "description": "Replace any type with unknown for better type safety",
+        "findPattern": ":\\s*any\\b",
+        "replaceTemplate": ": unknown",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires type narrowing at usage sites"
+        ],
+        "confidence": 0.6
+      },
+      {
+        "ruleId": "SCR-TS-070",
+        "name": "Replace non-null assertion with optional chaining",
+        "description": "Replace ! operator with ?. for safer null handling",
+        "findPattern": "(\\w+)!\\.(\\w+)",
+        "replaceTemplate": "$1?.$2",
+        "isSafe": false,
+        "breakingChanges": [
+          "May change behavior if value was expected to be non-null"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-TS-047",
+        "name": "Add error variable to catch binding",
+        "description": "Add error parameter to empty catch block",
+        "findPattern": "catch\\s*\\(\\s*\\)",
+        "replaceTemplate": "catch (error: unknown)",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TS-046",
+        "name": "Replace loose equality with strict equality",
+        "description": "Replace == null with === null || === undefined",
+        "findPattern": "(\\w+)\\s*==\\s*null",
+        "replaceTemplate": "($1 === null || $1 === undefined)",
+        "isSafe": true,
+        "confidence": 0.85
       }
     ],
-
     "python": [
       {
         "ruleId": "S1656",
@@ -187,8 +360,12 @@
         "findPattern": "(PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*['\"]([^'\"]+)['\"]",
         "replaceTemplate": "$1 = os.environ.get('$1')",
         "isSafe": false,
-        "breakingChanges": ["Requires environment variable setup"],
-        "requiredImports": ["os"],
+        "breakingChanges": [
+          "Requires environment variable setup"
+        ],
+        "requiredImports": [
+          "os"
+        ],
         "confidence": 0.9
       },
       {
@@ -215,9 +392,66 @@
         "findPattern": "\".*\"\\.format\\s*\\(",
         "isSafe": true,
         "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-PY-V012",
+        "name": "Replace yaml.load with safe_load",
+        "description": "Use yaml.safe_load instead of yaml.load",
+        "findPattern": "yaml\\.load\\s*\\(([^)]+)\\)",
+        "replaceTemplate": "yaml.safe_load(\\1)",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-PY-B005",
+        "name": "Convert to with statement",
+        "description": "Use context manager for file handling",
+        "findPattern": "(\\w+)\\s*=\\s*open\\s*\\(([^)]+)\\)",
+        "replaceTemplate": "with open(\\2) as \\1:",
+        "isSafe": false,
+        "confidence": 0.75,
+        "breakingChanges": [
+          "Requires indenting subsequent code"
+        ]
+      },
+      {
+        "ruleId": "SCR-PY-B003",
+        "name": "Replace bare except",
+        "description": "Replace bare except with except Exception",
+        "findPattern": "except\\s*:",
+        "replaceTemplate": "except Exception:",
+        "isSafe": false,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "May catch different exceptions"
+        ]
+      },
+      {
+        "ruleId": "SCR-PY-S001",
+        "name": "Expand wildcard import",
+        "description": "Replace wildcard with explicit imports",
+        "findPattern": "from\\s+(\\w+)\\s+import\\s+\\*",
+        "replaceTemplate": "from \\1 import (specific, names)",
+        "isSafe": false,
+        "confidence": 0.5,
+        "breakingChanges": [
+          "Requires manual specification of imports"
+        ]
+      },
+      {
+        "ruleId": "SCR-PY-S002",
+        "name": "Replace print with logging",
+        "description": "Convert print to logging.info",
+        "findPattern": "print\\s*\\(([^)]+)\\)",
+        "replaceTemplate": "logging.info(\\1)",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "Requires logging import and configuration"
+        ]
       }
     ],
-
     "go": [
       {
         "ruleId": "S1656",
@@ -235,8 +469,12 @@
         "findPattern": "(password|secret|apiKey|token)\\s*:=\\s*\"([^\"]+)\"",
         "replaceTemplate": "$1 := os.Getenv(\"$1\")",
         "isSafe": false,
-        "breakingChanges": ["Requires environment variable setup"],
-        "requiredImports": ["os"],
+        "breakingChanges": [
+          "Requires environment variable setup"
+        ],
+        "requiredImports": [
+          "os"
+        ],
         "confidence": 0.9
       },
       {
@@ -248,62 +486,243 @@
         "confidence": 0.95
       },
       {
-        "ruleId": "S1000",
-        "name": "Simplify error handling",
-        "description": "Simplify if err != nil blocks",
-        "findPattern": "if\\s+err\\s*!=\\s*nil\\s*\\{\\s*return\\s+err\\s*\\}",
-        "replaceTemplate": "if err != nil { return err }",
+        "ruleId": "S3649",
+        "name": "Convert to parameterized query",
+        "description": "Convert string concatenation SQL to parameterized query using placeholders",
+        "findPattern": "(?:db|tx|conn)\\.(?:Query|Exec)\\s*\\(\\s*fmt\\.Sprintf\\([^)]+\\)",
         "isSafe": false,
-        "confidence": 0.6
+        "breakingChanges": [
+          "Requires extracting parameters and using prepared statements"
+        ],
+        "requiredImports": [
+          "database/sql"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S4830",
+        "name": "Remove InsecureSkipVerify",
+        "description": "Remove InsecureSkipVerify from TLS config to enable certificate validation",
+        "findPattern": "(InsecureSkipVerify\\s*:\\s*)true",
+        "replaceTemplate": "${1}false",
+        "isSafe": false,
+        "breakingChanges": [
+          "May cause connection failures if server uses self-signed certificates"
+        ],
+        "requiredImports": [
+          "crypto/tls"
+        ],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-GO-029",
+        "name": "Add error check",
+        "description": "Add 'if err != nil' check after function call that returns error",
+        "findPattern": "(\\w+),\\s*err\\s*:=\\s*([^\\n]+)\\n(?!\\s*if\\s+err\\s*!=\\s*nil)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires proper error handling logic implementation"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-GO-038",
+        "name": "Move defer out of loop",
+        "description": "Move defer statement outside of loop to prevent resource exhaustion",
+        "findPattern": "for\\s+[^\\{]*\\{[^}]*defer\\s+",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires restructuring code to handle resource cleanup outside the loop"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-GO-033",
+        "name": "Fix sync.Mutex copy",
+        "description": "Replace value receiver with pointer receiver for methods accessing sync.Mutex",
+        "findPattern": "func\\s*\\(\\s*(\\w+)\\s+(\\w+)\\s*\\)\\s*(\\w+)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires checking if struct contains sync.Mutex or sync.RWMutex"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-GO-105",
+        "name": "Extract magic number to const",
+        "description": "Replace magic number with named constant for better readability and maintainability",
+        "findPattern": "\\b(\\d{3,}|60|100|1000|1024|3600|86400)\\b",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires creating a constant with appropriate name"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-GO-102",
+        "name": "Replace interface{} with any",
+        "description": "Replace empty interface{} with the 'any' alias (Go 1.18+)",
+        "findPattern": "interface\\{\\s*\\}",
+        "replaceTemplate": "any",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-GO-B001",
+        "name": "Add context.Context parameter",
+        "description": "Add context.Context as first parameter to function for cancellation and timeouts",
+        "findPattern": "func\\s+(\\w+)\\s*\\(\\s*([^)]*)\\s*\\)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires updating all callers to pass context"
+        ],
+        "requiredImports": [
+          "context"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-GO-B004",
+        "name": "Add defer file.Close()",
+        "description": "Add defer statement to close file after opening",
+        "findPattern": "file,\\s*err\\s*:=\\s*os\\.Open\\([^)]+\\)",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-GO-C003",
+        "name": "Remove unused parameter",
+        "description": "Rename unused parameter to underscore to indicate intentional omission",
+        "findPattern": "func\\s*\\([^)]*\\)\\s*\\w+\\s*\\([^)]*(\\w+)\\s+\\w+[^)]*\\)",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-GO-C004",
+        "name": "Replace interface{} with specific type",
+        "description": "Replace generic interface{} with concrete type when possible",
+        "findPattern": ":\\s+interface\\{\\}\\s*=",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires knowing the actual type being assigned"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-GO-C007",
+        "name": "Simplify error handling",
+        "description": "Simplify error handling pattern 'if err == nil { return nil }' to reduce nesting",
+        "findPattern": "if\\s+err\\s*==\\s*nil\\s*\\{\\s*return\\s+(nil|err)\\s*\\}",
+        "isSafe": false,
+        "breakingChanges": [
+          "May require restructuring subsequent code"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-GO-S001",
+        "name": "Add json struct tags",
+        "description": "Add json tags to struct fields for proper serialization",
+        "findPattern": "type\\s+(\\w+)\\s+struct\\s*\\{[^}]*(\\w+)\\s+(\\w+)",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-GO-S002",
+        "name": "Remove unnecessary blank import",
+        "description": "Remove blank import (_) that is no longer needed for side effects",
+        "findPattern": "_\\s+\"([^\"]+)\"",
+        "isSafe": false,
+        "breakingChanges": [
+          "Verify that package init() is not required"
+        ],
+        "confidence": 0.8
       }
     ],
-
     "java": [
       {
-        "ruleId": "S1656",
-        "name": "Remove self-assignment",
-        "description": "Remove variable self-assignment",
-        "findPattern": "^(\\w+)\\s*=\\s*\\1\\s*;",
+        "ruleId": "S2095",
+        "name": "Add try-with-resources",
+        "description": "Convert resource creation to try-with-resources for automatic cleanup",
+        "findPattern": "(?i)new\\s+(FileInputStream|FileOutputStream|Socket)\\s*\\([^)]+\\)(?!\\s*;\\s*\\w+\\.close)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires restructuring try-catch blocks"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S3649",
+        "name": "Replace with parameterized query",
+        "description": "Convert string concatenation SQL to parameterized query",
+        "findPattern": "\\.createStatement\\s*\\(\\s*\\)\\.execute\\s*\\([^)]*\\+",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires restructuring query parameters"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S2259",
+        "name": "Add null check",
+        "description": "Add null check before method call to prevent NullPointerException",
+        "findPattern": "(\\w+)\\.(\\w+)\\s*\\(\\s*\\)(?!\\s*[!=]=\\s*null)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires adding conditional logic"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "S1128",
+        "name": "Remove unused import",
+        "description": "Remove unused import statement from java.util, java.io, java.net packages",
+        "findPattern": "^import\\s+(?:java\\.(?:util|io|net)\\.[A-Z]\\w+|[^;]+);\\s*$",
         "replaceTemplate": "",
         "isSafe": true,
         "confidence": 0.95
       },
       {
-        "ruleId": "S2259",
-        "name": "Add null check",
-        "description": "Add null check before method call",
-        "findPattern": "(\\w+)\\.(\\w+)\\(\\)",
+        "ruleId": "S4790",
+        "name": "Replace MD5 with SHA-256",
+        "description": "Replace weak MD5 hash algorithm with secure SHA-256",
+        "findPattern": "MessageDigest\\.getInstance\\s*\\(\\s*\"MD5\"\\s*\\)",
+        "replaceTemplate": "MessageDigest.getInstance(\"SHA-256\")",
         "isSafe": false,
-        "confidence": 0.7
-      },
-      {
-        "ruleId": "S2068",
-        "name": "Extract to properties",
-        "description": "Replace hardcoded credentials with property reference",
-        "findPattern": "(password|secret|apiKey|token)\\s*=\\s*\"([^\"]+)\"",
-        "replaceTemplate": "$1 = System.getProperty(\"$1\");",
-        "isSafe": false,
-        "breakingChanges": ["Requires property setup"],
+        "breakingChanges": [
+          "May produce different hash outputs"
+        ],
         "confidence": 0.9
-      },
-      {
-        "ruleId": "S1141",
-        "name": "Use try-with-resources",
-        "description": "Convert to try-with-resources",
-        "findPattern": "try\\s*\\{[^}]*new\\s+(?:FileInputStream|FileOutputStream|Socket|Connection)",
-        "isSafe": true,
-        "confidence": 0.85
       },
       {
         "ruleId": "S1118",
         "name": "Add private constructor",
-        "description": "Add private constructor to utility class",
+        "description": "Add private constructor to utility class to prevent instantiation",
         "findPattern": "public\\s+class\\s+(\\w+)\\s*\\{\\s*(?=\\s*(?:public\\s+static|private\\s+static))",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S4973",
+        "name": "Replace == with equals",
+        "description": "Replace reference equality with equals() for String and other objects",
+        "findPattern": "(\\w+)\\s*==\\s*(\\w+)(?!\\s*(?:null|\\d))",
+        "isSafe": false,
+        "breakingChanges": [
+          "May change behavior for null comparisons"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S1135",
+        "name": "Remove TODO comment",
+        "description": "Remove TODO comment that should be tracked in issue tracker",
+        "findPattern": "//\\s*TODO.*$",
+        "replaceTemplate": "",
         "isSafe": true,
         "confidence": 0.9
       }
     ],
-
     "rust": [
       {
         "ruleId": "S6915",
@@ -358,9 +777,66 @@
         "replaceTemplate": "{",
         "isSafe": true,
         "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-RUST-B001",
+        "name": "Replace unwrap with match",
+        "description": "Convert unwrap to proper error handling",
+        "findPattern": "(\\w+)\\.unwrap\\s*\\(\\s*\\)",
+        "replaceTemplate": "match \\1 {\\n    Some(v) => v,\\n    None => return Err(...),\\n}",
+        "isSafe": false,
+        "confidence": 0.6,
+        "breakingChanges": [
+          "Requires return type change"
+        ]
+      },
+      {
+        "ruleId": "SCR-RUST-S001",
+        "name": "Remove unnecessary clone",
+        "description": "Remove clone on Copy types",
+        "findPattern": "(\\w+)\\.clone\\s*\\(\\s*\\)",
+        "replaceTemplate": "\\1",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "Verify type implements Copy"
+        ]
+      },
+      {
+        "ruleId": "SCR-RUST-S007",
+        "name": "Replace panic with Result",
+        "description": "Convert panic to Result::Err",
+        "findPattern": "panic!\\s*\\(([^)]+)\\)",
+        "replaceTemplate": "return Err(\\1.into())",
+        "isSafe": false,
+        "confidence": 0.5,
+        "breakingChanges": [
+          "Requires function signature change"
+        ]
+      },
+      {
+        "ruleId": "SCR-RUST-H004",
+        "name": "Flag todo macro",
+        "description": "Add comment for todo! macro",
+        "findPattern": "todo!\\s*\\(\\s*\\)",
+        "replaceTemplate": "// TODO: Implement this\\ntodo!()",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-RUST-B003",
+        "name": "Handle ignored Result",
+        "description": "Add error handling for ignored Result",
+        "findPattern": "let\\s+_\\s*=\\s*(.+);",
+        "replaceTemplate": "if let Err(e) = \\1 {\\n    eprintln!(\"Error: {:?}\", e);\\n}",
+        "isSafe": false,
+        "confidence": 0.6,
+        "breakingChanges": [
+          "May not be appropriate for all cases"
+        ]
       }
     ],
-
     "php": [
       {
         "ruleId": "S1656",
@@ -378,7 +854,9 @@
         "findPattern": "\\$(password|secret|api_key|token)\\s*=\\s*['\"]([^'\"]+)['\"]",
         "replaceTemplate": "$$$1 = getenv(strtoupper('$1'));",
         "isSafe": false,
-        "breakingChanges": ["Requires environment variable setup"],
+        "breakingChanges": [
+          "Requires environment variable setup"
+        ],
         "confidence": 0.9
       },
       {
@@ -397,9 +875,80 @@
         "replaceTemplate": "throw new Exception(",
         "isSafe": false,
         "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-PHP-B001",
+        "name": "Replace loose comparison",
+        "description": "Replace == with ===",
+        "findPattern": "\\s*==\\s*",
+        "replaceTemplate": " === ",
+        "isSafe": false,
+        "confidence": 0.75,
+        "breakingChanges": [
+          "May change behavior for type coercion"
+        ]
+      },
+      {
+        "ruleId": "SCR-PHP-B007",
+        "name": "Replace ereg with preg_match",
+        "description": "Replace deprecated ereg with preg_match",
+        "findPattern": "ereg\\s*\\(",
+        "replaceTemplate": "preg_match('/^', ",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "Requires regex pattern conversion"
+        ]
+      },
+      {
+        "ruleId": "SCR-PHP-H001",
+        "name": "Replace md5 with password_hash",
+        "description": "Replace weak md5 with secure password_hash",
+        "findPattern": "md5\\s*\\(([^)]+)\\)",
+        "replaceTemplate": "password_hash(\\1, PASSWORD_DEFAULT)",
+        "isSafe": false,
+        "confidence": 0.6,
+        "breakingChanges": [
+          "Requires verification logic update"
+        ]
+      },
+      {
+        "ruleId": "SCR-PHP-H004",
+        "name": "Replace rand with random_int",
+        "description": "Replace insecure rand with random_int",
+        "findPattern": "rand\\s*\\(([^)]*)\\)",
+        "replaceTemplate": "random_int(\\1)",
+        "isSafe": false,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "Parameter format may differ"
+        ]
+      },
+      {
+        "ruleId": "SCR-PHP-V004",
+        "name": "Add htmlspecialchars to echo",
+        "description": "Add escaping to echo output",
+        "findPattern": "echo\\s+([^;]+);",
+        "replaceTemplate": "echo htmlspecialchars(\\1, ENT_QUOTES, 'UTF-8');",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "May double-encode already escaped content"
+        ]
+      },
+      {
+        "ruleId": "SCR-PHP-S002",
+        "name": "Flag superglobal access",
+        "description": "Add validation comment for superglobal",
+        "findPattern": "\\$_GET\\[([^\\]]+)\\]",
+        "replaceTemplate": "filter_input(INPUT_GET, \\1, FILTER_SANITIZE_SPECIAL_CHARS)",
+        "isSafe": false,
+        "confidence": 0.75,
+        "breakingChanges": [
+          "Requires filter extension"
+        ]
       }
     ],
-
     "kotlin": [
       {
         "ruleId": "S1656",
@@ -435,9 +984,132 @@
         "replaceTemplate": "?.isNullOrEmpty()",
         "isSafe": true,
         "confidence": 0.9
+      },
+      {
+        "ruleId": "S2068",
+        "name": "Extract hardcoded credentials",
+        "description": "Replace hardcoded credentials with environment or build config reference",
+        "findPattern": "(password|secret|apiKey|token)\\s*[=:]\\s*\"([^\"]+)\"",
+        "replaceTemplate": "$1 = System.getenv(\"$1\")",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires environment variable setup"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-KOTLIN-B001",
+        "name": "Replace !! with safe call",
+        "description": "Replace not-null assertion (!!) with safe call (?.) or Elvis operator (?:)",
+        "findPattern": "(\\w+)!!",
+        "replaceTemplate": "$1?: throw IllegalStateException(\"$1 is null\")",
+        "isSafe": false,
+        "breakingChanges": [
+          "May change runtime behavior if null is acceptable"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C001",
+        "name": "Replace var with val",
+        "description": "Replace mutable var with immutable val when variable is never reassigned",
+        "findPattern": "\\bvar\\b",
+        "replaceTemplate": "val",
+        "isSafe": false,
+        "breakingChanges": [
+          "Verify variable is not reassigned elsewhere before applying"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C002",
+        "name": "Add explicit type declaration",
+        "description": "Add explicit type declaration for public API clarity",
+        "findPattern": "(val|var)\\s+(\\w+)\\s*=",
+        "isSafe": true,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C003",
+        "name": "Use scope function",
+        "description": "Convert code block to use let, run, apply, or also scope functions",
+        "findPattern": "(val|var)\\s+(\\w+)\\s*=\\s*(.+?)\\n(\\s*)(\\w+)\\.",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires selecting appropriate scope function based on context"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C004",
+        "name": "Use immutable list",
+        "description": "Replace mutableListOf with listOf when list is never modified",
+        "findPattern": "mutableListOf",
+        "replaceTemplate": "listOf",
+        "isSafe": false,
+        "breakingChanges": [
+          "Verify list is not modified (add, remove, etc.) elsewhere"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C005",
+        "name": "Add trailing comma",
+        "description": "Add trailing comma to multiline parameter lists and arguments for better diff readability",
+        "findPattern": "(\\w+)\\s*:\\s*(\\w+)(\\s*\\))",
+        "replaceTemplate": "$1: $2,",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C006",
+        "name": "Convert to data class",
+        "description": "Convert regular class holding only data properties to data class",
+        "findPattern": "class\\s+(\\w+)\\s*\\(\\s*(val|var)",
+        "replaceTemplate": "data class $1( $2",
+        "isSafe": false,
+        "breakingChanges": [
+          "Changes equality behavior (structural vs referential)",
+          "May require updating hashCode/equals dependent code"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-KOTLIN-C007",
+        "name": "Use Kotlin collections",
+        "description": "Replace Java collections (ArrayList, HashMap) with Kotlin counterparts",
+        "findPattern": "(ArrayList|HashMap|HashSet|LinkedList)\\s*\\(",
+        "isSafe": false,
+        "breakingChanges": [
+          "Kotlin collections have different mutability characteristics"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "S3649",
+        "name": "Use parameterized query",
+        "description": "Convert string concatenation or interpolation SQL to parameterized query",
+        "findPattern": "(executeQuery|executeUpdate|execute)\\s*\\(\\s*\".*\\$\\{",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires extracting parameters and using prepared statements"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "S4790",
+        "name": "Use SHA-256 instead of weak hash",
+        "description": "Replace MD5 or SHA1 with SHA-256 for cryptographic operations",
+        "findPattern": "(MessageDigest\\.getInstance\\s*\\(\\s*\\\")(MD5|SHA1|SHA-1)(\\\"\\))",
+        "replaceTemplate": "${1}SHA-256${3}",
+        "isSafe": false,
+        "breakingChanges": [
+          "Will produce different hash outputs",
+          "Requires updating any verification logic"
+        ],
+        "confidence": 0.9
       }
     ],
-
     "ruby": [
       {
         "ruleId": "S1656",
@@ -455,7 +1127,9 @@
         "findPattern": "(PASSWORD|SECRET|API_KEY|TOKEN)\\s*=\\s*['\"]([^'\"]+)['\"]",
         "replaceTemplate": "$1 = ENV['$1']",
         "isSafe": false,
-        "breakingChanges": ["Requires environment variable setup"],
+        "breakingChanges": [
+          "Requires environment variable setup"
+        ],
         "confidence": 0.9
       },
       {
@@ -475,9 +1149,82 @@
         "replaceTemplate": ".map {",
         "isSafe": true,
         "confidence": 0.95
+      },
+      {
+        "ruleId": "S1523",
+        "name": "Replace eval with send",
+        "description": "Replace dangerous eval with safer send/public_send method call",
+        "findPattern": "eval\\s*\\(\\s*[\"']([^\"']+)[\"']\\s*\\)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires restructuring to use object.send(method_name) pattern"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "RUBY-C003",
+        "name": "Add frozen string literal pragma",
+        "description": "Add # frozen_string_literal: true at the top of the file for performance",
+        "findPattern": "^(?!# frozen_string_literal)",
+        "replaceTemplate": "# frozen_string_literal: true\\n",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S2221",
+        "name": "Replace rescue Exception with StandardError",
+        "description": "Replace broad Exception rescue with more specific StandardError",
+        "findPattern": "rescue\\s+Exception",
+        "replaceTemplate": "rescue StandardError",
+        "isSafe": false,
+        "breakingChanges": [
+          "May change exception handling for system-level exceptions"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S1481",
+        "name": "Remove unused variable",
+        "description": "Remove unused local variable declaration",
+        "findPattern": "^\\s*\\w+\\s*=\\s*[^\\n]+(?![^#]*\\b\\1\\b)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Verify variable is truly unused before removing"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "RUBY-C001",
+        "name": "Replace global with constant",
+        "description": "Replace global variable with constant or accessor method",
+        "findPattern": "\\$([a-zA-Z_]\\w*)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires creating constant or method to replace global"
+        ],
+        "confidence": 0.65
+      },
+      {
+        "ruleId": "RUBY-C005",
+        "name": "Add private for utility methods",
+        "description": "Mark helper/util methods as private",
+        "findPattern": "def\\s+(helper|util)_\\w+",
+        "isSafe": false,
+        "breakingChanges": [
+          "May break external callers if methods are used outside class"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "RUBY-PERF-001",
+        "name": "Convert string to symbol",
+        "description": "Convert string literal to symbol for better performance",
+        "findPattern": "\"([^\"]+)\"\\.to_sym",
+        "replaceTemplate": ":$1",
+        "isSafe": true,
+        "confidence": 0.95
       }
     ],
-
     "cpp": [
       {
         "ruleId": "S3519",
@@ -562,9 +1309,198 @@
         "findPattern": "(\\w+)\\s*\\(\\s*\\w+&&\\s*\\)|operator=\\s*\\(\\s*\\w+&&\\s*\\)",
         "isSafe": true,
         "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-CPP-V011",
+        "name": "Replace gets with fgets",
+        "description": "Replace unsafe gets() with safer fgets()",
+        "findPattern": "gets\\s*\\(\\s*([^)]+)\\s*\\)",
+        "replaceTemplate": "fgets($1, sizeof($1), stdin)",
+        "isSafe": false,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-CPP-C031",
+        "name": "Remove using namespace from header",
+        "description": "Remove using namespace directive from header file",
+        "findPattern": "using\\s+namespace\\s+std\\s*;",
+        "isSafe": false,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-CPP-B077",
+        "name": "Replace C-style cast with static_cast",
+        "description": "Replace C-style cast with C++ static_cast",
+        "findPattern": "\\(\\s*(\\w+)\\s*\\*?\\s*\\)\\s*",
+        "replaceTemplate": "static_cast<$1>",
+        "isSafe": false,
+        "breakingChanges": [
+          "May need dynamic_cast for polymorphic types"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-C013",
+        "name": "Create issue from TODO",
+        "description": "Extract TODO comment to issue tracker",
+        "findPattern": "//\\s*TODO[\\s:]*(.*)$",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-CPP-C014",
+        "name": "Create issue from FIXME",
+        "description": "Extract FIXME comment to issue tracker",
+        "findPattern": "//\\s*FIXME[\\s:]*(.*)$",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-CPP-V041",
+        "name": "Extract hardcoded key to config",
+        "description": "Move hardcoded key to configuration file",
+        "findPattern": "(const\\s+)?(?:char|byte|string)\\s+(\\w*)(?:key|password|secret)(\\w*)\\s*=\\s*\"([^\"]+)\"",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires configuration setup"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CPP-B033",
+        "name": "Add missing break",
+        "description": "Add break statement at end of case",
+        "findPattern": "(case\\s+\\w+:)\\s*([^}]+?)(?=case|default|\\})",
+        "replaceTemplate": "$1\\n    $2\\n    break;",
+        "isSafe": false,
+        "breakingChanges": [
+          "Verify that fallthrough was not intentional"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-B037",
+        "name": "Catch by reference",
+        "description": "Change catch by value to catch by const reference",
+        "findPattern": "catch\\s*\\(\\s*(\\w+)\\s+(\\w+)\\s*\\)",
+        "replaceTemplate": "catch (const $1& $2)",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-CPP-V017",
+        "name": "Add null check",
+        "description": "Add null pointer check before dereference",
+        "findPattern": "(\\w+)\\s*->\\s*(\\w+)",
+        "replaceTemplate": "if ($1 != nullptr) $1->$2",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-C011",
+        "name": "Extract magic number",
+        "description": "Replace magic number with named constant",
+        "findPattern": "\\b([0-9]{2,})\\b",
+        "isSafe": false,
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CPP-B001",
+        "name": "Add allocation check",
+        "description": "Add null check after memory allocation",
+        "findPattern": "(\\w+)\\s*=\\s*(?:malloc|calloc|realloc)\\s*\\([^)]+\\)\\s*;",
+        "replaceTemplate": "$1 = malloc(...);\\nif ($1 == nullptr) {\\n    // Handle allocation failure\\n}",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-V028",
+        "name": "Replace MD5 with SHA256",
+        "description": "Replace weak MD5 hashing with SHA-256",
+        "findPattern": "MD5",
+        "replaceTemplate": "SHA256",
+        "isSafe": false,
+        "breakingChanges": [
+          "API may differ between implementations"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-CPP-C005",
+        "name": "Mark unused parameter",
+        "description": "Mark unused parameter with [[maybe_unused]]",
+        "findPattern": "(void\\s+\\w+\\s*\\([^)]*?\\w+\\s+\\w+)([\\),])",
+        "replaceTemplate": "$1 [[maybe_unused]]$2",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-CPP-B119",
+        "name": "Add self-assignment check",
+        "description": "Add self-assignment check in copy assignment",
+        "findPattern": "(\\w+)\\s*&\\s*operator=\\s*\\(\\s*const\\s+(\\w+)\\s*&\\s*\\w+\\s*\\)",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-C072",
+        "name": "Replace new with make_unique",
+        "description": "Replace raw new with std::make_unique",
+        "findPattern": "new\\s+(\\w+)\\s*\\(([^)]*)\\)",
+        "replaceTemplate": "std::make_unique<$1>($2)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires C++14 or later"
+        ],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-CPP-B063",
+        "name": "Replace global static with local static",
+        "description": "Fix static initialization order fiasco with local static",
+        "findPattern": "^static\\s+(\\w+)\\s+(\\w+)",
+        "replaceTemplate": "$1& $2() { static $1 instance; return instance; }",
+        "isSafe": false,
+        "breakingChanges": [
+          "Changes from variable to function call"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CPP-B006",
+        "name": "Add virtual destructor",
+        "description": "Add virtual destructor to base class",
+        "findPattern": "(class\\s+\\w+.*\\{[^}]*virtual[^}]*~\\w+\\s*\\(\\)\\s*=[^;]+;)",
+        "isSafe": false,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-CPP-V053",
+        "name": "Replace mktemp with mkstemp",
+        "description": "Replace insecure mktemp with secure mkstemp",
+        "findPattern": "mktemp\\s*\\(",
+        "replaceTemplate": "mkstemp(",
+        "isSafe": false,
+        "breakingChanges": [
+          "mkstemp opens the file, mktemp does not"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-B022",
+        "name": "Fix delete mismatch",
+        "description": "Use delete[] for arrays",
+        "findPattern": "delete\\s+(\\w+);",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SCR-CPP-B123",
+        "name": "Add noexcept to move constructor",
+        "description": "Mark move constructor as noexcept",
+        "findPattern": "(\\w+)\\s*\\(\\s*\\w+&&\\s*\\w+\\s*\\)"
       }
     ],
-
     "javascript": [
       {
         "ruleId": "S6676",
@@ -573,32 +1509,39 @@
         "findPattern": "console\\.(log|debug|info)\\s*\\([^)]*\\)\\s*;?",
         "replaceTemplate": "",
         "isSafe": false,
+        "breakingChanges": [
+          "May remove debugging information useful in development"
+        ],
         "confidence": 0.8
       },
       {
         "ruleId": "S2068",
-        "name": "Extract to environment variable",
-        "description": "Replace hardcoded credentials with env variable",
+        "name": "Extract credentials to env",
+        "description": "Replace hardcoded credentials with environment variable reference",
         "findPattern": "(password|secret|apiKey|token)\\s*[:=]\\s*['\"]([^'\"]+)['\"]",
         "replaceTemplate": "$1 = process.env.$1",
         "isSafe": false,
-        "breakingChanges": ["Requires environment variable setup"],
+        "breakingChanges": [
+          "Requires environment variable setup in .env file or deployment config"
+        ],
         "confidence": 0.9
       },
       {
         "ruleId": "S3504",
-        "name": "Replace var with const",
+        "name": "var to const",
         "description": "Replace var declarations with const for immutable bindings",
         "findPattern": "\\bvar\\s+(\\w+)\\s*=\\s*",
         "replaceTemplate": "const $1 = ",
         "isSafe": false,
-        "breakingChanges": ["May break if variable is reassigned later"],
+        "breakingChanges": [
+          "May break if variable is reassigned later - verify before applying"
+        ],
         "confidence": 0.75
       },
       {
         "ruleId": "S1656",
         "name": "Remove self-assignment",
-        "description": "Remove variable self-assignment",
+        "description": "Remove variable self-assignment that has no effect",
         "findPattern": "(\\w+)\\s*=\\s*\\1\\s*;",
         "replaceTemplate": "",
         "isSafe": true,
@@ -615,16 +1558,167 @@
       },
       {
         "ruleId": "S1105",
-        "name": "Replace == with ===",
+        "name": "== to ===",
         "description": "Use strict equality instead of loose equality",
         "findPattern": "([^!=])\\s*==\\s*([^=])",
         "replaceTemplate": "$1 === $2",
         "isSafe": false,
-        "breakingChanges": ["May change behavior for type-coerced comparisons"],
+        "breakingChanges": [
+          "May change behavior for type-coerced comparisons (e.g., null == undefined is true but null === undefined is false)"
+        ],
         "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-JS-AF01",
+        "name": "Add async/await error handling",
+        "description": "Add try-catch wrapper to async function for proper error handling",
+        "findPattern": "async\\s+function\\s+(\\w+)",
+        "isSafe": false,
+        "breakingChanges": [
+          "May require adjusting error handling strategy in calling code"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-JS-AF02",
+        "name": "Convert to template literal",
+        "description": "Convert string concatenation to template literal for better readability",
+        "findPattern": "\"([^\"]*)\"\\s*\\+\\s*([^+]+)\\s*\\+\\s*\"",
+        "replaceTemplate": "\\`$1${$2}`",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-JS-AF03",
+        "name": "Add JSDoc comment",
+        "description": "Add JSDoc comment to function for better documentation",
+        "findPattern": "function\\s+(\\w+)\\s*\\(\\s*([^)]*)\\s*\\)",
+        "isSafe": true,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-JS-AF04",
+        "name": "Convert callback to Promise",
+        "description": "Convert callback-based pattern to Promise/async-await",
+        "findPattern": "\\.then\\s*\\(\\s*function\\s*\\(",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires updating all .then() and .catch() calls in the chain",
+          "May change error handling flow"
+        ],
+        "confidence": 0.75
+      },
+      {
+        "ruleId": "SCR-JS-B006",
+        "name": "Replace var with const/let",
+        "description": "Replace var with const (or let if reassigned)",
+        "findPattern": "\\bvar\\b",
+        "replaceTemplate": "const",
+        "isSafe": false,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "May need let if variable is reassigned"
+        ]
+      },
+      {
+        "ruleId": "SCR-JS-B009",
+        "name": "Add radix to parseInt",
+        "description": "Add explicit radix 10 to parseInt",
+        "findPattern": "parseInt\\s*\\(\\s*([^,)]+)\\s*\\)",
+        "replaceTemplate": "parseInt(\\1, 10)",
+        "isSafe": true,
+        "confidence": 0.95,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JS-S011",
+        "name": "Convert to template literal",
+        "description": "Replace string concatenation with template literal",
+        "findPattern": "['\"]([^'\"]*)['\"]\\s*\\+\\s*(\\w+)",
+        "replaceTemplate": "`\\1\\${\\2}`",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JS-S009",
+        "name": "Replace indexOf with includes",
+        "description": "Use includes() instead of indexOf for existence check",
+        "findPattern": "\\.indexOf\\s*\\([^)]+\\)\\s*!==?\\s*-1",
+        "replaceTemplate": ".includes(...)",
+        "isSafe": true,
+        "confidence": 0.85,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JS-S004",
+        "name": "Remove console statement",
+        "description": "Remove debug console statements",
+        "findPattern": "console\\.(log|debug|info)\\s*\\([^)]*\\);?\\s*\\n",
+        "replaceTemplate": "",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "May remove intentional logging"
+        ]
+      },
+      {
+        "ruleId": "SCR-JS-S012",
+        "name": "Simplify arrow function return",
+        "description": "Use implicit return for arrow functions",
+        "findPattern": "(\\w+)\\s*=>\\s*\\{\\s*return\\s+([^;]+);\\s*\\}",
+        "replaceTemplate": "\\1 => \\2",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JS-S008",
+        "name": "Use nullish coalescing",
+        "description": "Replace || with ?? for default values",
+        "findPattern": "(\\w+)\\s*\\?\\s*\\w+\\s*:\\s*(null|undefined)",
+        "replaceTemplate": "\\1 ?? defaultValue",
+        "isSafe": false,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "Behavior differs for falsy values"
+        ]
+      },
+      {
+        "ruleId": "SCR-JS-B001",
+        "name": "Use strict equality",
+        "description": "Replace == with ===",
+        "findPattern": "\\s*==\\s*",
+        "replaceTemplate": " === ",
+        "isSafe": false,
+        "confidence": 0.75,
+        "breakingChanges": [
+          "May change behavior for type coercion cases"
+        ]
+      },
+      {
+        "ruleId": "SCR-JS-B010",
+        "name": "Use Number.isNaN",
+        "description": "Replace global isNaN with Number.isNaN",
+        "findPattern": "\\bisNaN\\s*\\(",
+        "replaceTemplate": "Number.isNaN(",
+        "isSafe": false,
+        "confidence": 0.85,
+        "breakingChanges": [
+          "Number.isNaN doesn't coerce to number"
+        ]
+      },
+      {
+        "ruleId": "SCR-JS-S006",
+        "name": "Remove unnecessary Boolean conversion",
+        "description": "Simplify !! or Boolean() calls",
+        "findPattern": "!!(\\w+)",
+        "replaceTemplate": "Boolean(\\1)",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
       }
     ],
-
     "swift": [
       {
         "ruleId": "S6900",
@@ -632,7 +1726,9 @@
         "description": "Replace force unwrap (!) with if let or guard let",
         "findPattern": "(\\w+)!\\.(\\w+)",
         "isSafe": false,
-        "breakingChanges": ["Requires restructuring control flow"],
+        "breakingChanges": [
+          "Requires restructuring control flow"
+        ],
         "confidence": 0.8
       },
       {
@@ -649,7 +1745,9 @@
         "description": "Replace try! with proper do-catch error handling",
         "findPattern": "try!\\s+(\\w+)",
         "isSafe": false,
-        "breakingChanges": ["Requires adding error handling block"],
+        "breakingChanges": [
+          "Requires adding error handling block"
+        ],
         "confidence": 0.85
       },
       {
@@ -667,7 +1765,9 @@
         "findPattern": "\\bNSArray\\b",
         "replaceTemplate": "[Any]",
         "isSafe": false,
-        "breakingChanges": ["May require updating Objective-C bridge code"],
+        "breakingChanges": [
+          "May require updating Objective-C bridge code"
+        ],
         "confidence": 0.75
       },
       {
@@ -676,11 +1776,12 @@
         "description": "Add [weak self] capture list to prevent retain cycles",
         "findPattern": "\\{\\s*(?!\\[weak\\s+self\\])\\s*self\\.",
         "isSafe": false,
-        "breakingChanges": ["Requires nil checks on self inside closure"],
+        "breakingChanges": [
+          "Requires nil checks on self inside closure"
+        ],
         "confidence": 0.8
       }
     ],
-
     "scala": [
       {
         "ruleId": "S7000",
@@ -689,7 +1790,9 @@
         "findPattern": "\\bvar\\s+(\\w+)\\s*[:=]",
         "replaceTemplate": "val $1:",
         "isSafe": false,
-        "breakingChanges": ["Will fail if variable is reassigned"],
+        "breakingChanges": [
+          "Will fail if variable is reassigned"
+        ],
         "confidence": 0.7
       },
       {
@@ -706,7 +1809,9 @@
         "description": "Use Option type instead of null checks",
         "findPattern": "if\\s*\\(\\s*(\\w+)\\s*!=\\s*null\\s*\\)",
         "isSafe": false,
-        "breakingChanges": ["Requires changing method signatures"],
+        "breakingChanges": [
+          "Requires changing method signatures"
+        ],
         "confidence": 0.7
       },
       {
@@ -727,55 +1832,86 @@
         "confidence": 0.9
       }
     ],
-
     "apex": [
       {
-        "ruleId": "S7100",
+        "ruleId": "SF1007",
         "name": "Add with sharing",
         "description": "Add 'with sharing' keyword to enforce security",
         "findPattern": "public\\s+class\\s+(\\w+)(?!\\s+(?:with|without)\\s+sharing)",
         "replaceTemplate": "public with sharing class $1",
         "isSafe": false,
-        "breakingChanges": ["May restrict record visibility"],
+        "breakingChanges": [
+          "May restrict record visibility"
+        ],
         "confidence": 0.9
       },
       {
-        "ruleId": "S7101",
+        "ruleId": "SF1001",
         "name": "Use bind variables in SOQL",
         "description": "Replace string concatenation in SOQL with bind variables",
-        "findPattern": "Database\\.query\\s*\\(\\s*'[^']*'\\s*\\+",
+        "findPattern": "Database\\.query\\s*\\([^)]*\\+",
         "isSafe": false,
-        "breakingChanges": ["Requires restructuring query"],
+        "breakingChanges": [
+          "Requires restructuring query"
+        ],
         "confidence": 0.85
       },
       {
-        "ruleId": "S7102",
+        "ruleId": "SF2001",
         "name": "Move SOQL out of loop",
         "description": "Extract SOQL query outside of for/while loop",
-        "findPattern": "for\\s*\\([^)]+\\)\\s*\\{[^}]*\\[SELECT",
+        "findPattern": "for\\s*\\([^)]+\\)\\s*\\{[^}]*\\[\\s*SELECT",
         "isSafe": false,
-        "breakingChanges": ["Requires restructuring data access logic"],
+        "breakingChanges": [
+          "Requires restructuring data access logic"
+        ],
         "confidence": 0.8
       },
       {
-        "ruleId": "S7103",
+        "ruleId": "SF1006",
         "name": "Add CRUD check",
         "description": "Add CRUD permission check before DML operation",
-        "findPattern": "(?:insert|update|delete|upsert)\\s+(\\w+)\\s*;",
+        "findPattern": "(?i)(?:insert|update|delete|upsert)\\s+(\\w+)\\s*;",
         "isSafe": false,
         "confidence": 0.75
       },
       {
-        "ruleId": "S7104",
+        "ruleId": "SF2005",
         "name": "Bulkify trigger handler",
         "description": "Replace single-record processing with bulk pattern",
         "findPattern": "Trigger\\.(new|old)\\[0\\]",
         "isSafe": false,
-        "breakingChanges": ["Requires restructuring trigger logic for collections"],
+        "breakingChanges": [
+          "Requires restructuring trigger logic for collections"
+        ],
         "confidence": 0.8
+      },
+      {
+        "ruleId": "SF4003",
+        "name": "Remove seeAllData",
+        "description": "Remove seeAllData=true from test methods",
+        "findPattern": "@isTest\\s*\\(\\s*seeAllData\\s*=\\s*true\\s*\\)",
+        "replaceTemplate": "@isTest",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SF2008",
+        "name": "Add null check",
+        "description": "Add null check before accessing query results",
+        "findPattern": "(\\w+)\\s*=\\s*\\[\\s*SELECT[^\\]]*\\][^;]*;\\s*\\1\\.",
+        "isSafe": false,
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "SF4005",
+        "name": "Remove hardcoded ID",
+        "description": "Replace hardcoded Salesforce ID with query or constant",
+        "findPattern": "\\b(001|005|00D|500|006|00T|00Q)[A-Za-z0-9]{12,15}\\b",
+        "isSafe": false,
+        "confidence": 0.85
       }
     ],
-
     "ocaml": [
       {
         "ruleId": "S7200",
@@ -810,9 +1946,58 @@
         "findPattern": "^open\\s+(\\w+)$",
         "isSafe": false,
         "confidence": 0.5
+      },
+      {
+        "ruleId": "OCAML-B004",
+        "name": "Replace List.hd with pattern match",
+        "description": "Replace unsafe List.hd with exhaustive pattern matching to handle empty list case",
+        "findPattern": "List\\.hd\\s+(\\w+)",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires restructuring to use match expression"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "OCAML-B001",
+        "name": "Add exhaustive pattern",
+        "description": "Add missing pattern match branches to make match expression exhaustive",
+        "findPattern": "match\\s+(\\w+)\\s+with\\s+\\|?\\s*\\w+\\s*->",
+        "isSafe": false,
+        "breakingChanges": [
+          "May require adding wildcard or specific case patterns"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "ruleId": "OCAML-C007",
+        "name": "Remove unused variable",
+        "description": "Remove let binding for variables that are never used",
+        "findPattern": "let\\s+(\\w+)\\s*=\\s*[^in]+in(?!.*\\b\\1\\b)",
+        "replaceTemplate": "",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "OCAML-C004",
+        "name": "Replace ref with let mutable",
+        "description": "Replace ref cell with let mutable for imperative style (ReasonML/OCaml 4.03+)",
+        "findPattern": "let\\s+(\\w+)\\s*=\\s*ref\\s+",
+        "isSafe": false,
+        "breakingChanges": [
+          "Requires changing !var to var and var := x to var = x"
+        ],
+        "confidence": 0.7
+      },
+      {
+        "ruleId": "OCAML-C008",
+        "name": "Add type annotation",
+        "description": "Add explicit type annotation to improve code clarity and catch type errors early",
+        "findPattern": "let\\s+(\\w+)\\s*=",
+        "isSafe": true,
+        "confidence": 0.75
       }
     ],
-
     "jsp": [
       {
         "ruleId": "S7300",
@@ -820,8 +2005,12 @@
         "description": "Replace Java scriptlet with JSTL tag",
         "findPattern": "<%\\s*(?!=|@)(.+?)%>",
         "isSafe": false,
-        "breakingChanges": ["Requires JSTL taglib declaration"],
-        "requiredImports": ["<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"],
+        "breakingChanges": [
+          "Requires JSTL taglib declaration"
+        ],
+        "requiredImports": [
+          "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"
+        ],
         "confidence": 0.7
       },
       {
@@ -831,7 +2020,9 @@
         "findPattern": "<%=\\s*(\\w+)\\s*%>",
         "replaceTemplate": "<c:out value=\"${$1}\" />",
         "isSafe": true,
-        "requiredImports": ["<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"],
+        "requiredImports": [
+          "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"
+        ],
         "confidence": 0.9
       },
       {
@@ -840,7 +2031,9 @@
         "description": "Extract inline SQL from JSP to DAO class",
         "findPattern": "<%[^>]*(?:SELECT|INSERT|UPDATE|DELETE)\\s+",
         "isSafe": false,
-        "breakingChanges": ["Requires creating DAO class"],
+        "breakingChanges": [
+          "Requires creating DAO class"
+        ],
         "confidence": 0.85
       },
       {
@@ -850,9 +2043,76 @@
         "findPattern": "<%@\\s*page\\s+import\\s*=\\s*\"([^\"]+)\"\\s*%>",
         "isSafe": true,
         "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-JSP-V001",
+        "name": "Replace scriptlet with JSTL",
+        "description": "Replace <%= %> with <c:out>",
+        "findPattern": "<%=([^%]+)%>",
+        "replaceTemplate": "<c:out value=\"\\1\" />",
+        "isSafe": false,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "Requires JSTL taglib import"
+        ]
+      },
+      {
+        "ruleId": "SCR-JSP-H001",
+        "name": "Replace scriptlet with expression",
+        "description": "Replace <% %> scriptlet with simpler expression",
+        "findPattern": "<%([^!][^%]*)%>",
+        "replaceTemplate": "<!-- TODO: Refactor scriptlet to servlet -->",
+        "isSafe": false,
+        "confidence": 0.5,
+        "breakingChanges": [
+          "Requires manual refactoring"
+        ]
+      },
+      {
+        "ruleId": "SCR-JSP-B004",
+        "name": "Add UTF-8 charset",
+        "description": "Add charset=UTF-8 to page directive",
+        "findPattern": "<%@\\s+page\\s+contentType=\"text/html\"%>",
+        "replaceTemplate": "<%@ page contentType=\"text/html; charset=UTF-8\" %>",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JSP-S001",
+        "name": "Replace out.print with c:out",
+        "description": "Replace scriptlet output with JSTL",
+        "findPattern": "<%\\s*out\\.print\\s*\\(([^)]+)\\)\\s*;%>",
+        "replaceTemplate": "<c:out value=\"\\1\" />",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "May need variable scope adjustment"
+        ]
+      },
+      {
+        "ruleId": "SCR-JSP-S006",
+        "name": "Add fn:escapeXml",
+        "description": "Add escaping to expression",
+        "findPattern": "\\$\\{([^}]+)\\}",
+        "replaceTemplate": "\\${fn:escapeXml(\\1)}",
+        "isSafe": false,
+        "confidence": 0.75,
+        "breakingChanges": [
+          "Requires JSTL functions taglib"
+        ]
+      },
+      {
+        "ruleId": "SCR-JSP-S025",
+        "name": "Flag TODO comment",
+        "description": "Add marker to TODO in JSP",
+        "findPattern": "<%\\s*//\\s*TODO",
+        "replaceTemplate": "<!-- TODO: Address this item -->",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
       }
     ],
-
     "json": [
       {
         "ruleId": "S7400",
@@ -861,7 +2121,9 @@
         "findPattern": "\"(password|secret|apiKey|token|api_key)\"\\s*:\\s*\"([^\"]+)\"",
         "replaceTemplate": "\"$1\": \"<REDACTED>\"",
         "isSafe": false,
-        "breakingChanges": ["Requires replacing with actual secret management"],
+        "breakingChanges": [
+          "Requires replacing with actual secret management"
+        ],
         "confidence": 0.9
       },
       {
@@ -881,9 +2143,62 @@
         "replaceTemplate": "$1",
         "isSafe": true,
         "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-JSON-B001",
+        "name": "Remove trailing comma",
+        "description": "Remove trailing commas for strict JSON compliance",
+        "findPattern": ",(\\s*[}\\]])",
+        "replaceTemplate": "\\1",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JSON-B003",
+        "name": "Replace single quotes with double",
+        "description": "Convert single quotes to double quotes",
+        "findPattern": "'([^']*)'",
+        "replaceTemplate": "\"\\1\"",
+        "isSafe": true,
+        "confidence": 0.85,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JSON-B005",
+        "name": "Quote unquoted keys",
+        "description": "Add quotes to unquoted object keys",
+        "findPattern": "(\\w+)(\\s*:)",
+        "replaceTemplate": "\"\\1\"\\2",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-JSON-S007",
+        "name": "Remove empty structures",
+        "description": "Remove empty objects and arrays",
+        "findPattern": "\"\\w+\"\\s*:\\s*({\\s*}|\\[\\s*\\])\\s*,?",
+        "replaceTemplate": "",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "May change schema validation"
+        ]
+      },
+      {
+        "ruleId": "SCR-JSON-S008",
+        "name": "Replace empty strings with null",
+        "description": "Convert empty strings to null",
+        "findPattern": "(\"\\w+\")\\s*:\\s*\"\"",
+        "replaceTemplate": "\\1: null",
+        "isSafe": false,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "May change type semantics"
+        ]
       }
     ],
-
     "terraform": [
       {
         "ruleId": "S7500",
@@ -891,7 +2206,9 @@
         "description": "Enable encryption for storage resources",
         "findPattern": "resource\\s+\"aws_(s3_bucket|ebs_volume|rds_instance)\"\\s+\"(\\w+)\"\\s*\\{(?!.*encryption)",
         "isSafe": false,
-        "breakingChanges": ["May require KMS key setup"],
+        "breakingChanges": [
+          "May require KMS key setup"
+        ],
         "confidence": 0.85
       },
       {
@@ -900,7 +2217,9 @@
         "description": "Replace 0.0.0.0/0 with restricted CIDR block",
         "findPattern": "cidr_blocks\\s*=\\s*\\[\"0\\.0\\.0\\.0/0\"\\]",
         "isSafe": false,
-        "breakingChanges": ["May block legitimate traffic"],
+        "breakingChanges": [
+          "May block legitimate traffic"
+        ],
         "confidence": 0.9
       },
       {
@@ -910,7 +2229,9 @@
         "findPattern": "(password|secret_key|access_key)\\s*=\\s*\"([^\"]+)\"",
         "replaceTemplate": "$1 = var.$1",
         "isSafe": false,
-        "breakingChanges": ["Requires variable declaration"],
+        "breakingChanges": [
+          "Requires variable declaration"
+        ],
         "confidence": 0.9
       },
       {
@@ -936,9 +2257,104 @@
         "findPattern": "required_providers\\s*\\{[^}]*source\\s*=\\s*\"([^\"]+)\"(?!.*version)",
         "isSafe": true,
         "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TF-002",
+        "findPattern": "encrypted\\s*=\\s*false",
+        "replaceTemplate": "encrypted = true",
+        "description": "Enable EBS volume encryption",
+        "isSafe": false,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TF-003",
+        "findPattern": "storage_encrypted\\s*=\\s*false",
+        "replaceTemplate": "storage_encrypted = true",
+        "description": "Enable RDS storage encryption",
+        "isSafe": false,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TF-083",
+        "findPattern": "auto_minor_version_upgrade\\s*=\\s*false",
+        "replaceTemplate": "auto_minor_version_upgrade = true",
+        "description": "Enable RDS auto minor version upgrade",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-TF-091",
+        "findPattern": "http_tokens\\s*=\\s*\"optional\"",
+        "replaceTemplate": "http_tokens = \"required\"",
+        "description": "Require IMDSv2 for EC2 instances",
+        "isSafe": false,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-TF-093",
+        "findPattern": "enable_key_rotation\\s*=\\s*false",
+        "replaceTemplate": "enable_key_rotation = true",
+        "description": "Enable KMS key rotation",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-TF-085",
+        "findPattern": "viewer_protocol_policy\\s*=\\s*\"allow-all\"",
+        "replaceTemplate": "viewer_protocol_policy = \"redirect-to-https\"",
+        "description": "Redirect CloudFront HTTP to HTTPS",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TF-101",
+        "findPattern": "transit_encryption_enabled\\s*=\\s*false",
+        "replaceTemplate": "transit_encryption_enabled = true",
+        "description": "Enable ElastiCache transit encryption",
+        "isSafe": false,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-TF-106",
+        "findPattern": "enable_https_traffic_only\\s*=\\s*false",
+        "replaceTemplate": "enable_https_traffic_only = true",
+        "description": "Enforce HTTPS on Azure storage",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-TF-250",
+        "findPattern": "\"\\$\\{(\\w+)\\}\"",
+        "replaceTemplate": "$1",
+        "description": "Remove unnecessary string interpolation",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "SCR-TF-145",
+        "findPattern": "\\$\\{(var\\.\\w+)\\}",
+        "replaceTemplate": "$1",
+        "description": "Replace deprecated interpolation with direct reference",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "SCR-TF-071",
+        "findPattern": "block_public_acls\\s*=\\s*false",
+        "replaceTemplate": "block_public_acls = true",
+        "description": "Enable S3 block public ACLs",
+        "isSafe": false,
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "SCR-TF-105",
+        "findPattern": "allow_public_blob_access\\s*=\\s*true",
+        "replaceTemplate": "allow_public_blob_access = false",
+        "description": "Disable Azure public blob access",
+        "isSafe": false,
+        "confidence": 0.85
       }
     ],
-
     "dockerfile": [
       {
         "ruleId": "S7600",
@@ -946,7 +2362,9 @@
         "description": "Add USER directive to avoid running as root",
         "findPattern": "^(?!.*USER\\s+\\w+).*CMD\\s+",
         "isSafe": false,
-        "breakingChanges": ["May require adjusting file permissions"],
+        "breakingChanges": [
+          "May require adjusting file permissions"
+        ],
         "confidence": 0.85
       },
       {
@@ -964,7 +2382,9 @@
         "description": "Replace latest tag with specific version",
         "findPattern": "FROM\\s+(\\w+):latest",
         "isSafe": false,
-        "breakingChanges": ["Requires choosing specific version"],
+        "breakingChanges": [
+          "Requires choosing specific version"
+        ],
         "confidence": 0.9
       },
       {
@@ -990,11 +2410,98 @@
         "description": "Separate build and runtime stages",
         "findPattern": "FROM\\s+(\\S+).*\\n(?!.*FROM).*(?:gcc|make|npm\\s+run\\s+build|mvn|gradle)",
         "isSafe": false,
-        "breakingChanges": ["Requires restructuring Dockerfile"],
+        "breakingChanges": [
+          "Requires restructuring Dockerfile"
+        ],
         "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-DOCKER-V004",
+        "name": "Add non-root USER",
+        "description": "Add USER instruction to run as non-root",
+        "findPattern": "^(?!.*USER).*$",
+        "replaceTemplate": "# Add non-root user\\nRUN addgroup -g 1000 appgroup && adduser -u 1000 -G appgroup -s /bin/sh -D appuser\\nUSER appuser",
+        "isSafe": false,
+        "confidence": 0.7,
+        "breakingChanges": [
+          "May need to adjust file permissions"
+        ]
+      },
+      {
+        "ruleId": "SCR-DOCKER-V005",
+        "name": "Replace ADD with COPY",
+        "description": "Replace ADD with COPY for local files",
+        "findPattern": "ADD\\s+(\\S+)\\s+(\\S+)",
+        "replaceTemplate": "COPY \\1 \\2",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-DOCKER-V008",
+        "name": "Replace curl pipe bash",
+        "description": "Download and verify before execution",
+        "findPattern": "curl\\s+.*\\|\\s*(bash|sh)",
+        "replaceTemplate": "curl -fsSL -o /tmp/script.sh URL\\n# Verify checksum\\nbash /tmp/script.sh",
+        "isSafe": true,
+        "confidence": 0.8,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-DOCKER-B005",
+        "name": "Replace MAINTAINER with LABEL",
+        "description": "Replace deprecated MAINTAINER with LABEL",
+        "findPattern": "MAINTAINER\\s+(.+)",
+        "replaceTemplate": "LABEL maintainer=\"\\1\"",
+        "isSafe": true,
+        "confidence": 1,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-DOCKER-S003",
+        "name": "Add apt cache cleanup",
+        "description": "Add rm -rf to clean apt cache",
+        "findPattern": "RUN\\s+(apt-get|apt)\\s+install",
+        "replaceTemplate": "RUN apt-get update && apt-get install -y <packages> \\\n    && rm -rf /var/lib/apt/lists/*",
+        "isSafe": true,
+        "confidence": 0.85,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-DOCKER-S017",
+        "name": "Replace cd with WORKDIR",
+        "description": "Replace cd commands with WORKDIR instruction",
+        "findPattern": "RUN\\s+cd\\s+(\\S+)(?!.*WORKDIR)",
+        "replaceTemplate": "WORKDIR \\1",
+        "isSafe": true,
+        "confidence": 0.8,
+        "breakingChanges": [
+          "May affect subsequent RUN commands"
+        ]
+      },
+      {
+        "ruleId": "SCR-DOCKER-H004",
+        "name": "Pin base image tag",
+        "description": "Replace latest tag with specific version",
+        "findPattern": "FROM\\s+(\\w+):(latest|main|master)",
+        "replaceTemplate": "FROM \\1:<SPECIFIC_VERSION>",
+        "isSafe": false,
+        "confidence": 0.6,
+        "breakingChanges": [
+          "Requires choosing appropriate version"
+        ]
+      },
+      {
+        "ruleId": "SCR-DOCKER-S007",
+        "name": "Suggest multi-stage build",
+        "description": "Add comment suggesting multi-stage build",
+        "findPattern": "FROM\\s+(\\w+)\\s+AS\\s+build",
+        "replaceTemplate": "# Consider using multi-stage build to reduce final image size\\nFROM \\1 AS build",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
       }
     ],
-
     "cicd": [
       {
         "ruleId": "S7700",
@@ -1002,7 +2509,9 @@
         "description": "Pin GitHub Actions to full commit SHA instead of tag",
         "findPattern": "uses:\\s+(\\w+/\\w+)@v(\\d+)",
         "isSafe": false,
-        "breakingChanges": ["Requires looking up commit SHA for the version"],
+        "breakingChanges": [
+          "Requires looking up commit SHA for the version"
+        ],
         "confidence": 0.85
       },
       {
@@ -1036,63 +2545,196 @@
         "description": "Use GitHub environment protection rules for sensitive deployments",
         "findPattern": "\\$\\{\\{\\s*secrets\\.(PROD|PRODUCTION|DEPLOY)",
         "isSafe": false,
-        "breakingChanges": ["Requires GitHub environment setup"],
+        "breakingChanges": [
+          "Requires GitHub environment setup"
+        ],
         "confidence": 0.7
+      },
+      {
+        "ruleId": "SCR-CICD-V005",
+        "name": "Replace curl pipe bash",
+        "description": "Download script first, verify, then execute",
+        "findPattern": "curl\\s+.*\\|\\s*(bash|sh)",
+        "replaceTemplate": "curl -fsSL -o /tmp/script.sh URL\\n# Verify checksum\\nbash /tmp/script.sh\\nrm /tmp/script.sh",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-CICD-V013",
+        "name": "Remove privileged mode",
+        "description": "Replace privileged with specific capabilities",
+        "findPattern": "privileged:\\s*true",
+        "replaceTemplate": "# Remove privileged, add specific capabilities if needed",
+        "isSafe": false,
+        "confidence": 0.6,
+        "breakingChanges": [
+          "Requires adding specific capabilities"
+        ]
+      },
+      {
+        "ruleId": "SCR-CICD-S002",
+        "name": "Add timeout to job",
+        "description": "Add timeout configuration to prevent hung jobs",
+        "findPattern": "^(\\s*)(\\w+):\\s*$",
+        "replaceTemplate": "\\1\\2:\\n\\1  timeout-minutes: 30",
+        "isSafe": true,
+        "confidence": 0.8,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-CICD-B015",
+        "name": "Add exit on error",
+        "description": "Add set -e to fail on first error",
+        "findPattern": "run:\\s*\\|\\s*\\n(?!\\s*set)(\\s+)(.+)",
+        "replaceTemplate": "run: |\\n\\1set -e\\n\\1\\2",
+        "isSafe": true,
+        "confidence": 0.9,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-CICD-V008",
+        "name": "Warn unpinned action",
+        "description": "Flag unpinned action references",
+        "findPattern": "uses:\\s*(\\w+/\\w+)@(v?\\d+|main|master)",
+        "replaceTemplate": "uses: \\1@<COMMIT_SHA> # Pin to SHA",
+        "isSafe": false,
+        "confidence": 0.5,
+        "breakingChanges": [
+          "Requires manual SHA lookup"
+        ]
+      },
+      {
+        "ruleId": "SCR-CICD-V017",
+        "name": "Replace eval",
+        "description": "Replace eval with safer alternative",
+        "findPattern": "eval\\s+(.+)",
+        "replaceTemplate": "# Avoid eval: $\\1",
+        "isSafe": false,
+        "confidence": 0.6,
+        "breakingChanges": [
+          "Manual review required"
+        ]
+      },
+      {
+        "ruleId": "SCR-CICD-S003",
+        "name": "Comment about SHA pinning",
+        "description": "Add comment to remind about SHA pinning",
+        "findPattern": "uses:\\s*(\\w+/\\w+)@(v\\d+\\.\\d+\\.\\d+)",
+        "replaceTemplate": "uses: \\1@\\2 # Pin to SHA for security",
+        "isSafe": true,
+        "confidence": 1,
+        "breakingChanges": []
+      },
+      {
+        "ruleId": "SCR-CICD-V012",
+        "name": "Remove docker socket mount",
+        "description": "Remove Docker socket mount warning",
+        "findPattern": "-v\\s+/var/run/docker\\.sock:",
+        "replaceTemplate": "# Docker socket mount removed - use DinD instead",
+        "isSafe": false,
+        "confidence": 0.5,
+        "breakingChanges": [
+          "Requires DinD setup"
+        ]
       }
     ],
-
     "shell": [
       {
-        "ruleId": "S7800",
-        "name": "Quote variable expansion",
-        "description": "Add double quotes around variable expansions",
-        "findPattern": "(?<!\")\\$\\{?(\\w+)\\}?(?!\")",
-        "replaceTemplate": "\"${$1}\"",
-        "isSafe": false,
-        "breakingChanges": ["May affect word splitting behavior"],
-        "confidence": 0.8
-      },
-      {
-        "ruleId": "S7801",
-        "name": "Replace eval with safer alternative",
-        "description": "Remove eval to prevent code injection",
-        "findPattern": "\\beval\\s+",
-        "isSafe": false,
-        "breakingChanges": ["Requires restructuring command construction"],
-        "confidence": 0.7
-      },
-      {
-        "ruleId": "S7802",
-        "name": "Add set -euo pipefail",
-        "description": "Add strict mode to catch errors early",
-        "findPattern": "^#!/bin/(ba)?sh\\s*$",
-        "replaceTemplate": "#!/bin/$1sh\\nset -euo pipefail",
-        "isSafe": false,
-        "breakingChanges": ["Script may fail on previously ignored errors"],
-        "confidence": 0.85
-      },
-      {
-        "ruleId": "S7803",
+        "ruleId": "S2154",
         "name": "Replace backticks with $()",
         "description": "Use $() instead of backticks for command substitution",
         "findPattern": "`([^`]+)`",
-        "replaceTemplate": "$($1)",
+        "replaceTemplate": "$(1)",
         "isSafe": true,
         "confidence": 0.95
       },
       {
-        "ruleId": "S7804",
-        "name": "Use [[ instead of [",
-        "description": "Replace [ with [[ for safer bash conditionals",
-        "findPattern": "\\[\\s+([^]]+)\\s+\\]",
-        "replaceTemplate": "[[ $1 ]]",
+        "ruleId": "S2067",
+        "name": "Quote unquoted variables",
+        "description": "Add double quotes around unquoted variable references to prevent word splitting",
+        "findPattern": "\\$(\\w+)(?![\"'])",
+        "replaceTemplate": "\"$${1}\"",
         "isSafe": false,
-        "breakingChanges": ["Not POSIX compatible, requires bash"],
+        "breakingChanges": [
+          "May affect word splitting behavior intentionally used"
+        ],
         "confidence": 0.8
+      },
+      {
+        "ruleId": "S1264",
+        "name": "Add shebang",
+        "description": "Add shebang line to script file",
+        "findPattern": "^(?!#!/bin/)",
+        "replaceTemplate": "#!/bin/bash\\n",
+        "isSafe": false,
+        "breakingChanges": [
+          "Assumes bash shell; may need adjustment for other shells"
+        ],
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S2178",
+        "name": "Replace deprecated test -a with &&",
+        "description": "Replace deprecated -a operator with && for logical AND in test commands",
+        "findPattern": "\\[\\s+(.*?)\\s+-a\\s+(.*?)\\s*\\]",
+        "replaceTemplate": "[ 1 ] && [ 2 ]",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S2178",
+        "name": "Replace deprecated test -o with ||",
+        "description": "Replace deprecated -o operator with || for logical OR in test commands",
+        "findPattern": "\\[\\s+(.*?)\\s+-o\\s+(.*?)\\s*\\]",
+        "replaceTemplate": "[ 1 ] || [ 2 ]",
+        "isSafe": true,
+        "confidence": 0.9
+      },
+      {
+        "ruleId": "S2160",
+        "name": "Replace which with command -v",
+        "description": "Use POSIX-compliant command -v instead of which",
+        "findPattern": "which\\s+(\\w+)",
+        "replaceTemplate": "command -v 1",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S7802",
+        "name": "Add set -euo pipefail",
+        "description": "Add strict mode settings after shebang for better error handling",
+        "findPattern": "^(#!/bin/\\w+)$",
+        "replaceTemplate": "$1\\nset -euo pipefail",
+        "isSafe": false,
+        "breakingChanges": [
+          "Script may fail on previously ignored errors, unset variables, or pipe failures"
+        ],
+        "confidence": 0.85
+      },
+      {
+        "ruleId": "S7805",
+        "name": "Remove useless cat",
+        "description": "Replace cat file | command with < file command redirection",
+        "findPattern": "cat\\s+(\\S+)\\s*\\|",
+        "replaceTemplate": "< 1 ",
+        "isSafe": true,
+        "confidence": 0.95
+      },
+      {
+        "ruleId": "S7806",
+        "name": "Quote $@ properly",
+        "description": "Quote $@ to preserve argument boundaries",
+        "findPattern": "\\$@(?![\"'])",
+        "replaceTemplate": "\"$@\"",
+        "isSafe": false,
+        "breakingChanges": [
+          "May change behavior when intentional word splitting is desired"
+        ],
+        "confidence": 0.85
       }
     ]
   },
-
   "transforms": {
     "csharp": {
       "extractToMethod": "Extract code block to new method",
@@ -1114,12 +2756,22 @@
     "go": {
       "extractFunction": "Extract to function",
       "handleError": "Add error handling",
-      "deferClose": "Add defer for Close()"
+      "deferClose": "Add defer for Close()",
+      "extractConstant": "Extract magic number to constant",
+      "addContext": "Add context.Context to function signature",
+      "convertToPointer": "Convert value receiver to pointer receiver",
+      "addStructTags": "Add json/db tags to struct fields",
+      "organizeImports": "Organize and format imports",
+      "addGodoc": "Add documentation comment to exported item"
     },
     "java": {
-      "extractToMethod": "Extract to method",
-      "convertToStreams": "Convert to Stream API",
-      "addLombok": "Add Lombok annotations"
+      "extractMethod": "Extract to method",
+      "extractConstant": "Extract to constant",
+      "inlineVariable": "Inline variable",
+      "addNullCheck": "Add null check",
+      "convertToStream": "Convert to Stream API",
+      "addOverride": "Add @Override annotation",
+      "convertToSwitch": "Convert to switch expression"
     },
     "rust": {
       "extractFunction": "Extract to function",
@@ -1134,12 +2786,21 @@
     "kotlin": {
       "convertToWhen": "Convert to when expression",
       "addNullSafety": "Add null safety",
-      "useScopeFunctions": "Use let/run/apply"
+      "useScopeFunctions": "Use let/run/apply",
+      "extractToFunction": "Extract code block to function",
+      "introduceParameterObject": "Group parameters into parameter object class",
+      "convertToDataClass": "Convert regular class to data class",
+      "addExplicitApiMode": "Add explicit visibility modifiers for API clarity",
+      "moveToCompanion": "Move static-like members to companion object",
+      "convertToSealed": "Convert to sealed class or interface"
     },
     "ruby": {
       "extractMethod": "Extract to method",
-      "modernize": "Use modern Ruby idioms",
-      "safeNavigation": "Add safe navigation operator"
+      "convertToSymbol": "Convert string to symbol",
+      "useSafeNavigation": "Use safe navigation operator (&.)",
+      "replaceEval": "Replace eval with public_send",
+      "addFrozenString": "Add frozen_string_literal pragma",
+      "convertToPredicate": "Convert to predicate method"
     },
     "cpp": {
       "useSmartPointers": "Replace raw pointers with smart pointers",
@@ -1149,7 +2810,11 @@
     "javascript": {
       "extractFunction": "Extract to named function",
       "convertToArrow": "Convert to arrow function",
-      "addErrorHandling": "Wrap in try-catch"
+      "addErrorHandling": "Wrap in try-catch",
+      "convertToAsync": "Convert to async/await",
+      "addJSDoc": "Add JSDoc comment",
+      "extractConstant": "Extract to constant",
+      "destructureProps": "Destructure object properties"
     },
     "swift": {
       "addGuardLet": "Add guard let for early return",
@@ -1162,14 +2827,20 @@
       "addImplicits": "Add implicit conversions"
     },
     "apex": {
+      "extractToHandler": "Extract trigger logic to handler class",
+      "addSharing": "Add with sharing keyword",
       "bulkify": "Convert to bulk-safe pattern",
-      "addTestMethod": "Generate test method stub",
-      "extractService": "Extract to service class"
+      "addCrudCheck": "Add CRUD permission check",
+      "extractQuery": "Extract SOQL outside loop",
+      "addNullCheck": "Add null check for query results"
     },
     "ocaml": {
       "addSignature": "Add module signature",
       "usePipe": "Convert to pipe operator style",
-      "addMatchExhaustive": "Add exhaustive match branches"
+      "addMatchExhaustive": "Add exhaustive match branches",
+      "extractFunction": "Extract to function",
+      "addTypeAnnotation": "Add type annotation",
+      "useOption": "Convert to Option type"
     },
     "jsp": {
       "convertToJstl": "Convert scriptlet to JSTL tags",
@@ -1196,9 +2867,12 @@
       "addMatrix": "Convert to matrix strategy"
     },
     "shell": {
-      "addErrorHandling": "Add error handling with trap",
-      "useFunction": "Extract to shell function",
-      "addLogging": "Add structured logging"
+      "quoteVariables": "Quote all unquoted variable references",
+      "replaceBackticks": "Replace backticks with $()",
+      "addErrorHandling": "Add set -euo pipefail",
+      "fixTestOperators": "Replace deprecated -a/-o with &&/||",
+      "extractFunction": "Extract code block to function",
+      "useMktemp": "Replace hardcoded temp paths with mktemp"
     }
   }
 }
